@@ -1,0 +1,46 @@
+.fxg-legal-notices {
+    padding: 24px 0;
+    background: var(--fedex-lightgray);
+    font-size: 14px;
+}
+
+.fxg-legal-notices .fxg-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.fxg-legal-notices__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.fxg-legal-notices__title {
+    font-weight: 600;
+    color: var(--fedex-dark);
+}
+
+.fxg-legal-notices__date {
+    color: var(--fedex-lighttext);
+    font-size: 13px;
+}
+
+.fxg-legal-notices__text {
+    color: var(--fedex-graytext);
+    font-size: 13px;
+}
+
+.fxg-legal-notices__item .fxg-link {
+    color: var(--fedex-link);
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .fxg-legal-notices__item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}

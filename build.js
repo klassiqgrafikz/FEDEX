@@ -1,0 +1,138 @@
+const fs = require('fs');
+const path = require('path');
+
+const COMPONENTS_DIR = path.join(__dirname, 'components');
+const TEMPLATE_FILE = path.join(__dirname, 'template.html');
+const PAGE_TEMPLATE_FILE = path.join(__dirname, 'page-template.html');
+const OUTPUT_FILE = path.join(__dirname, 'index.html');
+const JS_OUTPUT = path.join(__dirname, 'script.js');
+const PAGES_DIR = path.join(__dirname, 'pages');
+const CONTENT_DIR = path.join(PAGES_DIR, 'content');
+const MANIFEST_FILE = path.join(__dirname, 'pages-manifest.json');
+
+const componentOrder = [
+    'header', 'hero', 'floating-widget', 'quicklinks',
+    'cta', 'whyship', 'cards', 'featured', 'legal', 'footer'
+];
+
+function readComponent(name) {
+    const f = path.join(COMPONENTS_DIR, name, name + '.html');
+    return fs.existsSync(f) ? fs.readFileSync(f, 'utf-8').trim() : '';
+}
+
+function buildHtml() {
+    let template = fs.readFileSync(TEMPLATE_FILE, 'utf-8');
+    for (const name of componentOrder) {
+        const marker = '<!--#component:' + name + '-->';
+        template = template.split(marker).join(readComponent(name));
+    }
+    template = template.replace(/<!--#home-link-->/g, 'index.html');
+    template = replaceExternalLinks(template);
+    fs.writeFileSync(OUTPUT_FILE, template, 'utf-8');
+    console.log('[BUILD] index.html written (' + (template.length / 1024).toFixed(1) + ' KB)');
+}
+
+function buildJs() {
+    const initJs = path.join(__dirname, 'script.js');
+    let combined = '';
+    for (const name of componentOrder) {
+        const f = path.join(COMPONENTS_DIR, name, name + '.js');
+        if (fs.existsSync(f)) {
+            const c = fs.readFileSync(f, 'utf-8').trim();
+            if (c) {
+                combined += '\n/* --- ' + name + ' --- */\n' + c + '\n';
+            }
+        }
+    }
+    combined += '\n/* --- init --- */\n' + fs.readFileSync(initJs, 'utf-8').trim() + '\n';
+    fs.writeFileSync(path.join(__dirname, 'script.built.js'), combined, 'utf-8');
+    console.log('[BUILD] script.built.js written (' + (combined.length / 1024).toFixed(1) + ' KB)');
+    console.log('[INFO]  Rename script.built.js to script.js to use the concatenated build.');
+}
+
+function buildAllPages() {
+    if (!fs.existsSync(MANIFEST_FILE)) {
+        console.log('[PAGES] No manifest found, skipping');
+        return;
+    }
+    if (!fs.existsSync(PAGE_TEMPLATE_FILE)) {
+        console.log('[PAGES] No page template found, skipping');
+        return;
+    }
+
+    const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf-8'));
+    const pageTemplate = fs.readFileSync(PAGE_TEMPLATE_FILE, 'utf-8');
+
+    if (!fs.existsSync(PAGES_DIR)) fs.mkdirSync(PAGES_DIR, { recursive: true });
+    if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
+
+    const headerHtml = readComponent('header');
+    const footerHtml = readComponent('footer');
+
+    for (const entry of manifest) {
+        const contentFile = path.join(CONTENT_DIR, entry.id + '.html');
+        let content = fs.existsSync(contentFile)
+            ? fs.readFileSync(contentFile, 'utf-8').trim()
+            : '<div class="fxg-page-inner"><div class="fxg-page-placeholder"><h1>' + entry.title + '</h1><p>Content not available.</p></div></div>';
+
+        let page = pageTemplate
+            .replace('<!--#page-title-->', entry.title)
+            .replace('<!--#component:header-->', headerHtml.replace(/<!--#home-link-->/g, '../index.html'))
+            .replace('<!--#component:floating-widget-->', readComponent('floating-widget'))
+            .replace('<!--#component:content-->', content)
+            .replace('<!--#component:footer-->', footerHtml);
+
+        page = killAllLinks(page);
+
+        const out = path.join(PAGES_DIR, entry.id + '.html');
+        fs.writeFileSync(out, page, 'utf-8');
+        console.log('  [PAGE] pages/' + entry.id + '.html (' + (page.length / 1024).toFixed(1) + ' KB)');
+    }
+    console.log('[PAGES] ' + manifest.length + ' pages built');
+}
+
+function replaceExternalLinks(html) {
+    if (!fs.existsSync(MANIFEST_FILE)) return html;
+    const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf-8'));
+    const sorted = [...manifest].sort((a, b) => b.url.length - a.url.length);
+    for (const entry of sorted) {
+        const escaped = entry.url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        html = html.replace(new RegExp(escaped, 'g'), 'pages/' + entry.id + '.html');
+    }
+    html = html.replace(/https:\/\/www\.fedex\.com\/en-us\/home\.html/g, 'index.html');
+    return html;
+}
+
+const SOCIAL_DOMAINS = [
+    'facebook.com', 'x.com', 'twitter.com', 'instagram.com',
+    'linkedin.com', 'youtube.com', 'pinterest.com',
+    'fedex.com/en-us/email'
+];
+
+function isPreservedLink(href) {
+    if (href === 'index.html' || href === '../index.html') return true;
+    return SOCIAL_DOMAINS.some(d => href.includes(d));
+}
+
+function killAllLinks(html) {
+    html = html.replace(/<a\b[^>]*>/gi, function(m) {
+        var hrefMatch = m.match(/href="([^"]+)"/);
+        if (hrefMatch && isPreservedLink(hrefMatch[1])) return m;
+        return m.replace(/\bhref="(https?:\/\/[^"]*)"/g, 'href="#"')
+                .replace(/\bhref="(\/\/[^"]*)"/g, 'href="#"')
+                .replace(/\bhref="((?!javascript)[^#][^"]*)"/g, function(m2) {
+                    if (/href="#/.test(m2)) return m2;
+                    if (/href="javascript/.test(m2)) return m2;
+                    return 'href="#"';
+                });
+    });
+    return html;
+}
+
+console.log('=== FedEx Static Site Builder ===');
+console.log('\n--- Homepage ---');
+buildHtml();
+buildJs();
+console.log('\n--- Sub-pages ---');
+buildAllPages();
+console.log('\n=== Build complete ===');

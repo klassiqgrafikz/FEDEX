@@ -1,0 +1,181 @@
+.fxg-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--fedex-white);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.fxg-nav .fxg-wrapper {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    height: 64px;
+    gap: 24px;
+}
+
+.fxg-header__logo_wrapper {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    line-height: 0;
+}
+.fxg-header__logo_wrapper:hover { text-decoration: none; }
+
+.fxg-header__logo {
+    height: 44px;
+    width: auto;
+    display: block;
+}
+
+.fxg-skip-to-main-content {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+}
+.fxg-skip-to-main-content:focus {
+    left: 16px;
+    top: 8px;
+}
+
+.fxg-global-nav { flex: 1; }
+
+.fxg-dropdown__list {
+    display: flex;
+    gap: 0;
+    list-style: none;
+}
+
+.fxg-dropdown__item { position: relative; }
+
+.fxg-dropdown__item > .fxg-link.fxg-dropdown-js {
+    display: flex;
+    align-items: center;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fedex-dark);
+    border-radius: 4px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.fxg-dropdown__item > .fxg-link.fxg-dropdown-js:hover {
+    background: var(--fedex-lightgray);
+    text-decoration: none;
+}
+.fxg-dropdown__item > .fxg-link.fxg-dropdown-js::after {
+    content: '\25BE';
+    font-size: 12px;
+    margin-left: 4px;
+    color: var(--fedex-midgray);
+}
+
+.fxg-dropdown__sub-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--fedex-white);
+    min-width: 280px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    padding: 8px 0;
+    z-index: 100;
+}
+.fxg-dropdown__item:hover .fxg-dropdown__sub-menu { display: block; }
+
+.fxg-dropdown__sub-menu .link.fxg-button-link a {
+    display: block;
+    padding: 10px 24px;
+    font-size: 14px;
+    color: var(--fedex-dark);
+    transition: background 0.15s;
+}
+.fxg-dropdown__sub-menu .link.fxg-button-link a:hover {
+    background: var(--fedex-lightgray);
+    text-decoration: none;
+}
+
+.fxg-header__right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fxg-header__search a,
+.fxg-header__account a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--fedex-dark);
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.fxg-header__search a:hover,
+.fxg-header__account a:hover {
+    background: var(--fedex-lightgray);
+    text-decoration: none;
+}
+
+.fxg-header__search svg,
+.fxg-header__account svg {
+    width: 20px;
+    height: 20px;
+}
+
+.fxg-tracking-module { padding: 16px 20px; }
+.fxg-tracking-module .fxg-field { margin-bottom: 12px; }
+.fxg-tracking-module .fxg-field__label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fedex-dark);
+    margin-bottom: 4px;
+}
+.fxg-tracking-module .fxg-field__input-text {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--fedex-midgray);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: var(--font-family);
+    outline: none;
+}
+.fxg-tracking-module .fxg-field__input-text:focus {
+    border-color: var(--fedex-purple);
+}
+.fxg-tracking-module .cc-aem-c-button--primary {
+    padding: 10px 24px;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .fxg-nav .fxg-wrapper {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 12px 16px;
+        gap: 12px;
+    }
+    .fxg-dropdown__list { flex-wrap: wrap; }
+    .fxg-dropdown__item > .fxg-link.fxg-dropdown-js {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+    .fxg-header__right a span { display: none; }
+}
+
+@media (max-width: 480px) {
+    .fxg-dropdown__item > .fxg-link.fxg-dropdown-js {
+        font-size: 12px;
+        padding: 4px 6px;
+    }
+    .fxg-global-nav {
+        order: 3;
+        width: 100%;
+    }
+}

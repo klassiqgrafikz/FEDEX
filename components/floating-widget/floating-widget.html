@@ -1,0 +1,107 @@
+<section class="fxg-floating-widget">
+    <div class="fxg-container">
+        <div class="fxg-floating-card">
+            <div class="fxg-floating-card__icons">
+                <a href="https://www.fedex.com/en-us/online/rating.html" class="fxg-floating-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+                        <line x1="8" y1="6" x2="16" y2="6"/>
+                        <line x1="8" y1="10" x2="16" y2="10"/>
+                        <line x1="8" y1="14" x2="12" y2="14"/>
+                        <line x1="8" y1="18" x2="10" y2="18"/>
+                    </svg>
+                    <span class="fxg-floating-icon__label">Get a quote</span>
+                </a>
+                <a href="https://www.fedex.com/en-us/shipping/ship-manager/login.html" class="fxg-floating-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    <span class="fxg-floating-icon__label">Ship now</span>
+                </a>
+                <a href="https://local.fedex.com/en-us" class="fxg-floating-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span class="fxg-floating-icon__label">FedEx locations</span>
+                </a>
+                <a href="https://www.fedex.com/en-us/customer-support.html" class="fxg-floating-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span class="fxg-floating-icon__label">Contact support</span>
+                </a>
+            </div>
+
+            <div class="fxg-floating-card__divider"></div>
+
+            <div class="fxg-floating-card__tracking">
+                <div class="fxg-floating-search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="floatingTrackingInput" class="fxg-floating-search__input" placeholder="Tracking number" autocomplete="off">
+                </div>
+                <button type="button" id="floatingTrackBtn" class="fxg-floating-track-btn">TRACK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat bubble (fixed bottom-right) -->
+    <button class="fxg-chat-bubble" id="chatBubble" aria-label="Chat with FedEx">
+        <span class="fxg-chat-bubble__tooltip" id="chatTooltip">ASK ME</span>
+        <svg class="fxg-chat-bubble__icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            <path d="M0 0h24v24H0z" fill="none"/>
+        </svg>
+        <svg class="fxg-chat-bubble__close" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+        <span class="fxg-chat-bubble__ring"></span>
+    </button>
+
+    <!-- Chat panel -->
+    <div class="fxg-chat-panel" id="chatPanel">
+        <div class="fxg-chat-panel__header">
+            <div class="fxg-chat-panel__header-info">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                </svg>
+                <span>FedEx Chat</span>
+            </div>
+            <span class="fxg-chat-panel__status">Online</span>
+            <button class="fxg-chat-panel__close" id="chatClose" aria-label="Close chat">&#x2715;</button>
+        </div>
+        <div class="fxg-chat-panel__messages" id="chatMessages">
+            <div class="fxg-chat-msg fxg-chat-msg--bot">
+                <div class="fxg-chat-msg__avatar">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                </div>
+                <div class="fxg-chat-msg__content">
+                    <p>Hello! Welcome to FedEx. How can I help you today?</p>
+                </div>
+            </div>
+            <div class="fxg-chat-msg fxg-chat-msg--bot">
+                <div class="fxg-chat-msg__avatar">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                </div>
+                <div class="fxg-chat-msg__content">
+                    <p>Choose an option below:</p>
+                    <div class="fxg-chat-options">
+                        <button class="fxg-chat-options__btn" data-action="track">Track a package</button>
+                        <button class="fxg-chat-options__btn" data-action="schedule">Schedule a pickup</button>
+                        <button class="fxg-chat-options__btn" data-action="rates">Get shipping rates</button>
+                        <button class="fxg-chat-options__btn" data-action="locations">Find a location</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fxg-chat-panel__input">
+            <input type="text" placeholder="Type your message..." disabled>
+            <button disabled>Send</button>
+        </div>
+    </div>
+</section>

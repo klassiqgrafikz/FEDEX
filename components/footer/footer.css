@@ -1,0 +1,122 @@
+.fxg-footer {
+    background: var(--fedex-footer-bg);
+    color: #ccc;
+    padding: 48px 0 24px;
+    font-size: 14px;
+}
+
+.fxg-footer__row {
+    display: flex;
+    gap: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #444;
+    margin-bottom: 24px;
+}
+
+.fxg-footer__col--4 { flex: 4; }
+.fxg-footer__col--3 { flex: 3; }
+.fxg-footer__col--2 { flex: 2; }
+
+.fxg-footer__heading {
+    color: var(--fedex-white);
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.fxg-footer__links li { margin-bottom: 8px; }
+
+.fxg-footer__links a {
+    color: #999;
+    font-size: 13px;
+    transition: color 0.2s;
+}
+.fxg-footer__links a:hover { color: var(--fedex-white); }
+
+.fxg-footer__country {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--fedex-white);
+    margin-bottom: 10px;
+    line-height: 1;
+}
+
+.fxg-footer__flag {
+    width: 22px;
+    height: 16px;
+    flex-shrink: 0;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.15);
+    display: block;
+}
+
+.fxg-footer__lang-links { font-size: 14px; }
+.fxg-footer__lang-links a { color: #999; }
+.fxg-footer__lang-links a.active {
+    color: var(--fedex-white);
+    font-weight: 600;
+}
+.fxg-footer__lang-links a:hover { color: var(--fedex-white); }
+
+.fxg-footer__sep {
+    color: #555;
+    margin: 0 6px;
+}
+
+.fxg-footer__social {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.fxg-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #444;
+    color: #ccc;
+    transition: all 0.2s;
+}
+.fxg-social-link:hover {
+    background: var(--fedex-purple);
+    color: var(--fedex-white);
+    text-decoration: none;
+}
+
+.fxg-footer__copyright {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 13px;
+    color: #777;
+}
+
+.fxg-footer__legal {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.fxg-footer__legal a {
+    color: #999;
+    font-size: 13px;
+}
+.fxg-footer__legal a:hover { color: var(--fedex-white); }
+
+@media (max-width: 900px) {
+    .fxg-footer__row { flex-wrap: wrap; }
+}
+
+@media (max-width: 768px) {
+    .fxg-footer__copyright {
+        flex-direction: column;
+        text-align: center;
+    }
+}

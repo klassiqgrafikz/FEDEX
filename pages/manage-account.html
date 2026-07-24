@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Account Management Tools | FedEx</title>
+    <meta name="description" content="">
+    <link rel="shortcut icon" type="image/x-icon" href="https://www.fedex.com/etc.clientlibs/designs/fedex-common/images/resources/fx-favicon.ico">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <input type="hidden" id="supportedLocales" value="en,es">
+    <div class="fxg-main-content">
+        <header class="fxg-header fxg-header--sticky">
+    <fedex-smart-banner>
+        <script type="application/json" data-config="js-smartbanner-config">
+            {
+                "title": "FedEx Mobile",
+                "buttonText": "VIEW",
+                "description": "Track, ship, and more.",
+                "android_enabled": true,
+                "android_image": "https://lh3.googleusercontent.com/YtXTsa-6SaaMl02-OUo8iRztlX5Thu4aCLavunIV1M5hm9y4ySTPpMjpY44fL4ayz7Se",
+                "android_url": "https://play.google.com/store/apps/details?id=com.fedex.ida.android",
+                "android_instore": "Get on the Google Play store.",
+                "ios_enabled": true,
+                "ios_image": "https://is1-ssl.mzstatic.com/image/thumb/Purple124/v4/16/9f/c2/169fc22b-b2b5-5e5a-097a-c0bc3a5dbddc/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/246x0w.png",
+                "ios_url": "https://apps.apple.com/app/fedex/id1010729050",
+                "ios_instore": "Get on the App Store."
+            }
+        </script>
+    </fedex-smart-banner>
+
+    <nav class="fxg-nav">
+        <div class="fxg-wrapper">
+            <a class="fxg-header__logo_wrapper" href="../index.html" aria-label="FedEx Logo">
+                <svg class="fxg-header__logo" viewBox="0 0 451.694 220.997" aria-hidden="true">
+                    <defs><style>.fxg-logo-ex{fill:#FF6600;}.fxg-logo-fed{fill:#660099;}</style></defs>
+                    <polygon class="fxg-logo-ex" points="360.671 159 346.805 143.415 333.547 159.009 306.001 159.012 332.991 127.8 306.001 97.012 335.001 97.012 348.006 111.984 361.001 97.012 388.001 97.012 361.62 127.6 389.705 159 360.671 159"/>
+                    <polygon class="fxg-logo-ex" points="252.001 159.012 252.001 62.012 306.001 62.012 306.001 84.012 275.001 84.012 275.001 97.012 306.001 97.012 306.001 118.012 275.001 118.012 275.001 137.012 306.001 137.012 306.001 159.012 252.001 159.012"/>
+                    <path class="fxg-logo-fed" d="M230,62.012v40l-.814-.639c-5.005-5.7-11.879-7.361-19.186-7.361-14.915,0-25.458,9.664-29.362,23.077C176.134,102.374,164.118,94.012,147,94.012c-13.914,0-25.294,5.789-31,16v-13H88v-13h31v-22H62v97H88v-41l25.571-.222a36.939,36.939,0,0,0-1.2,9.509c0,20.12,15.316,34.535,34.935,34.535,16.517,0,26.89-7.708,32.7-21.822H158c-3,4.2-4.69,5.205-10.6,5.205-6.907,0-13.113-6.206-13.113-13.413h45.045c1.9,16.016,14.41,30.208,31.528,30.208A24.082,24.082,0,0,0,230,151.755v7.257h22v-97ZM135.293,118.09c1.4-6.106,6.206-10.11,12.112-10.11,6.507,0,11.011,3.9,12.213,10.11Zm80.381,25.626c-8.309,0-13.514-7.808-13.514-15.916,0-8.709,4.5-17.017,13.514-17.017,9.309,0,13.113,8.308,13.113,17.017C228.787,136.108,224.783,143.716,215.674,143.716Z"/>
+                </svg>
+            </a>
+            <a href="javascript:void(0)" class="cc-aem-c-button cc-aem-c-button--tertiary fxg-skip-to-main-content">Skip to main content</a>
+            <div class="fxg-dropdown fxg-global-nav">
+                <div class="fxg-dropdown__list">
+                    <div class="fxg-dropdown__item">
+                        <a href="#" aria-label="Open Shipping Menu" class="fxg-link fxg-dropdown-js">Shipping</a>
+                        <div class="fxg-dropdown__sub-menu">
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/shipping/ship-manager/login.html" class="fxg-link">Create a Shipment</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/online/rating.html" class="fxg-link">Shipping Rates &amp; Delivery Times</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/shipping/schedule-manage-pickups.html" class="fxg-link">Schedule &amp; Manage Pickups</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/shipping/packing.html" class="fxg-link">Packing &amp; Shipping Supplies</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/shipping/international.html" class="fxg-link">International Shipping Guide</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/shipping/freight.html" class="fxg-link">Freight</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/shipping/returns.html" class="fxg-link">Manage a Return</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/shipping.html" class="fxg-link fxg-link--blue">ALL SHIPPING SERVICES</a></div>
+                        </div>
+                    </div>
+                    <div class="fxg-dropdown__item">
+                        <a href="#" aria-label="Open Tracking Menu" class="fxg-link fxg-dropdown-js">Tracking</a>
+                        <div class="fxg-dropdown__sub-menu">
+                            <div class="fxg-tracking-module fxg-field__default">
+                                <form method="POST" action="#" class="fxg-form" id="HeaderTrackingModule">
+                                    <div class="fxg-field">
+                                        <label class="fxg-field__label" for="trackingModuleTrackingNum">Tracking ID</label>
+                                        <input id="trackingModuleTrackingNum" tabindex="0" type="text" class="fxg-field__input-text fxg-field__input--required" name="trackingNumber" required title="Tracking ID" placeholder="Tracking ID" aria-required="true" data-errmsg="Please enter at least one tracking number.">
+                                        <div class="fxg-field__error_text"><span>Please enter at least one tracking number.</span></div>
+                                    </div>
+                                    <button type="submit" aria-label="Click here to track your package" class="cc-aem-c-button cc-aem-c-button--primary">TRACK</button>
+                                </form>
+                            </div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/fedextracking/" class="fxg-link">Advanced Shipment Tracking</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/fdmenrollment/" class="fxg-link">Manage Your Delivery</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/tracking.html" class="fxg-link fxg-link--blue">ALL TRACKING SERVICES</a></div>
+                        </div>
+                    </div>
+                    <div class="fxg-dropdown__item">
+                        <a href="#" aria-label="Open Design & Print menu" class="fxg-link fxg-dropdown-js">Design &amp; Print</a>
+                        <div class="fxg-dropdown__sub-menu">
+                            <div class="link fxg-button-link"><a href="https://www.office.fedex.com/default/all-print-products.html" class="fxg-link">Explore Print, Products &amp; Design</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.office.fedex.com/default/services" class="fxg-link">Browse Services</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.office.fedex.com/" class="fxg-link fxg-link--blue">VISIT NEW MARKETPLACE</a></div>
+                        </div>
+                    </div>
+                    <div class="fxg-dropdown__item">
+                        <a href="#" aria-label="Open Locations Menu" class="fxg-link fxg-dropdown-js">Locations</a>
+                        <div class="fxg-dropdown__sub-menu">
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/shipping/drop-off-package.html" class="fxg-link">Drop Off a Package</a></div>
+                            <div class="link fxg-button-link"><a href="https://local.fedex.com/en-us" class="fxg-link fxg-link--blue">Find a Location</a></div>
+                        </div>
+                    </div>
+                    <div class="fxg-dropdown__item">
+                        <a href="#" aria-label="Open Customer Support Menu" class="fxg-link fxg-dropdown-js">Support</a>
+                        <div class="fxg-dropdown__sub-menu">
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/small-business.html" class="fxg-link">Small Business Center</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/service-guide.html" class="fxg-link">FedEx Service Guide</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/manage-account.html" class="fxg-link">Account Management Tools</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/customer-support/faqs.html" class="fxg-link">Frequently Asked Questions</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/customer-support/claims.html" class="fxg-link">File a Claim</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/billing-online.html" class="fxg-link">Billing &amp; Invoicing</a></div>
+                            <div class="link fxg-button-link"><a href="https://www.fedex.com/en-us/customer-support.html" class="fxg-link fxg-link--blue">Customer Support</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fxg-header__right">
+                <div class="fxg-header__search">
+                    <a href="#" class="fxg-link fxg-search-js" aria-label="Search">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>
+                        <span>Search</span>
+                    </a>
+                </div>
+                <div class="fxg-header__account">
+                    <a href="#" class="fxg-link" aria-label="Sign Up or Log In">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
+                        <span>Sign Up or Log In</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+        <section class="fxg-floating-widget">
+    <div class="fxg-container">
+        <div class="fxg-floating-card">
+            <div class="fxg-floating-card__icons">
+                <a href="https://www.fedex.com/en-us/online/rating.html" class="fxg-floating-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+                        <line x1="8" y1="6" x2="16" y2="6"/>
+                        <line x1="8" y1="10" x2="16" y2="10"/>
+                        <line x1="8" y1="14" x2="12" y2="14"/>
+                        <line x1="8" y1="18" x2="10" y2="18"/>
+                    </svg>
+                    <span class="fxg-floating-icon__label">Get a quote</span>
+                </a>
+                <a href="https://www.fedex.com/en-us/shipping/ship-manager/login.html" class="fxg-floating-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    <span class="fxg-floating-icon__label">Ship now</span>
+                </a>
+                <a href="https://local.fedex.com/en-us" class="fxg-floating-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span class="fxg-floating-icon__label">FedEx locations</span>
+                </a>
+                <a href="https://www.fedex.com/en-us/customer-support.html" class="fxg-floating-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span class="fxg-floating-icon__label">Contact support</span>
+                </a>
+            </div>
+
+            <div class="fxg-floating-card__divider"></div>
+
+            <div class="fxg-floating-card__tracking">
+                <div class="fxg-floating-search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="floatingTrackingInput" class="fxg-floating-search__input" placeholder="Tracking number" autocomplete="off">
+                </div>
+                <button type="button" id="floatingTrackBtn" class="fxg-floating-track-btn">TRACK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat bubble (fixed bottom-right) -->
+    <button class="fxg-chat-bubble" id="chatBubble" aria-label="Chat with FedEx">
+        <span class="fxg-chat-bubble__tooltip" id="chatTooltip">ASK ME</span>
+        <svg class="fxg-chat-bubble__icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            <path d="M0 0h24v24H0z" fill="none"/>
+        </svg>
+        <svg class="fxg-chat-bubble__close" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+        <span class="fxg-chat-bubble__ring"></span>
+    </button>
+
+    <!-- Chat panel -->
+    <div class="fxg-chat-panel" id="chatPanel">
+        <div class="fxg-chat-panel__header">
+            <div class="fxg-chat-panel__header-info">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                </svg>
+                <span>FedEx Chat</span>
+            </div>
+            <span class="fxg-chat-panel__status">Online</span>
+            <button class="fxg-chat-panel__close" id="chatClose" aria-label="Close chat">&#x2715;</button>
+        </div>
+        <div class="fxg-chat-panel__messages" id="chatMessages">
+            <div class="fxg-chat-msg fxg-chat-msg--bot">
+                <div class="fxg-chat-msg__avatar">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                </div>
+                <div class="fxg-chat-msg__content">
+                    <p>Hello! Welcome to FedEx. How can I help you today?</p>
+                </div>
+            </div>
+            <div class="fxg-chat-msg fxg-chat-msg--bot">
+                <div class="fxg-chat-msg__avatar">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                </div>
+                <div class="fxg-chat-msg__content">
+                    <p>Choose an option below:</p>
+                    <div class="fxg-chat-options">
+                        <button class="fxg-chat-options__btn" data-action="track">Track a package</button>
+                        <button class="fxg-chat-options__btn" data-action="schedule">Schedule a pickup</button>
+                        <button class="fxg-chat-options__btn" data-action="rates">Get shipping rates</button>
+                        <button class="fxg-chat-options__btn" data-action="locations">Find a location</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fxg-chat-panel__input">
+            <input type="text" placeholder="Type your message..." disabled>
+            <button disabled>Send</button>
+        </div>
+    </div>
+</section>
+        <main class="fxg-page-content">
+            <div class="fxg-page-inner"><div class="fxg-subpage-hero"><div class="fxg-subpage-hero__bg"></div><div class="fxg-subpage-hero__content"><h1>Account Management Tools</h1><p>Manage your FedEx account settings, billing, and preferences.</p></div></div><div class="fxg-subpage-section"><h2>Overview</h2><p>Your FedEx account dashboard provides centralized control over your shipping profile, billing information, and service preferences. Manage everything from one secure location.</p></div><div class="fxg-subpage-features"><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M16 0L2 6v9c0 6.8 4.6 13.2 11 15 6.4-1.8 11-8.2 11-15V6L16 0zm9 15c0 5.8-3.9 11.3-9 12.9V3.1l9 4.5v7.4z"/></svg></div><h3>Account Security</h3><p>Manage login credentials, two-factor authentication, and authorized users for your account.</p></div><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M27 0H11c-.3 0-.5.1-.7.3l-6 6c-.2.2-.3.4-.3.7v24c0 .6.4 1 1 1h22c.6 0 1-.4 1-1V1c0-.6-.4-1-1-1zM11 2.4V7H6.4L11 2.4zM26 30H6V9h6c.6 0 1-.4 1-1V2h13v28z"/><path d="M9 12h14v2H9zM9 17h14v2H9zM9 22h10v2H9z"/></svg></div><h3>Billing & Invoices</h3><p>View invoices, payment history, and set up automatic payments or paperless billing options.</p></div><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M16 0C7.2 0 0 7.2 0 16s7.2 16 16 16 16-7.2 16-16S24.8 0 16 0zm0 30C8.3 30 2 23.7 2 16S8.3 2 16 2s14 6.3 14 14-6.3 14-14 14z"/><path d="M13.3 22.3c-.4 0-.8-.1-1.1-.4l-4.7-4.7c-.6-.6-.6-1.5 0-2.1.6-.6 1.5-.6 2.1 0l3.7 3.7 8.2-8.2c.6-.6 1.5-.6 2.1 0 .6.6.6 1.5 0 2.1L14.4 21.9c-.3.3-.7.4-1.1.4z"/></svg></div><h3>Shipping Preferences</h3><p>Set default shipping options, save address books, and customize your shipping experience.</p></div></div></div>
+        </main>
+        <footer class="fxg-footer">
+    <div class="fxg-container">
+        <div class="fxg-footer__row">
+            <div class="fxg-footer__col fxg-footer__col--4">
+                <h4 class="fxg-footer__heading">Our Company</h4>
+                <ul class="fxg-footer__links">
+                    <li><a href="#">About FedEx</a></li>
+                    <li><a href="#">Our Portfolio</a></li>
+                    <li><a href="#">Investor Relations</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">FedEx Blog</a></li>
+                    <li><a href="#">Corporate Responsibility</a></li>
+                    <li><a href="#">Newsroom</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="fxg-footer__col fxg-footer__col--3">
+                <h4 class="fxg-footer__heading">More From FedEx</h4>
+                <ul class="fxg-footer__links">
+                    <li><a href="#">FedEx Compatible</a></li>
+                    <li><a href="#">FedEx Developer Portal</a></li>
+                    <li><a href="#">FedEx Logistics</a></li>
+                </ul>
+            </div>
+            <div class="fxg-footer__col fxg-footer__col--3 fxg-footer__language">
+                <h4 class="fxg-footer__heading">Language</h4>
+                <div class="fxg-footer__country">
+                    <svg class="fxg-footer__flag" viewBox="0 0 60 30" width="20" height="15" aria-hidden="true">
+                        <rect width="60" height="30" fill="#fff"/>
+                        <rect y="0" width="60" height="2.3" fill="#b22234"/><rect y="4.6" width="60" height="2.3" fill="#b22234"/><rect y="9.2" width="60" height="2.3" fill="#b22234"/><rect y="13.8" width="60" height="2.3" fill="#b22234"/><rect y="18.4" width="60" height="2.3" fill="#b22234"/><rect y="23" width="60" height="2.3" fill="#b22234"/><rect y="27.6" width="60" height="2.3" fill="#b22234"/>
+                        <rect width="24" height="15" fill="#3c3b6e"/>
+                    </svg>
+                    <span>United States</span>
+                </div>
+                <div class="fxg-footer__lang-links">
+                    <a href="#">English</a>
+                    <span class="fxg-footer__sep">|</span>
+                    <a href="#">Espanol</a>
+                </div>
+            </div>
+            <div class="fxg-footer__col fxg-footer__col--2">
+                <h4 class="fxg-footer__heading">Follow FedEx</h4>
+                <div class="fxg-footer__social">
+                    <a href="https://www.fedex.com/en-us/email.html" class="fxg-social-link" aria-label="Newsletter" target="_blank" rel="noopener">&#9993;</a>
+                    <a href="https://www.facebook.com/FedEx/" class="fxg-social-link" aria-label="Facebook" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a href="https://twitter.com/fedex" class="fxg-social-link" aria-label="Twitter" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/fedex/" class="fxg-social-link" aria-label="Instagram" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/company/fedex" class="fxg-social-link" aria-label="LinkedIn" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                    <a href="https://www.youtube.com/user/fedex" class="fxg-social-link" aria-label="YouTube" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </a>
+                    <a href="https://www.pinterest.com/FedEx/" class="fxg-social-link" aria-label="Pinterest" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.27 1.041-1.002 2.345-1.492 3.141C9.581 23.812 10.779 24 12 24c6.628 0 12-5.372 12-12 0-6.627-5.372-12-12-12z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="fxg-footer__copyright">
+            <span>&copy; FedEx 1995-2025</span>
+            <div class="fxg-footer__legal">
+                <a href="#">Site Map</a>
+                <span class="fxg-footer__sep">|</span>
+                <a href="#">Terms of Use</a>
+                <span class="fxg-footer__sep">|</span>
+                <a href="#">Privacy &amp; Security</a>
+                <span class="fxg-footer__sep">|</span>
+                <a href="#">Ad Choices</a>
+            </div>
+        </div>
+    </div>
+</footer>
+    </div>
+    <script src="../script.js"></script>
+    <script>
+document.addEventListener('click',function(e){
+    var a=e.target.closest('a');
+    var h=a&&a.getAttribute('href');
+    if(h&&h!=='#'&&h!=='javascript:void(0)'&&!a.getAttribute('target')&&h!=='index.html'&&h!=='../index.html'){e.preventDefault()}
+});
+document.addEventListener('submit',function(e){e.preventDefault()});
+    </script>
+</body>
+</html>

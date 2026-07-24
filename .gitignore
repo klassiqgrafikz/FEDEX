@@ -1,0 +1,4 @@
+node_modules/
+script.built.js
+.DS_Store
+Thumbs.db
