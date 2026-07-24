@@ -32,5 +32,7 @@
     .fxg-cta-card {
         flex-direction: column;
         text-align: center;
+        padding: 24px 20px;
     }
+    .fxg-cta-card__content h4 { font-size: 19px; }
 }

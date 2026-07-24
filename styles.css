@@ -114,6 +114,23 @@ img {
     min-height: 500px;
 }
 
+@media (max-width: 768px) {
+    .fxg-page-content { padding: 32px 0; min-height: 300px; }
+    .fxg-page-inner h1 { font-size: 28px; }
+    .fxg-page-inner h2 { font-size: 20px; }
+    .fxg-page-inner p { font-size: 15px; }
+    .fxg-container,
+    .fxg-page-inner,
+    .fxg-subpage-section,
+    .fxg-subpage-features { padding-left: 16px; padding-right: 16px; }
+}
+
+@media (max-width: 480px) {
+    .fxg-page-content { padding: 24px 0; }
+    .fxg-page-inner h1 { font-size: 24px; }
+    .fxg-page-inner h2 { font-size: 18px; }
+}
+
 .fxg-page-inner {
     max-width: var(--max-width);
     margin: 0 auto;
@@ -285,6 +302,16 @@ img {
     .fxg-subpage-hero__content p { font-size: 16px; }
     .fxg-subpage-features { grid-template-columns: 1fr; gap: 16px; }
     .fxg-subpage-section h2 { font-size: 22px; }
+    .fxg-subpage-section { padding: 0 16px; }
+    .fxg-subpage-features { padding: 0 16px; }
+}
+
+@media (max-width: 480px) {
+    .fxg-subpage-hero { padding: 32px 16px; margin: -48px -16px 24px; }
+    .fxg-subpage-hero__content h1 { font-size: 22px; }
+    .fxg-subpage-hero__content p { font-size: 15px; }
+    .fxg-subpage-feature { padding: 20px 16px; }
+    .fxg-subpage-section h2 { font-size: 19px; padding-left: 12px; }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {

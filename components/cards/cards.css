@@ -61,5 +61,6 @@
 }
 
 @media (max-width: 768px) {
-    .fxg-cards__grid { grid-template-columns: 1fr; }
+    .fxg-cards__grid { grid-template-columns: 1fr; gap: 16px; }
+    .fxg-card__body { padding: 16px; }
 }

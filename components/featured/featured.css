@@ -40,10 +40,16 @@
 @media (max-width: 900px) {
     .fxg-featured__offer {
         flex-direction: column;
+        gap: 20px;
     }
     .fxg-featured__image {
         flex: none;
         width: 100%;
         max-width: 400px;
     }
+}
+
+@media (max-width: 480px) {
+    .fxg-featured__offer { padding: 20px 0; }
+    .fxg-featured__content h4 { font-size: 18px; }
 }

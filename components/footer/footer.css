@@ -111,7 +111,18 @@
 .fxg-footer__legal a:hover { color: var(--fedex-white); }
 
 @media (max-width: 900px) {
-    .fxg-footer__row { flex-wrap: wrap; }
+    .fxg-footer__row { flex-wrap: wrap; gap: 32px; }
+    .fxg-footer__col--4,
+    .fxg-footer__col--3,
+    .fxg-footer__col--2 { flex: 1 1 calc(50% - 16px); min-width: 200px; }
+}
+
+@media (max-width: 600px) {
+    .fxg-footer { padding: 32px 0 20px; }
+    .fxg-footer__row { flex-direction: column; gap: 24px; }
+    .fxg-footer__col--4,
+    .fxg-footer__col--3,
+    .fxg-footer__col--2 { flex: none; width: 100%; }
 }
 
 @media (max-width: 768px) {

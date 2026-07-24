@@ -170,9 +170,10 @@
     .fxg-floating-card__icons {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
+        gap: 4px;
     }
-    .fxg-floating-icon { padding: 14px 8px; }
+    .fxg-floating-icon { padding: 12px 6px; min-height: 56px; }
+    .fxg-floating-icon__label { white-space: normal; font-size: 11px; }
     .fxg-floating-card__tracking { flex-direction: column; }
     .fxg-floating-search { width: 100%; }
     .fxg-floating-track-btn { width: 100%; }
