@@ -44,7 +44,7 @@ function buildJs() {
             }
         }
     }
-    combined += '\n/* --- init --- */\n' + fs.readFileSync(initJs, 'utf-8').trim() + '\n';
+    combined += '\n/* --- init --- */\n' + fs.readFileSync(path.join(__dirname, 'init.js'), 'utf-8').trim() + '\n';
     fs.writeFileSync(path.join(__dirname, 'script.built.js'), combined, 'utf-8');
     console.log('[BUILD] script.built.js written (' + (combined.length / 1024).toFixed(1) + ' KB)');
     console.log('[INFO]  Rename script.built.js to script.js to use the concatenated build.');
