@@ -11,8 +11,8 @@ const CONTENT_DIR = path.join(PAGES_DIR, 'content');
 const MANIFEST_FILE = path.join(__dirname, 'pages-manifest.json');
 
 const componentOrder = [
-    'supabase', 'header', 'hero', 'floating-widget', 'quicklinks',
-    'cta', 'whyship', 'cards', 'featured', 'legal', 'footer', 'admin'
+    'header', 'hero', 'floating-widget', 'quicklinks',
+    'cta', 'whyship', 'cards', 'featured', 'legal', 'footer'
 ];
 
 function readComponent(name) {
@@ -111,7 +111,6 @@ const SOCIAL_DOMAINS = [
 
 function isPreservedLink(href) {
     if (href === 'index.html' || href === '../index.html') return true;
-    if (href.includes('login.html') || href.includes('dashboard.html') || href.includes('content.html') || href.includes('contacts.html') || href.includes('blog.html') || href.includes('pages.html') || href.includes('settings.html')) return true;
     return SOCIAL_DOMAINS.some(d => href.includes(d));
 }
 
@@ -129,61 +128,10 @@ function killAllLinks(html) {
     });
     return html;
 }
-function buildAdminPages() {
-    const ADMIN_TEMPLATE = path.join(__dirname, 'admin-template.html');
-    const ADMIN_LOGIN_TEMPLATE = path.join(__dirname, 'admin-login-template.html');
-    const ADMIN_CONTENT_DIR = path.join(PAGES_DIR, 'admin', 'content');
-    const ADMIN_OUT_DIR = path.join(PAGES_DIR, 'admin');
-    const ADMIN_NAV_ITEMS = [
-        { id: 'login', title: 'Admin Login', page: 'login', login: true },
-        { id: 'dashboard', title: 'Dashboard', page: 'dashboard' },
-        { id: 'content', title: 'Site Content', page: 'content' },
-        { id: 'contacts', title: 'Contacts', page: 'contacts' },
-        { id: 'blog', title: 'Blog', page: 'blog' },
-        { id: 'pages', title: 'Manage Pages', page: 'pages' },
-        { id: 'settings', title: 'Settings', page: 'settings' }
-    ];
-
-    if (!fs.existsSync(ADMIN_TEMPLATE)) { console.log('  [ADMIN] No admin template found, skipping'); return; }
-    if (!fs.existsSync(ADMIN_CONTENT_DIR)) { console.log('  [ADMIN] No admin content dir, skipping'); return; }
-
-    const adminHtml = readComponent('admin');
-
-    for (const item of ADMIN_NAV_ITEMS) {
-        const contentFile = path.join(ADMIN_CONTENT_DIR, item.id + '.html');
-        if (!fs.existsSync(contentFile)) {
-            console.log('  [ADMIN] No content for ' + item.id + ', skipping');
-            continue;
-        }
-        const content = fs.readFileSync(contentFile, 'utf-8').trim();
-
-        let template;
-        if (item.login && fs.existsSync(ADMIN_LOGIN_TEMPLATE)) {
-            template = fs.readFileSync(ADMIN_LOGIN_TEMPLATE, 'utf-8');
-        } else {
-            template = fs.readFileSync(ADMIN_TEMPLATE, 'utf-8');
-        }
-
-        let page = template
-            .replace('<!--#admin-title-->', item.title)
-            .replace('<!--#admin-page-->', item.page || '')
-            .replace('<!--#component:admin-->', adminHtml)
-            .replace('<!--#component:admin-content-->', content)
-            .replace('<!--#admin-scripts-->', '');
-
-        const out = path.join(ADMIN_OUT_DIR, item.id + '.html');
-        fs.writeFileSync(out, page, 'utf-8');
-        console.log('  [ADMIN] pages/admin/' + item.id + '.html (' + (page.length / 1024).toFixed(1) + ' KB)');
-    }
-    console.log('[ADMIN] Admin pages built');
-}
-
 console.log('=== FedEx Static Site Builder ===');
 console.log('\n--- Homepage ---');
 buildHtml();
 buildJs();
 console.log('\n--- Sub-pages ---');
 buildAllPages();
-console.log('\n--- Admin Pages ---');
-buildAdminPages();
 console.log('\n=== Build complete ===');
