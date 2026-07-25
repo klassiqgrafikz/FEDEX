@@ -73,7 +73,8 @@
                     var err = input.parentElement.querySelector('.fxg-field__error_text');
                     if (err) err.style.display = 'block';
                 } else {
-                    window.location.href = 'loading.html?tracking=' + encodeURIComponent(val);
+                    var prefix = window.location.pathname.includes('/pages/') ? '../' : '';
+                    window.location.href = prefix + 'loading.html?tracking=' + encodeURIComponent(val);
                 }
             });
         }
@@ -122,7 +123,8 @@
                 } else {
                     trackInput.style.borderColor = '';
                     trackInput.placeholder = 'Tracking number';
-                    window.location.href = 'loading.html?tracking=' + encodeURIComponent(val);
+                    var prefix = window.location.pathname.includes('/pages/') ? '../' : '';
+                    window.location.href = prefix + 'loading.html?tracking=' + encodeURIComponent(val);
                 }
             }
 
