@@ -3,13 +3,13 @@
         <div class="fxg-admin-detail-header__info">
             <h1 id="shipmentTrackingId"></h1>
             <p id="shipmentPackageName"></p>
-            <p style="font-size:12px;color:#999">Created <span id="shipmentCreatedDate"></span> &mdash; Status: <span id="shipmentStatus"></span></p>
+            <p style="font-size:12px;color:#999;margin-top:4px">Created <span id="shipmentCreatedDate"></span> &mdash; Status: <span id="shipmentStatus"></span></p>
         </div>
         <div id="shipmentImage"></div>
     </div>
 
     <div class="fxg-admin-status-update">
-        <h3>Update Status</h3>
+        <h3>Update Tracking Status</h3>
         <form id="updateStatusForm">
             <div class="fxg-admin-form__row">
                 <div class="fxg-admin-form__group">
@@ -17,11 +17,11 @@
                     <select id="updateStatus" class="fxg-admin-form__select"></select>
                 </div>
                 <div class="fxg-admin-form__group" style="flex:1">
-                    <label class="fxg-admin-form__label" for="updateRemark">Remark / Description <span class="required">*</span></label>
+                    <label class="fxg-admin-form__label" for="updateRemark">Remark <span class="required">*</span></label>
                     <input type="text" id="updateRemark" class="fxg-admin-form__input" placeholder="e.g. Package handed to carrier" required>
                 </div>
                 <div class="fxg-admin-form__group" style="display:flex;align-items:end">
-                    <button type="submit" class="fxg-admin-btn fxg-admin-btn--primary">Update</button>
+                    <button type="submit" class="fxg-admin-btn fxg-admin-btn--primary">Update Status</button>
                 </div>
             </div>
         </form>

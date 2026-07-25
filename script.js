@@ -389,7 +389,7 @@
                     el.classList.add('fxg-admin__nav-item--active');
                 }
             });
-            var titleEl = document.getElementById('adminTopbarTitle');
+            var titleEl = document.getElementById('adminHeaderTitle');
             if (titleEl) {
                 var titles = { dashboard: 'Dashboard', create: 'Create Shipment', shipments: 'All Shipments' };
                 titleEl.textContent = titles[page] || page;
@@ -514,7 +514,8 @@
             window.FDX.admin.saveData(data);
 
             if (trackingDisplay) {
-                trackingDisplay.textContent = id;
+                var span = trackingDisplay.querySelector('#newTrackingIdSpan');
+                if (span) span.textContent = id;
                 trackingDisplay.style.display = 'block';
             }
 

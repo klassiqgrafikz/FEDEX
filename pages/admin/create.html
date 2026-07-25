@@ -10,63 +10,71 @@
     <div class="fxg-main-content">
         <div class="fxg-admin">
     <aside class="fxg-admin__sidebar" id="adminSidebar">
-        <div class="fxg-admin__sidebar-header">
-            <a href="dashboard.html" class="fxg-admin__logo">
-                <svg viewBox="0 0 451.694 220.997" aria-hidden="true" class="fxg-admin__logo-svg">
-                    <defs><style>.fxg-admin-logo-ex{fill:#FF6600;}.fxg-admin-logo-fed{fill:#fff;}</style></defs>
-                    <polygon class="fxg-admin-logo-ex" points="360.671 159 346.805 143.415 333.547 159.009 306.001 159.012 332.991 127.8 306.001 97.012 335.001 97.012 348.006 111.984 361.001 97.012 388.001 97.012 361.62 127.6 389.705 159 360.671 159"/>
-                    <polygon class="fxg-admin-logo-ex" points="252.001 159.012 252.001 62.012 306.001 62.012 306.001 84.012 275.001 84.012 275.001 97.012 306.001 97.012 306.001 118.012 275.001 118.012 275.001 137.012 306.001 137.012 306.001 159.012 252.001 159.012"/>
-                    <path class="fxg-admin-logo-fed" d="M230,62.012v40l-.814-.639c-5.005-5.7-11.879-7.361-19.186-7.361-14.915,0-25.458,9.664-29.362,23.077C176.134,102.374,164.118,94.012,147,94.012c-13.914,0-25.294,5.789-31,16v-13H88v-13h31v-22H62v97H88v-41l25.571-.222a36.939,36.939,0,0,0-1.2,9.509c0,20.12,15.316,34.535,34.935,34.535,16.517,0,26.89-7.708,32.7-21.822H158c-3,4.2-4.69,5.205-10.6,5.205-6.907,0-13.113-6.206-13.113-13.413h45.045c1.9,16.016,14.41,30.208,31.528,30.208A24.082,24.082,0,0,0,230,151.755v7.257h22v-97ZM135.293,118.09c1.4-6.106,6.206-10.11,12.112-10.11,6.507,0,11.011,3.9,12.213,10.11Zm80.381,25.626c-8.309,0-13.514-7.808-13.514-15.916,0-8.709,4.5-17.017,13.514-17.017,9.309,0,13.113,8.308,13.113,17.017C228.787,136.108,224.783,143.716,215.674,143.716Z"/>
-                </svg>
-                <span class="fxg-admin__logo-text">Admin</span>
-            </a>
+        <div class="fxg-admin__sidebar-brand">
+            <svg class="fxg-admin__sidebar-logo" viewBox="0 0 451.694 220.997">
+                <defs><style>.fxg-al-ex{fill:#FF6600;}.fxg-al-fed{fill:#fff;}</style></defs>
+                <polygon class="fxg-al-ex" points="360.671 159 346.805 143.415 333.547 159.009 306.001 159.012 332.991 127.8 306.001 97.012 335.001 97.012 348.006 111.984 361.001 97.012 388.001 97.012 361.62 127.6 389.705 159 360.671 159"/>
+                <polygon class="fxg-al-ex" points="252.001 159.012 252.001 62.012 306.001 62.012 306.001 84.012 275.001 84.012 275.001 97.012 306.001 97.012 306.001 118.012 275.001 118.012 275.001 137.012 306.001 137.012 306.001 159.012 252.001 159.012"/>
+                <path class="fxg-al-fed" d="M230,62.012v40l-.814-.639c-5.005-5.7-11.879-7.361-19.186-7.361-14.915,0-25.458,9.664-29.362,23.077C176.134,102.374,164.118,94.012,147,94.012c-13.914,0-25.294,5.789-31,16v-13H88v-13h31v-22H62v97H88v-41l25.571-.222a36.939,36.939,0,0,0-1.2,9.509c0,20.12,15.316,34.535,34.935,34.535,16.517,0,26.89-7.708,32.7-21.822H158c-3,4.2-4.69,5.205-10.6,5.205-6.907,0-13.113-6.206-13.113-13.413h45.045c1.9,16.016,14.41,30.208,31.528,30.208A24.082,24.082,0,0,0,230,151.755v7.257h22v-97ZM135.293,118.09c1.4-6.106,6.206-10.11,12.112-10.11,6.507,0,11.011,3.9,12.213,10.11Zm80.381,25.626c-8.309,0-13.514-7.808-13.514-15.916,0-8.709,4.5-17.017,13.514-17.017,9.309,0,13.113,8.308,13.113,17.017C228.787,136.108,224.783,143.716,215.674,143.716Z"/>
+            </svg>
+            <span class="fxg-admin__sidebar-label">Admin</span>
         </div>
+
         <nav class="fxg-admin__nav">
             <a href="dashboard.html" class="fxg-admin__nav-item" data-page="dashboard">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-                Dashboard
+                <span>Dashboard</span>
             </a>
             <a href="create.html" class="fxg-admin__nav-item" data-page="create">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                Create Shipment
+                <span>Create Shipment</span>
             </a>
             <a href="shipments.html" class="fxg-admin__nav-item" data-page="shipments">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-                All Shipments
+                <span>All Shipments</span>
             </a>
         </nav>
+
         <div class="fxg-admin__sidebar-footer">
             <a href="../../index.html" class="fxg-admin__nav-item" target="_blank">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
-                View Site
+                <span>View Site</span>
             </a>
-
         </div>
     </aside>
-    <main class="fxg-admin__main">
-        <header class="fxg-admin__topbar">
-            <button class="fxg-admin__hamburger" id="adminHamburger" aria-label="Toggle sidebar">
-                <span></span><span></span><span></span>
-            </button>
-            <div class="fxg-admin__topbar-right">
-                <span class="fxg-admin__topbar-title" id="adminTopbarTitle">Dashboard</span>
+
+    <div class="fxg-admin__body">
+        <header class="fxg-admin__header">
+            <div class="fxg-admin__header-left">
+                <button class="fxg-admin__hamburger" id="adminHamburger" aria-label="Toggle sidebar">
+                    <span></span><span></span><span></span>
+                </button>
+                <h1 class="fxg-admin__header-title" id="adminHeaderTitle">Dashboard</h1>
+            </div>
+            <div class="fxg-admin__header-right">
+                <div class="fxg-admin__header-brand">
+                    <svg viewBox="0 0 451.694 220.997" class="fxg-admin__header-brand-svg">
+                        <defs><style>.fxg-ah-ex{fill:#FF6600;}.fxg-ah-fed{fill:#4D148C;}</style></defs>
+                        <polygon class="fxg-ah-ex" points="360.671 159 346.805 143.415 333.547 159.009 306.001 159.012 332.991 127.8 306.001 97.012 335.001 97.012 348.006 111.984 361.001 97.012 388.001 97.012 361.62 127.6 389.705 159 360.671 159"/>
+                        <polygon class="fxg-ah-ex" points="252.001 159.012 252.001 62.012 306.001 62.012 306.001 84.012 275.001 84.012 275.001 97.012 306.001 97.012 306.001 118.012 275.001 118.012 275.001 137.012 306.001 137.012 306.001 159.012 252.001 159.012"/>
+                        <path class="fxg-ah-fed" d="M230,62.012v40l-.814-.639c-5.005-5.7-11.879-7.361-19.186-7.361-14.915,0-25.458,9.664-29.362,23.077C176.134,102.374,164.118,94.012,147,94.012c-13.914,0-25.294,5.789-31,16v-13H88v-13h31v-22H62v97H88v-41l25.571-.222a36.939,36.939,0,0,0-1.2,9.509c0,20.12,15.316,34.535,34.935,34.535,16.517,0,26.89-7.708,32.7-21.822H158c-3,4.2-4.69,5.205-10.6,5.205-6.907,0-13.113-6.206-13.113-13.413h45.045c1.9,16.016,14.41,30.208,31.528,30.208A24.082,24.082,0,0,0,230,151.755v7.257h22v-97ZM135.293,118.09c1.4-6.106,6.206-10.11,12.112-10.11,6.507,0,11.011,3.9,12.213,10.11Zm80.381,25.626c-8.309,0-13.514-7.808-13.514-15.916,0-8.709,4.5-17.017,13.514-17.017,9.309,0,13.113,8.308,13.113,17.017C228.787,136.108,224.783,143.716,215.674,143.716Z"/>
+                    </svg>
+                </div>
             </div>
         </header>
-        <div class="fxg-admin__content">
-            <div id="adminContent" data-page-type="create">
+
+        <main class="fxg-admin__main">
+            <div class="fxg-admin__content">
+                <div id="adminContent" data-page-type="create">
     <div class="fxg-admin-alert" id="createAlert" style="display:none"></div>
 
-    <div class="fxg-admin-section">
-        <div class="fxg-admin-section__header">
-            <h2 class="fxg-admin-section__title">Create Shipment</h2>
-        </div>
+    <div class="fxg-admin-success-banner" id="newTrackingId">
+        Shipment created! Tracking ID: <strong><span id="newTrackingIdSpan"></span></strong>
+    </div>
 
-        <div id="newTrackingId" style="display:none;background:#e8f5e9;padding:12px 18px;border-radius:8px;margin-bottom:16px;font-size:14px;font-weight:600;color:#2e7d32">
-            New tracking ID: <span id="newTrackingIdSpan"></span>
-        </div>
-
-        <form class="fxg-admin-form" id="createForm">
-            <h3>Package Information</h3>
+    <form class="fxg-admin-form-card" id="createForm">
+        <div class="fxg-admin-form-card__section">
+            <h3 class="fxg-admin-form-card__heading">Package Information</h3>
             <div class="fxg-admin-form__row">
                 <div class="fxg-admin-form__group">
                     <label class="fxg-admin-form__label">Package Image</label>
@@ -82,7 +90,7 @@
                     <input type="text" id="pkgName" class="fxg-admin-form__input" placeholder="e.g. Gift for Mom" required>
                 </div>
                 <div class="fxg-admin-form__group">
-                    <label class="fxg-admin-form__label" for="pkgWeight">Weight (lbs/kg) <span class="required">*</span></label>
+                    <label class="fxg-admin-form__label" for="pkgWeight">Weight <span class="required">*</span></label>
                     <input type="text" id="pkgWeight" class="fxg-admin-form__input" placeholder="e.g. 5 lbs" required>
                 </div>
                 <div class="fxg-admin-form__group">
@@ -119,8 +127,10 @@
                     </label>
                 </div>
             </div>
+        </div>
 
-            <h3>Sender Information</h3>
+        <div class="fxg-admin-form-card__section">
+            <h3 class="fxg-admin-form-card__heading">Sender Information</h3>
             <div class="fxg-admin-form__row">
                 <div class="fxg-admin-form__group">
                     <label class="fxg-admin-form__label" for="senderName">Full Name <span class="required">*</span></label>
@@ -159,8 +169,10 @@
                     <input type="email" id="senderEmail" class="fxg-admin-form__input" required>
                 </div>
             </div>
+        </div>
 
-            <h3>Recipient Information</h3>
+        <div class="fxg-admin-form-card__section">
+            <h3 class="fxg-admin-form-card__heading">Recipient Information</h3>
             <div class="fxg-admin-form__row">
                 <div class="fxg-admin-form__group">
                     <label class="fxg-admin-form__label" for="recipName">Full Name <span class="required">*</span></label>
@@ -205,16 +217,17 @@
                     </label>
                 </div>
             </div>
-
-            <div class="fxg-admin-form__actions">
-                <button type="submit" class="fxg-admin-btn fxg-admin-btn--success">Create Shipment</button>
-                <button type="reset" class="fxg-admin-btn fxg-admin-btn--outline">Clear Form</button>
-            </div>
-        </form>
-    </div>
-</div>
         </div>
-    </main>
+
+        <div class="fxg-admin-form-card__actions">
+            <button type="submit" class="fxg-admin-btn fxg-admin-btn--success">Create Shipment</button>
+            <button type="reset" class="fxg-admin-btn fxg-admin-btn--outline">Clear Form</button>
+        </div>
+    </form>
+</div>
+            </div>
+        </main>
+    </div>
 </div>
     </div>
     <script src="../../script.js"></script>

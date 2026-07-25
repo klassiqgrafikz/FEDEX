@@ -1,17 +1,13 @@
 <div id="adminContent" data-page-type="create">
     <div class="fxg-admin-alert" id="createAlert" style="display:none"></div>
 
-    <div class="fxg-admin-section">
-        <div class="fxg-admin-section__header">
-            <h2 class="fxg-admin-section__title">Create Shipment</h2>
-        </div>
+    <div class="fxg-admin-success-banner" id="newTrackingId">
+        Shipment created! Tracking ID: <strong><span id="newTrackingIdSpan"></span></strong>
+    </div>
 
-        <div id="newTrackingId" style="display:none;background:#e8f5e9;padding:12px 18px;border-radius:8px;margin-bottom:16px;font-size:14px;font-weight:600;color:#2e7d32">
-            New tracking ID: <span id="newTrackingIdSpan"></span>
-        </div>
-
-        <form class="fxg-admin-form" id="createForm">
-            <h3>Package Information</h3>
+    <form class="fxg-admin-form-card" id="createForm">
+        <div class="fxg-admin-form-card__section">
+            <h3 class="fxg-admin-form-card__heading">Package Information</h3>
             <div class="fxg-admin-form__row">
                 <div class="fxg-admin-form__group">
                     <label class="fxg-admin-form__label">Package Image</label>
@@ -27,7 +23,7 @@
                     <input type="text" id="pkgName" class="fxg-admin-form__input" placeholder="e.g. Gift for Mom" required>
                 </div>
                 <div class="fxg-admin-form__group">
-                    <label class="fxg-admin-form__label" for="pkgWeight">Weight (lbs/kg) <span class="required">*</span></label>
+                    <label class="fxg-admin-form__label" for="pkgWeight">Weight <span class="required">*</span></label>
                     <input type="text" id="pkgWeight" class="fxg-admin-form__input" placeholder="e.g. 5 lbs" required>
                 </div>
                 <div class="fxg-admin-form__group">
@@ -64,8 +60,10 @@
                     </label>
                 </div>
             </div>
+        </div>
 
-            <h3>Sender Information</h3>
+        <div class="fxg-admin-form-card__section">
+            <h3 class="fxg-admin-form-card__heading">Sender Information</h3>
             <div class="fxg-admin-form__row">
                 <div class="fxg-admin-form__group">
                     <label class="fxg-admin-form__label" for="senderName">Full Name <span class="required">*</span></label>
@@ -104,8 +102,10 @@
                     <input type="email" id="senderEmail" class="fxg-admin-form__input" required>
                 </div>
             </div>
+        </div>
 
-            <h3>Recipient Information</h3>
+        <div class="fxg-admin-form-card__section">
+            <h3 class="fxg-admin-form-card__heading">Recipient Information</h3>
             <div class="fxg-admin-form__row">
                 <div class="fxg-admin-form__group">
                     <label class="fxg-admin-form__label" for="recipName">Full Name <span class="required">*</span></label>
@@ -150,11 +150,11 @@
                     </label>
                 </div>
             </div>
+        </div>
 
-            <div class="fxg-admin-form__actions">
-                <button type="submit" class="fxg-admin-btn fxg-admin-btn--success">Create Shipment</button>
-                <button type="reset" class="fxg-admin-btn fxg-admin-btn--outline">Clear Form</button>
-            </div>
-        </form>
-    </div>
+        <div class="fxg-admin-form-card__actions">
+            <button type="submit" class="fxg-admin-btn fxg-admin-btn--success">Create Shipment</button>
+            <button type="reset" class="fxg-admin-btn fxg-admin-btn--outline">Clear Form</button>
+        </div>
+    </form>
 </div>
