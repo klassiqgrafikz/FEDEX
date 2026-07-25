@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Shipments | FDX Admin</title>
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body data-admin-page="shipments">
+    <div class="fxg-main-content">
+        <div class="fxg-admin">
+    <aside class="fxg-admin__sidebar" id="adminSidebar">
+        <div class="fxg-admin__sidebar-header">
+            <a href="dashboard.html" class="fxg-admin__logo">FDX Admin</a>
+        </div>
+        <nav class="fxg-admin__nav">
+            <a href="dashboard.html" class="fxg-admin__nav-item" data-page="dashboard">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                Dashboard
+            </a>
+            <a href="create.html" class="fxg-admin__nav-item" data-page="create">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                Create Shipment
+            </a>
+            <a href="shipments.html" class="fxg-admin__nav-item" data-page="shipments">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                All Shipments
+            </a>
+        </nav>
+        <div class="fxg-admin__sidebar-footer">
+            <a href="../../index.html" class="fxg-admin__nav-item" target="_blank">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
+                View Site
+            </a>
+            <button id="adminLogout" class="fxg-admin__nav-item fxg-admin__logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                Logout
+            </button>
+        </div>
+    </aside>
+    <main class="fxg-admin__main">
+        <header class="fxg-admin__topbar">
+            <button class="fxg-admin__hamburger" id="adminHamburger" aria-label="Toggle sidebar">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="fxg-admin__topbar-right">
+                <span class="fxg-admin__topbar-title" id="adminTopbarTitle">Dashboard</span>
+            </div>
+        </header>
+        <div class="fxg-admin__content">
+            <div id="adminContent" data-page-type="shipments">
+    <div class="fxg-admin-section">
+        <div class="fxg-admin-section__header">
+            <h2 class="fxg-admin-section__title">All Shipments</h2>
+            <div class="fxg-admin-search">
+                <input type="text" id="shipmentsSearch" placeholder="Search by tracking #, name or package...">
+                <a href="create.html" class="fxg-admin-btn fxg-admin-btn--primary fxg-admin-btn--small">+ New</a>
+            </div>
+        </div>
+        <div class="fxg-admin-table-wrap">
+            <table class="fxg-admin-table">
+                <thead>
+                    <tr>
+                        <th>Tracking #</th>
+                        <th>Package</th>
+                        <th>Recipient</th>
+                        <th>Status</th>
+                        <th>Departure</th>
+                        <th>Est. Delivery</th>
+                    </tr>
+                </thead>
+                <tbody id="shipmentsBody"></tbody>
+            </table>
+            <div class="fxg-admin-empty" id="noShipments" style="display:none">
+                <p>No shipments found.</p>
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+    </main>
+</div>
+    </div>
+    <script src="../../script.js"></script>
+    
+</body>
+</html>

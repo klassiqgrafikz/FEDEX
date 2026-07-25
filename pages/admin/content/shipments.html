@@ -1,0 +1,29 @@
+<div id="adminContent" data-page-type="shipments">
+    <div class="fxg-admin-section">
+        <div class="fxg-admin-section__header">
+            <h2 class="fxg-admin-section__title">All Shipments</h2>
+            <div class="fxg-admin-search">
+                <input type="text" id="shipmentsSearch" placeholder="Search by tracking #, name or package...">
+                <a href="create.html" class="fxg-admin-btn fxg-admin-btn--primary fxg-admin-btn--small">+ New</a>
+            </div>
+        </div>
+        <div class="fxg-admin-table-wrap">
+            <table class="fxg-admin-table">
+                <thead>
+                    <tr>
+                        <th>Tracking #</th>
+                        <th>Package</th>
+                        <th>Recipient</th>
+                        <th>Status</th>
+                        <th>Departure</th>
+                        <th>Est. Delivery</th>
+                    </tr>
+                </thead>
+                <tbody id="shipmentsBody"></tbody>
+            </table>
+            <div class="fxg-admin-empty" id="noShipments" style="display:none">
+                <p>No shipments found.</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<div id="adminContent" data-page-type="dashboard">
+    <div class="fxg-admin-section">
+        <div class="fxg-admin-section__header">
+            <h2 class="fxg-admin-section__title">Dashboard</h2>
+        </div>
+        <div class="fxg-admin-stats">
+            <div class="fxg-admin-stat">
+                <div class="fxg-admin-stat__label">Total Shipments</div>
+                <div class="fxg-admin-stat__value fxg-admin-stat__value--purple" id="statTotal">0</div>
+            </div>
+            <div class="fxg-admin-stat">
+                <div class="fxg-admin-stat__label">In Transit</div>
+                <div class="fxg-admin-stat__value fxg-admin-stat__value--blue" id="statTransit">0</div>
+            </div>
+            <div class="fxg-admin-stat">
+                <div class="fxg-admin-stat__label">Delivered</div>
+                <div class="fxg-admin-stat__value fxg-admin-stat__value--green" id="statDelivered">0</div>
+            </div>
+            <div class="fxg-admin-stat">
+                <div class="fxg-admin-stat__label">Pending / Exception</div>
+                <div class="fxg-admin-stat__value fxg-admin-stat__value--red" id="statPending">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fxg-admin-section">
+        <div class="fxg-admin-section__header">
+            <h2 class="fxg-admin-section__title">Recent Shipments</h2>
+            <a href="create.html" class="fxg-admin-btn fxg-admin-btn--primary fxg-admin-btn--small">+ New Shipment</a>
+        </div>
+        <div class="fxg-admin-table-wrap">
+            <table class="fxg-admin-table">
+                <thead>
+                    <tr>
+                        <th>Tracking #</th>
+                        <th>Package</th>
+                        <th>Recipient</th>
+                        <th>Status</th>
+                        <th>Est. Delivery</th>
+                    </tr>
+                </thead>
+                <tbody id="recentShipmentsBody"></tbody>
+            </table>
+            <div class="fxg-admin-empty" id="noRecent" style="display:none">
+                <p>No shipments yet. <a href="create.html" style="color:#660099">Create your first shipment</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
