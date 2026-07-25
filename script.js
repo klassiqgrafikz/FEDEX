@@ -239,6 +239,66 @@
     if (!window.FDX) window.FDX = {};
     if (!window.FDX.components) window.FDX.components = [];
 
+    var SUPABASE_URL = 'https://ytbrsiswpoqaaparfgon.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0YnJzaXN3cG9xYWFwYXJmZ29uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MzMyNjIsImV4cCI6MjEwMDUwOTI2Mn0.KkpG3hiscVSBtYDqZFCqHZnoNDOOJPnPWZ8vvV_UaN0';
+
+    function supabaseFetch(path, options) {
+        var url = SUPABASE_URL + '/rest/v1/' + path;
+        var headers = {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Prefer': 'return=minimal'
+        };
+        if (options && options.headers) {
+            for (var k in options.headers) headers[k] = options.headers[k];
+        }
+        return fetch(url, {
+            method: (options && options.method) || 'GET',
+            headers: headers,
+            body: options && options.body ? JSON.stringify(options.body) : null
+        });
+    }
+
+    function toDb(s) {
+        return {
+            id: s.id,
+            package_name: s.packageName,
+            image: s.image,
+            sender: s.sender,
+            recipient: s.recipient,
+            weight: s.weight,
+            service_type: s.serviceType,
+            departure_date: s.departureDate,
+            est_delivery_date: s.estDeliveryDate,
+            signature_required: s.signatureRequired,
+            reference_number: s.referenceNumber,
+            current_status: s.currentStatus,
+            status_timeline: s.statusTimeline,
+            created_at: s.createdAt,
+            updated_at: s.updatedAt
+        };
+    }
+
+    function fromDb(r) {
+        return {
+            id: r.id,
+            packageName: r.package_name,
+            image: r.image,
+            sender: r.sender,
+            recipient: r.recipient,
+            weight: r.weight,
+            serviceType: r.service_type,
+            departureDate: r.departure_date,
+            estDeliveryDate: r.est_delivery_date,
+            signatureRequired: r.signature_required,
+            referenceNumber: r.reference_number,
+            currentStatus: r.current_status,
+            statusTimeline: r.status_timeline,
+            createdAt: r.created_at,
+            updatedAt: r.updated_at
+        };
+    }
+
     var STATUSES = [
         'Shipment Created',
         'Package Received',
@@ -311,12 +371,20 @@
         var data = getData();
         data.shipments[shipment.id] = shipment;
         saveData(data);
+        supabaseFetch('shipments', {
+            method: 'POST',
+            body: toDb(shipment),
+            headers: { 'Prefer': 'resolution=merge-duplicates' }
+        });
     }
 
     function deleteShipment(id) {
         var data = getData();
         delete data.shipments[id];
         saveData(data);
+        supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
+            method: 'DELETE'
+        });
     }
 
     function getStats() {
@@ -352,6 +420,60 @@
     function badgeHtml(status) {
         var cls = STATUS_CLASSES[status] || '';
         return '<span class="fxg-admin-badge ' + cls + '">' + escapeHtml(status) + '</span>';
+    }
+
+    function syncFromSupabase(callback) {
+        var data = getData();
+        var migrated = localStorage.getItem('fdx_migrated');
+
+        supabaseFetch('shipments?order=created_at.desc', {
+            headers: { 'Prefer': '' }
+        }).then(function(res) {
+            if (!res.ok) throw new Error('Supabase fetch failed');
+            return res.json();
+        }).then(function(rows) {
+            var hasRemote = rows && rows.length > 0;
+            var hasLocal = Object.keys(data.shipments).length > 0;
+
+            if (hasRemote) {
+                rows.forEach(function(row) {
+                    data.shipments[row.id] = fromDb(row);
+                });
+            }
+
+            if (!migrated && hasLocal && !hasRemote) {
+                var batch = [];
+                for (var key in data.shipments) {
+                    if (data.shipments.hasOwnProperty(key)) {
+                        batch.push(toDb(data.shipments[key]));
+                    }
+                }
+                if (batch.length > 0) {
+                    supabaseFetch('shipments', {
+                        method: 'POST',
+                        body: batch,
+                        headers: { 'Prefer': 'resolution=merge-duplicates' }
+                    });
+                }
+                localStorage.setItem('fdx_migrated', '1');
+            }
+
+            saveData(data);
+
+            supabaseFetch('tracking_config?id=eq.1', {
+                headers: { 'Prefer': '' }
+            }).then(function(r) { return r.json(); }).then(function(config) {
+                if (config && config.length > 0) {
+                    data.nextNum = Math.max(data.nextNum || 1, config[0].next_num);
+                    saveData(data);
+                }
+                if (callback) callback();
+            }).catch(function() {
+                if (callback) callback();
+            });
+        }).catch(function() {
+            if (callback) callback();
+        });
     }
 
     window.FDX.admin = {
@@ -401,6 +523,16 @@
         else if (pageType === 'create') initCreate(contentEl);
         else if (pageType === 'shipments') initShipments(contentEl);
         else if (pageType === 'shipment') initShipmentDetail(contentEl);
+
+        if (pageType !== 'create') {
+            setTimeout(function() {
+                syncFromSupabase(function() {
+                    if (pageType === 'dashboard') initDashboard(contentEl);
+                    else if (pageType === 'shipments') initShipments(contentEl);
+                    else if (pageType === 'shipment') initShipmentDetail(contentEl);
+                });
+            }, 50);
+        }
     });
 
     function initDashboard(el) {
@@ -512,6 +644,10 @@
 
             window.FDX.admin.saveShipment(shipment);
             window.FDX.admin.saveData(data);
+            supabaseFetch('tracking_config?id=eq.1', {
+                method: 'PATCH',
+                body: { next_num: data.nextNum }
+            });
 
             if (trackingDisplay) {
                 var span = trackingDisplay.querySelector('#newTrackingIdSpan');
