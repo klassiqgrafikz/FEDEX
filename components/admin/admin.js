@@ -412,6 +412,7 @@
             };
 
             window.FDX.admin.saveShipment(shipment);
+            data.shipments[shipment.id] = shipment;
             window.FDX.admin.saveData(data);
             supabaseFetch('tracking_config?id=eq.1', {
                 method: 'PATCH',
