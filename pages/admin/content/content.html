@@ -1,0 +1,38 @@
+<div class="fxg-admin-section">
+    <div class="fxg-admin-section__header">
+        <h2 class="fxg-admin-section__title">Site Content</h2>
+        <button class="fxg-admin-btn fxg-admin-btn--primary" onclick="refreshContent()">Refresh</button>
+    </div>
+    <div id="contentAlert"></div>
+</div>
+<div class="fxg-admin-table">
+    <table>
+        <thead><tr><th>Section</th><th>Key</th><th>Current Value</th><th style="width:180px">Actions</th></tr></thead>
+        <tbody id="contentTable"><tr><td colspan="4" style="text-align:center;color:#999;">Loading...</td></tr></tbody>
+    </table>
+</div>
+<script>
+function refreshContent() {
+    if (!window.FDX || !window.FDX.supabase) return;
+    window.FDX.supabase.from('site_content').select('*').order('section').order('key').then(function(res) {
+        if (res.error) { document.getElementById('contentTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">Error loading</td></tr>'; return; }
+        var tbody = document.getElementById('contentTable');
+        if (res.data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">No content blocks. Run the seed SQL.</td></tr>'; return; }
+        tbody.innerHTML = res.data.map(function(c) {
+            return '<tr><td>' + c.section + '</td><td>' + c.key + '</td><td>' + (c.value.length > 60 ? c.value.substring(0,60) + '...' : c.value) + '</td><td><button class="fxg-admin-btn fxg-admin-btn--primary fxg-admin-btn--small" onclick="editContent(\'' + c.id + '\',\'' + c.section.replace(/'/g,"\\'") + '\',\'' + c.key.replace(/'/g,"\\'") + '\',\'' + c.value.replace(/'/g,"\\'").replace(/\n/g,'\\n') + '\')">Edit</button></td></tr>';
+        }).join('');
+    });
+}
+function editContent(id, section, key, value) {
+    var newVal = prompt('Edit "' + section + '/' + key + '":', value);
+    if (newVal === null || newVal === value) return;
+    window.FDX.supabase.from('site_content').update({ value: newVal, updated_at: new Date().toISOString() }).eq('id', id).then(function(res) {
+        var alert = document.getElementById('contentAlert');
+        if (res.error) { alert.className = 'fxg-admin-alert fxg-admin-alert--error'; alert.textContent = 'Error: ' + res.error.message; } 
+        else { alert.className = 'fxg-admin-alert fxg-admin-alert--success'; alert.textContent = 'Updated!'; refreshContent(); }
+        alert.style.display = 'block';
+        setTimeout(function() { alert.style.display = 'none'; }, 3000);
+    });
+}
+refreshContent();
+</script>

@@ -1,0 +1,62 @@
+<div class="fxg-admin-login">
+    <div class="fxg-admin-login__card">
+        <div class="fxg-admin-login__title">Admin Login</div>
+        <div class="fxg-admin-login__subtitle">Sign in to manage your FedEx site</div>
+        <div class="fxg-admin-login__error" id="loginError"></div>
+        <form id="loginForm">
+            <div class="fxg-admin-form__group">
+                <label class="fxg-admin-form__label" for="loginEmail">Email</label>
+                <input class="fxg-admin-form__input" type="email" id="loginEmail" placeholder="you@example.com" required>
+            </div>
+            <div class="fxg-admin-form__group">
+                <label class="fxg-admin-form__label" for="loginPassword">Password</label>
+                <input class="fxg-admin-form__input" type="password" id="loginPassword" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="fxg-admin-btn fxg-admin-btn--primary" style="width:100%;justify-content:center;padding:12px">Sign In</button>
+        </form>
+        <p style="text-align:center;margin-top:20px;font-size:13px;color:#999;">
+            <a href="#" onclick="showSignup()" style="color:var(--fedex-purple)">Create an account</a>
+        </p>
+    </div>
+</div>
+<script>
+var loginForm = document.getElementById('loginForm');
+var loginError = document.getElementById('loginError');
+function showSignup() {
+    var card = loginForm.parentElement;
+    loginForm.innerHTML = '<div class="fxg-admin-form__group"><label class="fxg-admin-form__label" for="signupEmail">Email</label><input class="fxg-admin-form__input" type="email" id="signupEmail" placeholder="you@example.com" required></div><div class="fxg-admin-form__group"><label class="fxg-admin-form__label" for="signupPassword">Password</label><input class="fxg-admin-form__input" type="password" id="signupPassword" placeholder="Min 6 characters" required></div><button type="submit" class="fxg-admin-btn fxg-admin-btn--primary" style="width:100%;justify-content:center;padding:12px">Create Account</button>';
+    loginForm.onsubmit = function(e) {
+        e.preventDefault();
+        var email = document.getElementById('signupEmail').value;
+        var password = document.getElementById('signupPassword').value;
+        if (!window.FDX || !window.FDX.supabase) { loginError.textContent = 'Supabase not loaded'; loginError.style.display = 'block'; return; }
+        window.FDX.supabase.auth.signUp({ email: email, password: password }).then(function(res) {
+            if (res.error) { loginError.textContent = res.error.message; loginError.style.display = 'block'; return; }
+            loginError.className = 'fxg-admin-alert fxg-admin-alert--success';
+            loginError.textContent = 'Account created! Check your email to confirm.';
+            loginError.style.display = 'block';
+        });
+    };
+}
+if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var email = document.getElementById('loginEmail').value;
+        var password = document.getElementById('loginPassword').value;
+        if (!window.FDX || !window.FDX.supabase) { loginError.textContent = 'Supabase not loaded'; loginError.style.display = 'block'; return; }
+        loginError.style.display = 'none';
+        window.FDX.supabase.auth.signInWithPassword({ email: email, password: password }).then(function(res) {
+            if (res.error) { loginError.textContent = res.error.message; loginError.style.display = 'block'; return; }
+            window.location.href = 'dashboard.html';
+        });
+    });
+}
+/* Auto-redirect if already logged in */
+if (window.FDX && window.FDX.supabase) {
+    window.FDX.supabase.auth.getSession().then(function(res) {
+        if (res.data && res.data.session) {
+            window.location.href = 'dashboard.html';
+        }
+    });
+}
+</script>

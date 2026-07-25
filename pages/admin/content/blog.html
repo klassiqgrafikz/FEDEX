@@ -1,0 +1,60 @@
+<div class="fxg-admin-section">
+    <div class="fxg-admin-section__header">
+        <h2 class="fxg-admin-section__title">Blog Posts</h2>
+        <button class="fxg-admin-btn fxg-admin-btn--primary" onclick="showNewPost()">+ New Post</button>
+    </div>
+    <div id="blogAlert"></div>
+</div>
+<div class="fxg-admin-table">
+    <table>
+        <thead><tr><th>Title</th><th>Slug</th><th>Date</th><th>Status</th><th style="width:140px">Actions</th></tr></thead>
+        <tbody id="blogTable"><tr><td colspan="5" style="text-align:center;color:#999;">Loading...</td></tr></tbody>
+    </table>
+</div>
+<script>
+function loadPosts() {
+    if (!window.FDX || !window.FDX.supabase) return;
+    window.FDX.supabase.from('blog_posts').select('*').order('created_at', { ascending: false }).then(function(res) {
+        if (res.error) return;
+        var tbody = document.getElementById('blogTable');
+        if (res.data.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No posts yet</td></tr>'; return; }
+        tbody.innerHTML = res.data.map(function(p) {
+            var date = new Date(p.created_at).toLocaleDateString();
+            var badge = p.published ? '<span class="fxg-admin-badge fxg-admin-badge--success">Published</span>' : '<span class="fxg-admin-badge fxg-admin-badge--warning">Draft</span>';
+            return '<tr><td>' + p.title + '</td><td>' + p.slug + '</td><td>' + date + '</td><td>' + badge + '</td><td><button class="fxg-admin-btn fxg-admin-btn--outline fxg-admin-btn--small" onclick="editPost(\'' + p.id + '\',\'' + p.title.replace(/'/g,"\\'") + '\',\'' + p.slug.replace(/'/g,"\\'") + '\')">Edit</button> <button class="fxg-admin-btn fxg-admin-btn--danger fxg-admin-btn--small" onclick="deletePost(\'' + p.id + '\')">Delete</button></td></tr>';
+        }).join('');
+    });
+}
+function showNewPost() {
+    var title = prompt('Post title:');
+    if (!title) return;
+    var slug = prompt('URL slug (e.g. my-post):', title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));
+    if (!slug) return;
+    var excerpt = prompt('Excerpt (optional):') || '';
+    var body = prompt('Post body (plain text):');
+    if (!body) return;
+    window.FDX.supabase.from('blog_posts').insert({ title: title, slug: slug, excerpt: excerpt, body: body, published: false }).then(function(res) {
+        var alert = document.getElementById('blogAlert');
+        if (res.error) { alert.className = 'fxg-admin-alert fxg-admin-alert--error'; alert.textContent = 'Error: ' + res.error.message; }
+        else { alert.className = 'fxg-admin-alert fxg-admin-alert--success'; alert.textContent = 'Post created!'; loadPosts(); }
+        alert.style.display = 'block'; setTimeout(function() { alert.style.display = 'none'; }, 3000);
+    });
+}
+function editPost(id, oldTitle, oldSlug) {
+    var title = prompt('Title:', oldTitle);
+    if (!title) return;
+    var slug = prompt('Slug:', oldSlug);
+    if (!slug) return;
+    window.FDX.supabase.from('blog_posts').update({ title: title, slug: slug, updated_at: new Date().toISOString() }).eq('id', id).then(function(res) {
+        var alert = document.getElementById('blogAlert');
+        if (res.error) { alert.className = 'fxg-admin-alert fxg-admin-alert--error'; alert.textContent = 'Error: ' + res.error.message; }
+        else { alert.className = 'fxg-admin-alert fxg-admin-alert--success'; alert.textContent = 'Updated!'; loadPosts(); }
+        alert.style.display = 'block'; setTimeout(function() { alert.style.display = 'none'; }, 3000);
+    });
+}
+function deletePost(id) {
+    if (!confirm('Delete this post?')) return;
+    window.FDX.supabase.from('blog_posts').delete().eq('id', id).then(function() { loadPosts(); });
+}
+loadPosts();
+</script>
