@@ -119,41 +119,46 @@
         var parts = [];
         if (shipment.serviceType) parts.push(shipment.serviceType);
         if (shipment.weight) parts.push(shipment.weight);
-        el.querySelector('#trServiceInfo').textContent = parts.join(' - ') || '';
+        el.querySelector('#trServiceInfo').textContent = parts.join(' \u00b7 ') || '';
 
         var isDel = st === 'Delivered';
         var dateEl = el.querySelector('#trDeliveryDate');
         if (isDel) {
             var tl = shipment.statusTimeline || [];
             var last = tl.length ? tl[tl.length - 1] : null;
-            if (last && last.timestamp) dateEl.textContent = 'Delivered ' + fmtDate(last.timestamp);
-            else if (shipment.updatedAt) dateEl.textContent = 'Delivered ' + fmtDate(shipment.updatedAt);
+            if (last && last.timestamp) dateEl.innerHTML = '<strong>Delivered</strong> ' + fmtDate(last.timestamp);
+            else if (shipment.updatedAt) dateEl.innerHTML = '<strong>Delivered</strong> ' + fmtDate(shipment.updatedAt);
             else dateEl.textContent = 'Delivered';
         } else if (shipment.estDeliveryDate) {
-            dateEl.textContent = 'Scheduled delivery: ' + fmtShort(shipment.estDeliveryDate);
+            dateEl.innerHTML = '<strong>Scheduled delivery:</strong> ' + fmtShort(shipment.estDeliveryDate);
         } else {
             dateEl.textContent = '';
         }
 
-        var sigEl = el.querySelector('#trSignedBy');
-        sigEl.textContent = (isDel && shipment.signatureName) ? 'Signed for by: ' + shipment.signatureName : '';
-        var recipEl = el.querySelector('#trRecipientName');
-        if (recipEl) {
+        var metaEl = el.querySelector('#trHeroMeta');
+        if (metaEl) {
+            var items = [];
+            if (isDel && shipment.signatureName) {
+                items.push('<span class="fxg-tracking-hero__meta-item"><strong>Signed by:</strong> ' + escape(shipment.signatureName) + '</span>');
+            }
             var rn = (shipment.recipient && shipment.recipient.name) || '';
-            if (rn) { recipEl.textContent = 'Recipient: ' + rn; recipEl.style.display = ''; }
-            else { recipEl.style.display = 'none'; }
+            if (rn) {
+                items.push('<span class="fxg-tracking-hero__meta-item"><strong>Recipient:</strong> ' + escape(rn) + '</span>');
+            }
+            var re = shipment.recipient || {};
+            var loc = [];
+            if (re.city) loc.push(escape(re.city));
+            if (re.state) loc.push(escape(re.state));
+            if (re.country) loc.push(escape(re.country));
+            if (re.zip) {
+                if (loc.length) loc[loc.length - 1] += ' ' + escape(re.zip);
+                else loc.push(escape(re.zip));
+            }
+            if (loc.length) {
+                items.push('<span class="fxg-tracking-hero__meta-item"><strong>Location:</strong> ' + loc.join(', ') + '</span>');
+            }
+            metaEl.innerHTML = items.join('');
         }
-        var locEl = el.querySelector('#trDeliveryLocation');
-        var re = shipment.recipient || {};
-        var loc = [];
-        if (re.city) loc.push(re.city);
-        if (re.state) loc.push(re.state);
-        if (re.country) loc.push(re.country);
-        if (re.zip) {
-            if (loc.length) loc[loc.length - 1] += ' ' + re.zip;
-            else loc.push(re.zip);
-        }
-        locEl.textContent = loc.length ? loc.join(', ') : '';
 
         var podEl = el.querySelector('#trProofOfDelivery');
         if (isDel && shipment.image) {
@@ -236,10 +241,11 @@
 
     function renderId(el, shipment) {
         var idEl = el.querySelector('#trTrackingNumber');
-        if (shipment.id) {
-            idEl.textContent = shipment.id;
+        var valEl = idEl ? idEl.querySelector('.fxg-tracking-id__value') : null;
+        if (shipment.id && valEl) {
+            valEl.textContent = shipment.id;
             idEl.style.display = '';
-        } else {
+        } else if (idEl) {
             idEl.style.display = 'none';
         }
     }
@@ -469,11 +475,13 @@
         '<h1 class="fxg-tracking-hero__status" id="trStatusText"></h1>',
         '<p class="fxg-tracking-hero__service" id="trServiceInfo"></p>',
         '<p class="fxg-tracking-hero__date" id="trDeliveryDate"></p>',
-        '<p class="fxg-tracking-hero__signature" id="trSignedBy"></p>',
-        '<p class="fxg-tracking-hero__recipient" id="trRecipientName"></p>',
-        '<p class="fxg-tracking-hero__location" id="trDeliveryLocation"></p>',
+        '<div class="fxg-tracking-hero__meta" id="trHeroMeta"></div>',
         '<div class="fxg-tracking-hero__pod" id="trProofOfDelivery"></div>',
         '</div></div>',
+        '<div class="fxg-tracking-id" id="trTrackingNumber">',
+        '<span class="fxg-tracking-id__label">Tracking number</span>',
+        '<span class="fxg-tracking-id__value"></span>',
+        '</div>',
         '<div class="fxg-tracking-stepper-wrap" id="trStepperWrap">',
         '<div class="fxg-tracking-stepper" id="trProgressStepper">',
         '<div class="fxg-tracking-stepper__step" data-step="1"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Label Created</span><span class="fxg-tracking-stepper__date" id="trStepDate1"></span></div>',
@@ -486,8 +494,7 @@
         '<div class="fxg-tracking-stepper__connector"></div>',
         '<div class="fxg-tracking-stepper__step" data-step="5"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Delivered</span><span class="fxg-tracking-stepper__date" id="trStepDate5"></span></div>',
         '</div></div>',
-        '<div class="fxg-tracking-id" id="trTrackingNumber"></div>',
-        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trHistoryToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>View travel history</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trTravelHistory"></div></div>',
+        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trHistoryToggle" aria-expanded="true"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Travel history</button><div class="fxg-tracking-section__body fxg-tracking-section__body--open" id="trTravelHistory"></div></div>',
         '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trFactsToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Shipment facts</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trShipmentFacts"></div></div>',
         '</div></div></div>'
     ].join('');
