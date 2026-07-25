@@ -450,4 +450,114 @@
             }
         }, 600);
     });
+
+    /* ---------- Full-screen Overlay ---------- */
+    var overlayHTML = [
+        '<div class="fxg-tracking-overlay" id="fxgTrackingOverlay">',
+        '<button class="fxg-tracking-overlay__close" id="trOverlayClose" aria-label="Close tracking result">',
+        '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
+        '</button>',
+        '<div class="fxg-tracking-wrap">',
+        '<div class="fxg-tracking-loader" id="trLoader">',
+        '<div class="fxg-tracking-loader__spinner" style="width:64px;height:64px;border-width:5px"></div>',
+        '<p class="fxg-tracking-loader__text">Looking up your shipment...</p>',
+        '</div>',
+        '<div class="fxg-tracking" id="trCard" style="display:none">',
+        '<div class="fxg-tracking-hero" id="trHero">',
+        '<div class="fxg-tracking-hero__icon" id="trStatusIcon"></div>',
+        '<div class="fxg-tracking-hero__info">',
+        '<h1 class="fxg-tracking-hero__status" id="trStatusText"></h1>',
+        '<p class="fxg-tracking-hero__service" id="trServiceInfo"></p>',
+        '<p class="fxg-tracking-hero__date" id="trDeliveryDate"></p>',
+        '<p class="fxg-tracking-hero__signature" id="trSignedBy"></p>',
+        '<p class="fxg-tracking-hero__recipient" id="trRecipientName"></p>',
+        '<p class="fxg-tracking-hero__location" id="trDeliveryLocation"></p>',
+        '<div class="fxg-tracking-hero__pod" id="trProofOfDelivery"></div>',
+        '</div></div>',
+        '<div class="fxg-tracking-stepper-wrap" id="trStepperWrap">',
+        '<div class="fxg-tracking-stepper" id="trProgressStepper">',
+        '<div class="fxg-tracking-stepper__step" data-step="1"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Label Created</span><span class="fxg-tracking-stepper__date" id="trStepDate1"></span></div>',
+        '<div class="fxg-tracking-stepper__connector"></div>',
+        '<div class="fxg-tracking-stepper__step" data-step="2"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Picked Up</span><span class="fxg-tracking-stepper__date" id="trStepDate2"></span></div>',
+        '<div class="fxg-tracking-stepper__connector"></div>',
+        '<div class="fxg-tracking-stepper__step" data-step="3"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">In Transit</span><span class="fxg-tracking-stepper__date" id="trStepDate3"></span></div>',
+        '<div class="fxg-tracking-stepper__connector"></div>',
+        '<div class="fxg-tracking-stepper__step" data-step="4"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Out for Delivery</span><span class="fxg-tracking-stepper__date" id="trStepDate4"></span></div>',
+        '<div class="fxg-tracking-stepper__connector"></div>',
+        '<div class="fxg-tracking-stepper__step" data-step="5"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Delivered</span><span class="fxg-tracking-stepper__date" id="trStepDate5"></span></div>',
+        '</div></div>',
+        '<div class="fxg-tracking-id" id="trTrackingNumber"></div>',
+        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trHistoryToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>View travel history</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trTravelHistory"></div></div>',
+        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trFactsToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Shipment facts</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trShipmentFacts"></div></div>',
+        '</div></div></div>'
+    ].join('');
+
+    window.FDX.track = function (trackingId) {
+        if (!trackingId) return;
+        var existing = document.getElementById('fxgTrackingOverlay');
+        if (existing) existing.remove();
+        var wrap = document.createElement('div');
+        wrap.innerHTML = overlayHTML;
+        var overlay = wrap.firstElementChild;
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+
+        var loader = overlay.querySelector('#trLoader');
+        var card = overlay.querySelector('#trCard');
+
+        /* Ensure loader visible, card hidden */
+        if (loader) loader.classList.remove('fxg-tracking-loader--hidden');
+        if (card) card.style.display = 'none';
+
+        function closeTrackOverlay() {
+            overlay.remove();
+            document.body.style.overflow = '';
+        }
+        var closeBtn = overlay.querySelector('#trOverlayClose');
+        if (closeBtn) closeBtn.addEventListener('click', closeTrackOverlay);
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeTrackOverlay();
+        });
+
+        /* Brief spinner, then render */
+        setTimeout(function () {
+            var F = window.FDX.admin;
+            var shipment = null;
+            try {
+                shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
+            } catch (e) {}
+
+            if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+            if (card) {
+                card.style.display = '';
+                card.style.animation = 'none';
+                void card.offsetHeight;
+                card.style.animation = '';
+            }
+
+            if (!shipment) {
+                showNotFound(card, trackingId);
+                return;
+            }
+
+            try {
+                renderHero(card, shipment);
+                renderStepper(card, shipment);
+                renderId(card, shipment);
+                renderTimeline(card, shipment);
+                renderFacts(card, shipment);
+
+                var st = (shipment.currentStatus || '').toLowerCase();
+                if (st === 'pending') showBanner(card, 'pending', 'Your shipment is pending. Additional information may be needed.');
+                else if (st === 'exception') showBanner(card, 'exception', 'There is a delivery exception for this shipment. Please check the travel history for details.');
+
+                setupToggle(card.querySelector('#trHistoryToggle'), card.querySelector('#trTravelHistory'));
+                setupToggle(card.querySelector('#trFactsToggle'), card.querySelector('#trShipmentFacts'));
+            } catch (e) {
+                if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+                if (card) card.style.display = '';
+                showSystemError(card);
+            }
+        }, 600);
+    };
 })();

@@ -15,8 +15,7 @@
                 } else {
                     trackInput.style.borderColor = '';
                     trackInput.placeholder = 'Tracking number';
-                    var prefix = window.location.pathname.includes('/pages/') ? '../' : '';
-                    window.location.href = prefix + 'loading.html?tracking=' + encodeURIComponent(val);
+                    window.FDX.track(val);
                 }
             }
 

@@ -603,3 +603,54 @@
     .fxg-tracking-loader { padding: 80px 20px 100px; }
     .fxg-tracking-loader__spinner { width: 44px; height: 44px; border-width: 3px; }
 }
+
+/* ====== Full-screen Tracking Overlay ====== */
+.fxg-tracking-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #f4f4f6;
+    overflow-y: auto;
+    -webkit-font-smoothing: antialiased;
+}
+
+.fxg-tracking-overlay__close {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10001;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.06);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.fxg-tracking-overlay__close:hover {
+    background: rgba(0,0,0,0.12);
+}
+
+.fxg-tracking-overlay .fxg-tracking-wrap {
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+}
+
+@media (max-width: 700px) {
+    .fxg-tracking-overlay .fxg-tracking-wrap {
+        padding: 68px 12px 60px;
+    }
+    .fxg-tracking-overlay__close {
+        top: 12px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+    }
+}

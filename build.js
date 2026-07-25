@@ -12,7 +12,8 @@ const MANIFEST_FILE = path.join(__dirname, 'pages-manifest.json');
 
 const componentOrder = [
     'header', 'hero', 'floating-widget', 'quicklinks',
-    'cta', 'whyship', 'cards', 'featured', 'legal', 'footer', 'admin'
+    'cta', 'whyship', 'cards', 'featured', 'legal', 'footer', 'admin',
+    'tracking-result'
 ];
 
 function readComponent(name) {

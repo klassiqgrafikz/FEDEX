@@ -73,8 +73,7 @@
                     var err = input.parentElement.querySelector('.fxg-field__error_text');
                     if (err) err.style.display = 'block';
                 } else {
-                    var prefix = window.location.pathname.includes('/pages/') ? '../' : '';
-                    window.location.href = prefix + 'loading.html?tracking=' + encodeURIComponent(val);
+                    window.FDX.track(val);
                 }
             });
         }
@@ -123,8 +122,7 @@
                 } else {
                     trackInput.style.borderColor = '';
                     trackInput.placeholder = 'Tracking number';
-                    var prefix = window.location.pathname.includes('/pages/') ? '../' : '';
-                    window.location.href = prefix + 'loading.html?tracking=' + encodeURIComponent(val);
+                    window.FDX.track(val);
                 }
             }
 
@@ -902,10 +900,12 @@
         return 'fxg-tracking-timeline__dot--default';
     }
 
+    /* ---------- Polished SVG Icons ---------- */
     function statusIcon(shipment) {
         var s = (shipment.currentStatus || '').toLowerCase();
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 64 64');
+
         if (s === 'delivered') {
             svg.innerHTML =
                 '<circle cx="32" cy="32" r="30" fill="#4CAF50"/>' +
@@ -943,25 +943,38 @@
         return svg;
     }
 
-    function checkSvg() {
+    /* Checkmark SVG used in stepper circles */
+    function checkSvg(cx, cy, size) {
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
-        svg.setAttribute('width', '18px');
-        svg.setAttribute('height', '18px');
+        svg.setAttribute('width', size);
+        svg.setAttribute('height', size);
         svg.innerHTML = '<path d="M6 13l4 4 8-8" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
         return svg;
     }
 
+    /* Inline SVG for timeline delivered dot */
+    function timelineCheckSvg() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.innerHTML = '<path d="M6 13l4 4 8-8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+        return svg;
+    }
+
+    /* ---------- Render Functions ---------- */
     function renderHero(el, shipment) {
         var iconBox = el.querySelector('#trStatusIcon');
         iconBox.innerHTML = '';
         iconBox.appendChild(statusIcon(shipment));
+
         var st = shipment.currentStatus || 'Pending';
         el.querySelector('#trStatusText').textContent = st;
+
         var parts = [];
         if (shipment.serviceType) parts.push(shipment.serviceType);
         if (shipment.weight) parts.push(shipment.weight);
         el.querySelector('#trServiceInfo').textContent = parts.join(' - ') || '';
+
         var isDel = st === 'Delivered';
         var dateEl = el.querySelector('#trDeliveryDate');
         if (isDel) {
@@ -975,6 +988,7 @@
         } else {
             dateEl.textContent = '';
         }
+
         var sigEl = el.querySelector('#trSignedBy');
         sigEl.textContent = (isDel && shipment.signatureName) ? 'Signed for by: ' + shipment.signatureName : '';
         var recipEl = el.querySelector('#trRecipientName');
@@ -994,6 +1008,7 @@
             else loc.push(re.zip);
         }
         locEl.textContent = loc.length ? loc.join(', ') : '';
+
         var podEl = el.querySelector('#trProofOfDelivery');
         if (isDel && shipment.image) {
             podEl.innerHTML = '<a href="' + escape(shipment.image) + '" target="_blank">' +
@@ -1016,11 +1031,13 @@
             return;
         }
         wrap.style.display = '';
+
         var active = stepperStep(status);
         var steps = wrap.querySelectorAll('.fxg-tracking-stepper__step');
         var connectors = wrap.querySelectorAll('.fxg-tracking-stepper__connector');
         var isDel = status === 'Delivered';
 
+        /* Determine dates per stepper step from timeline */
         var tl = shipment.statusTimeline || [];
         var stepDates = [null, null, null, null, null];
         tl.forEach(function (e) {
@@ -1038,7 +1055,9 @@
             var num = parseInt(step.getAttribute('data-step'), 10);
             var circle = step.querySelector('.fxg-tracking-stepper__circle');
             var dateEl = step.querySelector('.fxg-tracking-stepper__date');
+
             step.classList.remove('fxg-tracking-stepper__step--completed', 'fxg-tracking-stepper__step--active', 'fxg-tracking-stepper__step--delivered');
+
             if (isDel && num <= active) {
                 step.classList.add('fxg-tracking-stepper__step--delivered');
             } else if (num < active) {
@@ -1046,12 +1065,19 @@
             } else if (num === active) {
                 step.classList.add('fxg-tracking-stepper__step--active');
             }
+
+            /* Add checkmark SVG inside completed/active/delivered circles */
             var existingCheck = circle.querySelector('svg');
             if (existingCheck) existingCheck.remove();
             if ((num < active) || (num === active) || (isDel && num <= active)) {
-                circle.appendChild(checkSvg());
+                var ck = checkSvg();
+                circle.appendChild(ck);
             }
-            if (dateEl) dateEl.textContent = stepDates[num - 1] || '';
+
+            /* Set date */
+            if (dateEl) {
+                dateEl.textContent = stepDates[num - 1] || '';
+            }
         });
 
         connectors.forEach(function (conn) {
@@ -1079,9 +1105,11 @@
             container.innerHTML = '<div style="padding:16px 36px 24px;color:#999;font-size:14px;">No tracking events available.</div>';
             return;
         }
+
         var sorted = tl.slice().sort(function (a, b) { return new Date(a.timestamp) - new Date(b.timestamp); });
         var html = '<div class="fxg-tracking-timeline">';
         var curDate = null;
+
         sorted.forEach(function (entry) {
             var d = entry.timestamp ? fmtShort(entry.timestamp) : '';
             if (d && d !== curDate) {
@@ -1093,6 +1121,7 @@
                 html += '<div class="fxg-tracking-timeline__date-group">';
                 curDate = '';
             }
+
             var dc = dotClass(entry.status);
             html += '<div class="fxg-tracking-timeline__item">';
             html += '<div class="fxg-tracking-timeline__dot ' + dc + '">';
@@ -1110,6 +1139,8 @@
         if (curDate !== null) html += '</div>';
         html += '</div>';
         container.innerHTML = html;
+
+        /* Reset collapsible state */
         if (container.classList.contains('fxg-tracking-section__body--closed')) {
             container.classList.remove('fxg-tracking-section__body--closed');
             container.classList.add('fxg-tracking-section__body--open');
@@ -1151,6 +1182,7 @@
         });
         html += '</div>';
         container.innerHTML = html;
+
         if (container.classList.contains('fxg-tracking-section__body--closed')) {
             container.classList.remove('fxg-tracking-section__body--closed');
             container.classList.add('fxg-tracking-section__body--open');
@@ -1210,6 +1242,7 @@
         });
     }
 
+    /* ---------- Main ---------- */
     window.FDX.components.push(function () {
         var el = document.getElementById('trackingResult');
         if (!el) return;
@@ -1228,7 +1261,11 @@
 
         var F = window.FDX.admin;
         var shipment = null;
-        try { shipment = F && F.getShipment ? F.getShipment(trackingId) : null; } catch (e) { shipment = null; }
+        try {
+            shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
+        } catch (e) {
+            shipment = null;
+        }
 
         if (!shipment) {
             if (loader) loader.classList.add('fxg-tracking-loader--hidden');
@@ -1237,6 +1274,7 @@
             return;
         }
 
+        /* Small delay so user sees the spinner */
         setTimeout(function () {
             try {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
@@ -1246,14 +1284,17 @@
                     void card.offsetHeight;
                     card.style.animation = '';
                 }
+
                 renderHero(card, shipment);
                 renderStepper(card, shipment);
                 renderId(card, shipment);
                 renderTimeline(card, shipment);
                 renderFacts(card, shipment);
+
                 var st = (shipment.currentStatus || '').toLowerCase();
                 if (st === 'pending') showBanner(card, 'pending', 'Your shipment is pending. Additional information may be needed.');
                 else if (st === 'exception') showBanner(card, 'exception', 'There is a delivery exception for this shipment. Please check the travel history for details.');
+
                 setupToggle(el.querySelector('#trHistoryToggle'), el.querySelector('#trTravelHistory'));
                 setupToggle(el.querySelector('#trFactsToggle'), el.querySelector('#trShipmentFacts'));
             } catch (e) {
@@ -1263,6 +1304,116 @@
             }
         }, 600);
     });
+
+    /* ---------- Full-screen Overlay ---------- */
+    var overlayHTML = [
+        '<div class="fxg-tracking-overlay" id="fxgTrackingOverlay">',
+        '<button class="fxg-tracking-overlay__close" id="trOverlayClose" aria-label="Close tracking result">',
+        '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
+        '</button>',
+        '<div class="fxg-tracking-wrap">',
+        '<div class="fxg-tracking-loader" id="trLoader">',
+        '<div class="fxg-tracking-loader__spinner" style="width:64px;height:64px;border-width:5px"></div>',
+        '<p class="fxg-tracking-loader__text">Looking up your shipment...</p>',
+        '</div>',
+        '<div class="fxg-tracking" id="trCard" style="display:none">',
+        '<div class="fxg-tracking-hero" id="trHero">',
+        '<div class="fxg-tracking-hero__icon" id="trStatusIcon"></div>',
+        '<div class="fxg-tracking-hero__info">',
+        '<h1 class="fxg-tracking-hero__status" id="trStatusText"></h1>',
+        '<p class="fxg-tracking-hero__service" id="trServiceInfo"></p>',
+        '<p class="fxg-tracking-hero__date" id="trDeliveryDate"></p>',
+        '<p class="fxg-tracking-hero__signature" id="trSignedBy"></p>',
+        '<p class="fxg-tracking-hero__recipient" id="trRecipientName"></p>',
+        '<p class="fxg-tracking-hero__location" id="trDeliveryLocation"></p>',
+        '<div class="fxg-tracking-hero__pod" id="trProofOfDelivery"></div>',
+        '</div></div>',
+        '<div class="fxg-tracking-stepper-wrap" id="trStepperWrap">',
+        '<div class="fxg-tracking-stepper" id="trProgressStepper">',
+        '<div class="fxg-tracking-stepper__step" data-step="1"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Label Created</span><span class="fxg-tracking-stepper__date" id="trStepDate1"></span></div>',
+        '<div class="fxg-tracking-stepper__connector"></div>',
+        '<div class="fxg-tracking-stepper__step" data-step="2"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Picked Up</span><span class="fxg-tracking-stepper__date" id="trStepDate2"></span></div>',
+        '<div class="fxg-tracking-stepper__connector"></div>',
+        '<div class="fxg-tracking-stepper__step" data-step="3"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">In Transit</span><span class="fxg-tracking-stepper__date" id="trStepDate3"></span></div>',
+        '<div class="fxg-tracking-stepper__connector"></div>',
+        '<div class="fxg-tracking-stepper__step" data-step="4"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Out for Delivery</span><span class="fxg-tracking-stepper__date" id="trStepDate4"></span></div>',
+        '<div class="fxg-tracking-stepper__connector"></div>',
+        '<div class="fxg-tracking-stepper__step" data-step="5"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Delivered</span><span class="fxg-tracking-stepper__date" id="trStepDate5"></span></div>',
+        '</div></div>',
+        '<div class="fxg-tracking-id" id="trTrackingNumber"></div>',
+        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trHistoryToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>View travel history</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trTravelHistory"></div></div>',
+        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trFactsToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Shipment facts</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trShipmentFacts"></div></div>',
+        '</div></div></div>'
+    ].join('');
+
+    window.FDX.track = function (trackingId) {
+        if (!trackingId) return;
+        var existing = document.getElementById('fxgTrackingOverlay');
+        if (existing) existing.remove();
+        var wrap = document.createElement('div');
+        wrap.innerHTML = overlayHTML;
+        var overlay = wrap.firstElementChild;
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+
+        var loader = overlay.querySelector('#trLoader');
+        var card = overlay.querySelector('#trCard');
+
+        /* Ensure loader visible, card hidden */
+        if (loader) loader.classList.remove('fxg-tracking-loader--hidden');
+        if (card) card.style.display = 'none';
+
+        function closeTrackOverlay() {
+            overlay.remove();
+            document.body.style.overflow = '';
+        }
+        var closeBtn = overlay.querySelector('#trOverlayClose');
+        if (closeBtn) closeBtn.addEventListener('click', closeTrackOverlay);
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeTrackOverlay();
+        });
+
+        /* Brief spinner, then render */
+        setTimeout(function () {
+            var F = window.FDX.admin;
+            var shipment = null;
+            try {
+                shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
+            } catch (e) {}
+
+            if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+            if (card) {
+                card.style.display = '';
+                card.style.animation = 'none';
+                void card.offsetHeight;
+                card.style.animation = '';
+            }
+
+            if (!shipment) {
+                showNotFound(card, trackingId);
+                return;
+            }
+
+            try {
+                renderHero(card, shipment);
+                renderStepper(card, shipment);
+                renderId(card, shipment);
+                renderTimeline(card, shipment);
+                renderFacts(card, shipment);
+
+                var st = (shipment.currentStatus || '').toLowerCase();
+                if (st === 'pending') showBanner(card, 'pending', 'Your shipment is pending. Additional information may be needed.');
+                else if (st === 'exception') showBanner(card, 'exception', 'There is a delivery exception for this shipment. Please check the travel history for details.');
+
+                setupToggle(card.querySelector('#trHistoryToggle'), card.querySelector('#trTravelHistory'));
+                setupToggle(card.querySelector('#trFactsToggle'), card.querySelector('#trShipmentFacts'));
+            } catch (e) {
+                if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+                if (card) card.style.display = '';
+                showSystemError(card);
+            }
+        }, 600);
+    };
 })();
 
 /* --- init --- */
