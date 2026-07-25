@@ -154,7 +154,7 @@
             });
             var titleEl = document.getElementById('adminHeaderTitle');
             if (titleEl) {
-                var titles = { dashboard: 'Dashboard', create: 'Create Shipment', shipments: 'All Shipments' };
+                var titles = { dashboard: 'Dashboard', create: 'Create Shipment', shipments: 'All Shipments', shipment: 'Shipment Detail' };
                 titleEl.textContent = titles[page] || page;
             }
         }
