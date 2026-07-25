@@ -1023,3 +1023,15 @@
         display: none;
     }
 }
+
+/* ===== Actions Column ===== */
+.fxg-admin-table td.fxg-admin-actions {
+    white-space: nowrap;
+    text-align: right;
+}
+.fxg-admin-table td.fxg-admin-actions .fxg-admin-btn {
+    margin-left: 6px;
+}
+.fxg-admin-table td.fxg-admin-actions .fxg-admin-btn:first-child {
+    margin-left: 0;
+}

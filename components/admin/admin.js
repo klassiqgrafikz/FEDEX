@@ -344,19 +344,46 @@
                 if (noRecent) noRecent.style.display = 'none';
                 recent.forEach(function(s) {
                     var tr = document.createElement('tr');
-                    tr.addEventListener('click', function() {
-                        window.location.href = 'shipment.html?id=' + encodeURIComponent(s.id);
-                    });
                     tr.innerHTML =
                         '<td><strong>' + escapeHtml(s.id) + '</strong></td>' +
                         '<td>' + escapeHtml(s.packageName) + '</td>' +
                         '<td>' + escapeHtml(s.recipient.name) + '</td>' +
                         '<td>' + window.FDX.admin.badgeHtml(s.currentStatus) + '</td>' +
-                        '<td>' + window.FDX.admin.formatDateShort(s.estDeliveryDate) + '</td>';
+                        '<td>' + window.FDX.admin.formatDateShort(s.estDeliveryDate) + '</td>' +
+                        '<td class="fxg-admin-actions">' +
+                            '<button class="fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--outline" data-edit="' + escapeHtml(s.id) + '">Edit</button>' +
+                            '<button class="fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--danger" data-delete="' + escapeHtml(s.id) + '">Delete</button>' +
+                        '</td>';
                     recentBody.appendChild(tr);
                 });
             }
         }
+
+        recentBody.addEventListener('click', function(e) {
+            var btn = e.target.closest('button');
+            if (!btn) {
+                var row = e.target.closest('tr');
+                if (row) {
+                    var idEl = row.querySelector('[data-edit]');
+                    if (idEl) {
+                        window.location.href = 'shipment.html?id=' + encodeURIComponent(idEl.getAttribute('data-edit'));
+                    }
+                }
+                return;
+            }
+            var id = btn.getAttribute('data-edit') || btn.getAttribute('data-delete');
+            if (!id) return;
+
+            if (btn.hasAttribute('data-edit')) {
+                window.location.href = 'shipment.html?id=' + encodeURIComponent(id);
+            } else if (btn.hasAttribute('data-delete')) {
+                if (confirm('Delete shipment ' + id + '? This cannot be undone.')) {
+                    window.FDX.admin.deleteShipment(id).then(function() {
+                        initDashboard(el);
+                    });
+                }
+            }
+        });
     }
 
     function initCreate(el) {
@@ -478,21 +505,48 @@
 
             list.forEach(function(s) {
                 var tr = document.createElement('tr');
-                tr.addEventListener('click', function() {
-                    window.location.href = 'shipment.html?id=' + encodeURIComponent(s.id);
-                });
                 tr.innerHTML =
                     '<td><strong style="color:#660099">' + escapeHtml(s.id) + '</strong></td>' +
                     '<td>' + escapeHtml(s.packageName) + '</td>' +
                     '<td>' + escapeHtml(s.recipient.name) + '</td>' +
                     '<td>' + window.FDX.admin.badgeHtml(s.currentStatus) + '</td>' +
                     '<td>' + window.FDX.admin.formatDateShort(s.departureDate) + '</td>' +
-                    '<td>' + window.FDX.admin.formatDateShort(s.estDeliveryDate) + '</td>';
+                    '<td>' + window.FDX.admin.formatDateShort(s.estDeliveryDate) + '</td>' +
+                    '<td class="fxg-admin-actions">' +
+                        '<button class="fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--outline" data-edit="' + escapeHtml(s.id) + '">Edit</button>' +
+                        '<button class="fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--danger" data-delete="' + escapeHtml(s.id) + '">Delete</button>' +
+                    '</td>';
                 tbody.appendChild(tr);
             });
         }
 
         render('');
+
+        tbody.addEventListener('click', function(e) {
+            var btn = e.target.closest('button');
+            if (!btn) {
+                var row = e.target.closest('tr');
+                if (row) {
+                    var idEl = row.querySelector('[data-edit]');
+                    if (idEl) {
+                        window.location.href = 'shipment.html?id=' + encodeURIComponent(idEl.getAttribute('data-edit'));
+                    }
+                }
+                return;
+            }
+            var id = btn.getAttribute('data-edit') || btn.getAttribute('data-delete');
+            if (!id) return;
+
+            if (btn.hasAttribute('data-edit')) {
+                window.location.href = 'shipment.html?id=' + encodeURIComponent(id);
+            } else if (btn.hasAttribute('data-delete')) {
+                if (confirm('Delete shipment ' + id + '? This cannot be undone.')) {
+                    window.FDX.admin.deleteShipment(id).then(function() {
+                        render(searchInput ? searchInput.value.trim() : '');
+                    });
+                }
+            }
+        });
 
         if (searchInput) {
             var timer;
