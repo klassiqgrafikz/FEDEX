@@ -494,7 +494,7 @@
         '<div class="fxg-tracking-stepper__connector"></div>',
         '<div class="fxg-tracking-stepper__step" data-step="5"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Delivered</span><span class="fxg-tracking-stepper__date" id="trStepDate5"></span></div>',
         '</div></div>',
-        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trHistoryToggle" aria-expanded="true"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Travel history</button><div class="fxg-tracking-section__body fxg-tracking-section__body--open" id="trTravelHistory"></div></div>',
+        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trHistoryToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Travel history</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trTravelHistory"></div></div>',
         '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trFactsToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Shipment facts</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trShipmentFacts"></div></div>',
         '</div></div></div>'
     ].join('');
@@ -507,7 +507,15 @@
         wrap.innerHTML = overlayHTML;
         var overlay = wrap.firstElementChild;
         document.body.appendChild(overlay);
+        var origOverflow = document.body.style.overflow;
+        var origPos = document.body.style.position;
+        var origWidth = document.body.style.width;
+        var origTop = document.body.style.top;
+        var scrollY = window.scrollY;
         document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.top = '-' + scrollY + 'px';
 
         var loader = overlay.querySelector('#trLoader');
         var card = overlay.querySelector('#trCard');
@@ -518,7 +526,11 @@
 
         function closeTrackOverlay() {
             overlay.remove();
-            document.body.style.overflow = '';
+            document.body.style.overflow = origOverflow;
+            document.body.style.position = origPos;
+            document.body.style.width = origWidth;
+            document.body.style.top = origTop;
+            window.scrollTo(0, scrollY);
         }
         var closeBtn = overlay.querySelector('#trOverlayClose');
         if (closeBtn) closeBtn.addEventListener('click', closeTrackOverlay);
