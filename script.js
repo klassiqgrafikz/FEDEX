@@ -617,33 +617,48 @@
         el.querySelector('#shipmentStatus').innerHTML = F.badgeHtml(shipment.currentStatus);
 
         var se = shipment.sender || {};
-        el.querySelector('#senderDisplay').innerHTML =
-            '<p><strong>Name:</strong> ' + escapeHtml(se.name || '-') + '</p>' +
-            (se.company ? '<p><strong>Company:</strong> ' + escapeHtml(se.company) + '</p>' : '') +
-            '<p><strong>Address:</strong> ' + escapeHtml(se.address || '-') + '</p>' +
-            '<p>' + escapeHtml(se.city || '') + (se.state ? ', ' + escapeHtml(se.state) : '') + (se.zip ? ' ' + escapeHtml(se.zip) : '') + '</p>' +
-            '<p><strong>Country:</strong> ' + escapeHtml(se.country || '-') + '</p>' +
-            '<p><strong>Phone:</strong> ' + escapeHtml(se.phone || '-') + '</p>' +
-            '<p><strong>Email:</strong> ' + escapeHtml(se.email || '-') + '</p>';
+        var senderHtml = '';
+        if (se.name) senderHtml += '<p><strong>Name:</strong> ' + escapeHtml(se.name) + '</p>';
+        if (se.company) senderHtml += '<p><strong>Company:</strong> ' + escapeHtml(se.company) + '</p>';
+        if (se.address) senderHtml += '<p><strong>Address:</strong> ' + escapeHtml(se.address) + '</p>';
+        if (se.city || se.state || se.zip) {
+            var sloc = '';
+            if (se.city) sloc += escapeHtml(se.city);
+            if (se.state) sloc += (sloc ? ', ' : '') + escapeHtml(se.state);
+            if (se.zip) sloc += ' ' + escapeHtml(se.zip);
+            senderHtml += '<p>' + sloc + '</p>';
+        }
+        if (se.country) senderHtml += '<p><strong>Country:</strong> ' + escapeHtml(se.country) + '</p>';
+        if (se.phone) senderHtml += '<p><strong>Phone:</strong> ' + escapeHtml(se.phone) + '</p>';
+        if (se.email) senderHtml += '<p><strong>Email:</strong> ' + escapeHtml(se.email) + '</p>';
+        el.querySelector('#senderDisplay').innerHTML = senderHtml || '<p class="fxg-admin-empty">No sender information provided.</p>';
 
         var re = shipment.recipient || {};
-        el.querySelector('#recipientDisplay').innerHTML =
-            '<p><strong>Name:</strong> ' + escapeHtml(re.name || '-') + '</p>' +
-            (re.company ? '<p><strong>Company:</strong> ' + escapeHtml(re.company) + '</p>' : '') +
-            '<p><strong>Address:</strong> ' + escapeHtml(re.address || '-') + '</p>' +
-            '<p>' + escapeHtml(re.city || '') + (re.state ? ', ' + escapeHtml(re.state) : '') + (re.zip ? ' ' + escapeHtml(re.zip) : '') + '</p>' +
-            '<p><strong>Country:</strong> ' + escapeHtml(re.country || '-') + '</p>' +
-            '<p><strong>Phone:</strong> ' + escapeHtml(re.phone || '-') + '</p>' +
-            '<p><strong>Email:</strong> ' + escapeHtml(re.email || '-') + '</p>' +
-            (re.isResidential ? '<p><span class="fxg-admin-badge fxg-admin-badge--received">Residential</span></p>' : '');
+        var recipHtml = '';
+        if (re.name) recipHtml += '<p><strong>Name:</strong> ' + escapeHtml(re.name) + '</p>';
+        if (re.company) recipHtml += '<p><strong>Company:</strong> ' + escapeHtml(re.company) + '</p>';
+        if (re.address) recipHtml += '<p><strong>Address:</strong> ' + escapeHtml(re.address) + '</p>';
+        if (re.city || re.state || re.zip) {
+            var rloc = '';
+            if (re.city) rloc += escapeHtml(re.city);
+            if (re.state) rloc += (rloc ? ', ' : '') + escapeHtml(re.state);
+            if (re.zip) rloc += ' ' + escapeHtml(re.zip);
+            recipHtml += '<p>' + rloc + '</p>';
+        }
+        if (re.country) recipHtml += '<p><strong>Country:</strong> ' + escapeHtml(re.country) + '</p>';
+        if (re.phone) recipHtml += '<p><strong>Phone:</strong> ' + escapeHtml(re.phone) + '</p>';
+        if (re.email) recipHtml += '<p><strong>Email:</strong> ' + escapeHtml(re.email) + '</p>';
+        if (re.isResidential) recipHtml += '<p><span class="fxg-admin-badge fxg-admin-badge--received">Residential</span></p>';
+        el.querySelector('#recipientDisplay').innerHTML = recipHtml || '<p class="fxg-admin-empty">No recipient information provided.</p>';
 
-        el.querySelector('#shipmentDetails').innerHTML =
-            '<p><strong>Weight:</strong> ' + escapeHtml(shipment.weight || '-') + '</p>' +
-            '<p><strong>Service:</strong> ' + escapeHtml(shipment.serviceType || '-') + '</p>' +
-            '<p><strong>Departure:</strong> ' + F.formatDateShort(shipment.departureDate) + '</p>' +
-            '<p><strong>Est. Delivery:</strong> ' + F.formatDateShort(shipment.estDeliveryDate) + '</p>' +
-            '<p><strong>Signature Required:</strong> ' + (shipment.signatureRequired ? 'Yes' : 'No') + '</p>' +
-            (shipment.referenceNumber ? '<p><strong>Reference:</strong> ' + escapeHtml(shipment.referenceNumber) + '</p>' : '');
+        var detailsHtml = '';
+        if (shipment.weight) detailsHtml += '<p><strong>Weight:</strong> ' + escapeHtml(shipment.weight) + '</p>';
+        if (shipment.serviceType) detailsHtml += '<p><strong>Service:</strong> ' + escapeHtml(shipment.serviceType) + '</p>';
+        if (shipment.departureDate) detailsHtml += '<p><strong>Departure:</strong> ' + F.formatDateShort(shipment.departureDate) + '</p>';
+        if (shipment.estDeliveryDate) detailsHtml += '<p><strong>Est. Delivery:</strong> ' + F.formatDateShort(shipment.estDeliveryDate) + '</p>';
+        if (shipment.signatureRequired) detailsHtml += '<p><strong>Signature Required:</strong> Yes</p>';
+        if (shipment.referenceNumber) detailsHtml += '<p><strong>Reference:</strong> ' + escapeHtml(shipment.referenceNumber) + '</p>';
+        el.querySelector('#shipmentDetails').innerHTML = detailsHtml || '<p class="fxg-admin-empty">No package details provided.</p>';
 
         var timelineEl = el.querySelector('#statusTimeline');
         var timeline = shipment.statusTimeline || [];
@@ -678,11 +693,6 @@
             var remark = el.querySelector('#updateRemark').value.trim();
 
             if (newStatus === shipment.currentStatus) return;
-
-            if (!remark) {
-                alert('Please enter a remark for this status update.');
-                return;
-            }
 
             shipment.currentStatus = newStatus;
             shipment.updatedAt = new Date().toISOString();
