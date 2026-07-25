@@ -131,11 +131,9 @@ function killAllLinks(html) {
 }
 function buildAdminPages() {
     const ADMIN_TEMPLATE = path.join(__dirname, 'admin-template.html');
-    const ADMIN_LOGIN_TEMPLATE = path.join(__dirname, 'admin-login-template.html');
     const ADMIN_CONTENT_DIR = path.join(PAGES_DIR, 'admin', 'content');
     const ADMIN_OUT_DIR = path.join(PAGES_DIR, 'admin');
     const ADMIN_NAV_ITEMS = [
-        { id: 'login', title: 'Admin Login', page: 'login', login: true },
         { id: 'dashboard', title: 'Dashboard', page: 'dashboard' },
         { id: 'create', title: 'Create Shipment', page: 'create' },
         { id: 'shipments', title: 'All Shipments', page: 'shipments' },
@@ -155,14 +153,7 @@ function buildAdminPages() {
         }
         const content = fs.readFileSync(contentFile, 'utf-8').trim();
 
-        let template;
-        if (item.login && fs.existsSync(ADMIN_LOGIN_TEMPLATE)) {
-            template = fs.readFileSync(ADMIN_LOGIN_TEMPLATE, 'utf-8');
-        } else {
-            template = fs.readFileSync(ADMIN_TEMPLATE, 'utf-8');
-        }
-
-        let page = template
+        let page = fs.readFileSync(ADMIN_TEMPLATE, 'utf-8')
             .replace('<!--#admin-title-->', item.title)
             .replace('<!--#admin-page-->', item.page || '')
             .replace('<!--#component:admin-->', adminHtml)

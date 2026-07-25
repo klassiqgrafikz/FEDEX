@@ -136,7 +136,6 @@
     window.FDX.components.push(function() {
         var sidebar = document.getElementById('adminSidebar');
         var hamburger = document.getElementById('adminHamburger');
-        var logoutBtn = document.getElementById('adminLogout');
         var contentEl = document.getElementById('adminContent');
         if (!contentEl) return;
 
@@ -160,52 +159,12 @@
             }
         }
 
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function() {
-                localStorage.removeItem('fdx_auth');
-                window.location.href = 'login.html';
-            });
-        }
-
         var pageType = contentEl.getAttribute('data-page-type');
-
-        if (pageType === 'login') {
-            initLogin(contentEl);
-        } else {
-            var auth = localStorage.getItem('fdx_auth');
-            if (!auth) {
-                window.location.href = 'login.html';
-                return;
-            }
-            if (pageType === 'dashboard') initDashboard(contentEl);
-            else if (pageType === 'create') initCreate(contentEl);
-            else if (pageType === 'shipments') initShipments(contentEl);
-            else if (pageType === 'shipment') initShipmentDetail(contentEl);
-        }
+        if (pageType === 'dashboard') initDashboard(contentEl);
+        else if (pageType === 'create') initCreate(contentEl);
+        else if (pageType === 'shipments') initShipments(contentEl);
+        else if (pageType === 'shipment') initShipmentDetail(contentEl);
     });
-
-    function initLogin(el) {
-        var form = el.querySelector('#loginForm');
-        var errorEl = el.querySelector('#loginError');
-        if (!form) return;
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var email = form.querySelector('#loginEmail').value.trim();
-            var password = form.querySelector('#loginPassword').value.trim();
-
-            if (!email || !password) {
-                if (errorEl) {
-                    errorEl.textContent = 'Please enter email and password.';
-                    errorEl.style.display = 'block';
-                }
-                return;
-            }
-
-            localStorage.setItem('fdx_auth', JSON.stringify({ email: email }));
-            window.location.href = 'dashboard.html';
-        });
-    }
 
     function initDashboard(el) {
         var stats = window.FDX.admin.getStats();
