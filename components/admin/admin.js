@@ -7,18 +7,24 @@
 
     function supabaseFetch(path, options) {
         var url = SUPABASE_URL + '/rest/v1/' + path;
+        var method = (options && options.method) || 'GET';
         var headers = {
             'apikey': SUPABASE_ANON_KEY,
             'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
             'Prefer': 'return=minimal'
         };
+        if (method === 'POST' || method === 'PATCH' || method === 'PUT') {
+            headers['Content-Type'] = 'application/json';
+        }
         if (options && options.headers) {
             for (var k in options.headers) headers[k] = options.headers[k];
         }
         return fetch(url, {
-            method: (options && options.method) || 'GET',
+            method: method,
             headers: headers,
             body: options && options.body ? JSON.stringify(options.body) : null
+        }).catch(function(err) {
+            console.error('[Supabase] Request failed:', method, path, err);
         });
     }
 

@@ -948,7 +948,7 @@
 
 /* ===== Success alert after create ===== */
 #newTrackingId {
-    display: none !important;
+    display: none;
 }
 
 /* ===== Mobile ===== */
