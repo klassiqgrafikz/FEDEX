@@ -123,7 +123,8 @@
                 } else {
                     trackInput.style.borderColor = '';
                     trackInput.placeholder = 'Tracking number';
-                    window.open('https://www.fedex.com/apps/fedextrack/?tracknumbers=' + encodeURIComponent(val), '_blank');
+                    var prefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
+                    window.location.href = prefix + 'tracking-result.html?tracking=' + encodeURIComponent(val);
                 }
             }
 
