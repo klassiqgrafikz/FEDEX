@@ -376,12 +376,18 @@
     function fetchShipment(id) {
         var data = getData();
         if (data.shipments[id]) return Promise.resolve(data.shipments[id]);
+        console.log('[FDX fetchShipment] Querying Supabase for:', id);
         return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
             headers: { 'Prefer': '' }
         }).then(function(res) {
-            if (!res.ok) return null;
+            console.log('[FDX fetchShipment] Supabase response status:', res && res.status);
+            if (!res || !res.ok) {
+                console.log('[FDX fetchShipment] Supabase not OK or no response');
+                return null;
+            }
             return res.json();
         }).then(function(rows) {
+            console.log('[FDX fetchShipment] Rows returned:', rows ? rows.length : 0);
             if (rows && rows.length > 0) {
                 var s = fromDb(rows[0]);
                 data.shipments[id] = s;
@@ -389,7 +395,8 @@
                 return s;
             }
             return null;
-        }).catch(function() {
+        }).catch(function(err) {
+            console.log('[FDX fetchShipment] Error:', err);
             return null;
         });
     }
@@ -1434,10 +1441,12 @@
         /* Brief spinner, then try local */
         setTimeout(function () {
             var F = window.FDX.admin;
+            console.log('[FDX Track] window.FDX.admin:', !!F);
             var shipment = null;
             try {
                 shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
             } catch (e) {}
+            console.log('[FDX Track] getShipment result:', shipment ? 'found' : 'null');
 
             if (shipment) {
                 renderShipment(shipment);
@@ -1446,17 +1455,22 @@
 
             /* Not found locally — try Supabase */
             if (F && F.fetchShipment) {
+                console.log('[FDX Track] Calling fetchShipment for:', trackingId);
                 try {
                     F.fetchShipment(trackingId).then(function (remote) {
+                        console.log('[FDX Track] fetchShipment resolved:', remote ? 'found' : 'null');
                         if (remote) renderShipment(remote);
                         else showNoResult();
-                    }).catch(function () {
+                    }).catch(function (err) {
+                        console.log('[FDX Track] fetchShipment error:', err);
                         showNoResult();
                     });
                 } catch (e) {
+                    console.log('[FDX Track] fetchShipment threw:', e);
                     showNoResult();
                 }
             } else {
+                console.log('[FDX Track] fetchShipment not available');
                 showNoResult();
             }
         }, 600);

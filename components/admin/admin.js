@@ -139,12 +139,18 @@
     function fetchShipment(id) {
         var data = getData();
         if (data.shipments[id]) return Promise.resolve(data.shipments[id]);
+        console.log('[FDX fetchShipment] Querying Supabase for:', id);
         return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
             headers: { 'Prefer': '' }
         }).then(function(res) {
-            if (!res.ok) return null;
+            console.log('[FDX fetchShipment] Supabase response status:', res && res.status);
+            if (!res || !res.ok) {
+                console.log('[FDX fetchShipment] Supabase not OK or no response');
+                return null;
+            }
             return res.json();
         }).then(function(rows) {
+            console.log('[FDX fetchShipment] Rows returned:', rows ? rows.length : 0);
             if (rows && rows.length > 0) {
                 var s = fromDb(rows[0]);
                 data.shipments[id] = s;
@@ -152,7 +158,8 @@
                 return s;
             }
             return null;
-        }).catch(function() {
+        }).catch(function(err) {
+            console.log('[FDX fetchShipment] Error:', err);
             return null;
         });
     }

@@ -556,10 +556,12 @@
         /* Brief spinner, then try local */
         setTimeout(function () {
             var F = window.FDX.admin;
+            console.log('[FDX Track] window.FDX.admin:', !!F);
             var shipment = null;
             try {
                 shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
             } catch (e) {}
+            console.log('[FDX Track] getShipment result:', shipment ? 'found' : 'null');
 
             if (shipment) {
                 renderShipment(shipment);
@@ -568,17 +570,22 @@
 
             /* Not found locally — try Supabase */
             if (F && F.fetchShipment) {
+                console.log('[FDX Track] Calling fetchShipment for:', trackingId);
                 try {
                     F.fetchShipment(trackingId).then(function (remote) {
+                        console.log('[FDX Track] fetchShipment resolved:', remote ? 'found' : 'null');
                         if (remote) renderShipment(remote);
                         else showNoResult();
-                    }).catch(function () {
+                    }).catch(function (err) {
+                        console.log('[FDX Track] fetchShipment error:', err);
                         showNoResult();
                     });
                 } catch (e) {
+                    console.log('[FDX Track] fetchShipment threw:', e);
                     showNoResult();
                 }
             } else {
+                console.log('[FDX Track] fetchShipment not available');
                 showNoResult();
             }
         }, 600);
