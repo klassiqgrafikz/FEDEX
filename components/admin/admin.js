@@ -81,6 +81,8 @@
         'Exception'
     ];
 
+    var _cache = { shipments: {}, nextNum: 1 };
+
     var STATUS_CLASSES = {
         'Shipment Created': 'fxg-admin-badge--created',
         'Package Received': 'fxg-admin-badge--received',
@@ -94,35 +96,26 @@
         'Exception': 'fxg-admin-badge--exception'
     };
 
-    function getData() {
-        try {
-            var data = JSON.parse(localStorage.getItem('fdx_data'));
-            return data || { shipments: {}, nextNum: 1 };
-        } catch (e) {
-            return { shipments: {}, nextNum: 1 };
-        }
-    }
-
-    function saveData(data) {
-        localStorage.setItem('fdx_data', JSON.stringify(data));
-    }
-
-    function generateTrackingId(data) {
+    function generateTrackingId() {
         var d = new Date();
         var y = d.getFullYear().toString().slice(-2);
         var m = ('0' + (d.getMonth() + 1)).slice(-2);
         var day = ('0' + d.getDate()).slice(-2);
-        var num = ('000000' + data.nextNum).slice(-6);
-        data.nextNum++;
+        var num = ('000000' + _cache.nextNum).slice(-6);
+        _cache.nextNum++;
+        supabaseFetch('tracking_config', {
+            method: 'POST',
+            body: { id: 1, next_num: _cache.nextNum },
+            headers: { 'Prefer': 'resolution=merge-duplicates' }
+        });
         return 'FDX' + y + m + day + num;
     }
 
     function getAllShipments() {
-        var data = getData();
         var list = [];
-        for (var key in data.shipments) {
-            if (data.shipments.hasOwnProperty(key)) {
-                list.push(data.shipments[key]);
+        for (var key in _cache.shipments) {
+            if (_cache.shipments.hasOwnProperty(key)) {
+                list.push(_cache.shipments[key]);
             }
         }
         list.sort(function(a, b) {
@@ -132,13 +125,11 @@
     }
 
     function getShipment(id) {
-        var data = getData();
-        return data.shipments[id] || null;
+        return _cache.shipments[id] || null;
     }
 
     function fetchShipment(id) {
-        var data = getData();
-        if (data.shipments[id]) return Promise.resolve(data.shipments[id]);
+        if (_cache.shipments[id]) return Promise.resolve(_cache.shipments[id]);
         console.log('[FDX fetchShipment] Querying Supabase for:', id);
         return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
             headers: { 'Prefer': '' }
@@ -153,8 +144,7 @@
             console.log('[FDX fetchShipment] Rows returned:', rows ? rows.length : 0);
             if (rows && rows.length > 0) {
                 var s = fromDb(rows[0]);
-                data.shipments[id] = s;
-                saveData(data);
+                _cache.shipments[id] = s;
                 return s;
             }
             return null;
@@ -165,10 +155,8 @@
     }
 
     function saveShipment(shipment) {
-        var data = getData();
-        data.shipments[shipment.id] = shipment;
-        saveData(data);
-        supabaseFetch('shipments', {
+        _cache.shipments[shipment.id] = shipment;
+        return supabaseFetch('shipments', {
             method: 'POST',
             body: toDb(shipment),
             headers: { 'Prefer': 'resolution=merge-duplicates' }
@@ -176,10 +164,8 @@
     }
 
     function deleteShipment(id) {
-        var data = getData();
-        delete data.shipments[id];
-        saveData(data);
-        supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
+        delete _cache.shipments[id];
+        return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
             method: 'DELETE'
         });
     }
@@ -220,54 +206,56 @@
     }
 
     function syncFromSupabase(callback) {
-        var data = getData();
-        var migrated = localStorage.getItem('fdx_migrated');
-
-        supabaseFetch('shipments?order=created_at.desc', {
-            headers: { 'Prefer': '' }
-        }).then(function(res) {
-            if (!res.ok) throw new Error('Supabase fetch failed');
-            return res.json();
-        }).then(function(rows) {
-            var hasRemote = rows && rows.length > 0;
-            var hasLocal = Object.keys(data.shipments).length > 0;
-
-            if (hasRemote) {
-                rows.forEach(function(row) {
-                    data.shipments[row.id] = fromDb(row);
-                });
-            }
-
-            if (!migrated && hasLocal && !hasRemote) {
-                var batch = [];
-                for (var key in data.shipments) {
-                    if (data.shipments.hasOwnProperty(key)) {
-                        batch.push(toDb(data.shipments[key]));
+        var migrateLocal = function() {
+            try {
+                var localData = JSON.parse(localStorage.getItem('fdx_data'));
+                if (localData && localData.shipments && Object.keys(localData.shipments).length > 0) {
+                    var batch = [];
+                    for (var key in localData.shipments) {
+                        if (localData.shipments.hasOwnProperty(key)) {
+                            batch.push(toDb(localData.shipments[key]));
+                        }
+                    }
+                    if (batch.length > 0) {
+                        return supabaseFetch('shipments', {
+                            method: 'POST',
+                            body: batch,
+                            headers: { 'Prefer': 'resolution=merge-duplicates' }
+                        }).then(function() {
+                            try { localStorage.removeItem('fdx_data'); } catch(e) {}
+                            try { localStorage.removeItem('fdx_migrated'); } catch(e) {}
+                        });
                     }
                 }
-                if (batch.length > 0) {
-                    supabaseFetch('shipments', {
-                        method: 'POST',
-                        body: batch,
-                        headers: { 'Prefer': 'resolution=merge-duplicates' }
-                    });
-                }
-                localStorage.setItem('fdx_migrated', '1');
-            }
+            } catch(e) {}
+            return Promise.resolve();
+        };
 
-            saveData(data);
-
-            supabaseFetch('tracking_config?id=eq.1', {
+        migrateLocal().then(function() {
+            return supabaseFetch('shipments?order=created_at.desc', {
                 headers: { 'Prefer': '' }
-            }).then(function(r) { return r.json(); }).then(function(config) {
-                if (config && config.length > 0) {
-                    data.nextNum = Math.max(data.nextNum || 1, config[0].next_num);
-                    saveData(data);
-                }
-                if (callback) callback();
-            }).catch(function() {
-                if (callback) callback();
             });
+        }).then(function(res) {
+            if (!res || !res.ok) throw new Error('Supabase fetch failed');
+            return res.json();
+        }).then(function(rows) {
+            _cache.shipments = {};
+            if (rows && rows.length > 0) {
+                rows.forEach(function(row) {
+                    _cache.shipments[row.id] = fromDb(row);
+                });
+            }
+            return supabaseFetch('tracking_config?id=eq.1', {
+                headers: { 'Prefer': '' }
+            });
+        }).then(function(r) {
+            if (!r) return;
+            return r.json();
+        }).then(function(config) {
+            if (config && config.length > 0) {
+                _cache.nextNum = config[0].next_num || 1;
+            }
+            if (callback) callback();
         }).catch(function() {
             if (callback) callback();
         });
@@ -277,8 +265,6 @@
         SUPABASE_URL: SUPABASE_URL,
         SUPABASE_ANON_KEY: SUPABASE_ANON_KEY,
         STATUSES: STATUSES,
-        getData: getData,
-        saveData: saveData,
         generateTrackingId: generateTrackingId,
         getAllShipments: getAllShipments,
         getShipment: getShipment,
@@ -398,8 +384,7 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            var data = window.FDX.admin.getData();
-            var id = window.FDX.admin.generateTrackingId(data);
+            var id = window.FDX.admin.generateTrackingId();
 
             var shipment = {
                 id: id,
@@ -443,12 +428,6 @@
             };
 
             window.FDX.admin.saveShipment(shipment);
-            data.shipments[shipment.id] = shipment;
-            window.FDX.admin.saveData(data);
-            supabaseFetch('tracking_config?id=eq.1', {
-                method: 'PATCH',
-                body: { next_num: data.nextNum }
-            });
 
             if (trackingDisplay) {
                 var span = trackingDisplay.querySelector('#newTrackingIdSpan');
