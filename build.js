@@ -10,6 +10,8 @@ const PAGES_DIR = path.join(__dirname, 'pages');
 const CONTENT_DIR = path.join(PAGES_DIR, 'content');
 const MANIFEST_FILE = path.join(__dirname, 'pages-manifest.json');
 
+const SCRIPT_VERSION = Date.now().toString(36);
+
 const componentOrder = [
     'header', 'hero', 'floating-widget', 'quicklinks',
     'cta', 'whyship', 'cards', 'featured', 'legal', 'footer', 'admin',
@@ -29,6 +31,7 @@ function buildHtml() {
     }
     template = template.replace(/<!--#home-link-->/g, 'index.html');
     template = replaceExternalLinks(template);
+    template = template.replace(/<!--#script-version-->/g, SCRIPT_VERSION);
     fs.writeFileSync(OUTPUT_FILE, template, 'utf-8');
     console.log('[BUILD] index.html written (' + (template.length / 1024).toFixed(1) + ' KB)');
 }
@@ -84,6 +87,7 @@ function buildAllPages() {
             .replace('<!--#component:footer-->', footerHtml);
 
         page = killAllLinks(page);
+        page = page.replace(/<!--#script-version-->/g, SCRIPT_VERSION);
 
         const out = path.join(PAGES_DIR, entry.id + '.html');
         fs.writeFileSync(out, page, 'utf-8');
@@ -159,7 +163,8 @@ function buildAdminPages() {
             .replace('<!--#admin-page-->', item.page || '')
             .replace('<!--#component:admin-->', adminHtml)
             .replace('<!--#component:admin-content-->', content)
-            .replace('<!--#admin-scripts-->', '');
+            .replace('<!--#admin-scripts-->', '')
+            .replace(/<!--#script-version-->/g, SCRIPT_VERSION);
 
         const out = path.join(ADMIN_OUT_DIR, item.id + '.html');
         fs.writeFileSync(out, page, 'utf-8');
