@@ -308,7 +308,6 @@
         if (pageType === 'dashboard') initDashboard(contentEl);
         else if (pageType === 'create') initCreate(contentEl);
         else if (pageType === 'shipments') initShipments(contentEl);
-        else if (pageType === 'shipment') initShipmentDetail(contentEl);
 
         if (pageType !== 'create') {
             setTimeout(function() {
@@ -387,6 +386,17 @@
     }
 
     function initCreate(el) {
+        supabaseFetch('tracking_config?id=eq.1', {
+            headers: { 'Prefer': '' }
+        }).then(function(r) {
+            if (!r) return;
+            return r.json();
+        }).then(function(config) {
+            if (config && config.length > 0) {
+                _cache.nextNum = config[0].next_num || 1;
+            }
+        }).catch(function() {});
+
         var form = el.querySelector('#createForm');
         var alertEl = el.querySelector('#createAlert');
         var previewEl = el.querySelector('#imagePreview');
