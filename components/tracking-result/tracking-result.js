@@ -46,7 +46,6 @@
         return 'fxg-tracking-timeline__dot--default';
     }
 
-    /* ---------- Polished SVG Icons ---------- */
     function statusIcon(shipment) {
         var s = (shipment.currentStatus || '').toLowerCase();
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -89,7 +88,6 @@
         return svg;
     }
 
-    /* Checkmark SVG used in stepper circles */
     function checkSvg(cx, cy, size) {
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
@@ -99,7 +97,6 @@
         return svg;
     }
 
-    /* Inline SVG for timeline delivered dot */
     function timelineCheckSvg() {
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
@@ -107,204 +104,210 @@
         return svg;
     }
 
-    /* ---------- Render Functions ---------- */
-    function renderHero(el, shipment) {
+    function badgeSvg() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('width', '14');
+        svg.setAttribute('height', '14');
+        svg.innerHTML = '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>';
+        return svg;
+    }
+
+    function alertSvg() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('width', '20');
+        svg.setAttribute('height', '20');
+        svg.innerHTML = '<path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" fill="currentColor"/>';
+        return svg;
+    }
+
+    function copySvg() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('width', '18');
+        svg.setAttribute('height', '18');
+        svg.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>';
+        return svg;
+    }
+
+    function editSvg() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('width', '18');
+        svg.setAttribute('height', '18');
+        svg.innerHTML = '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>';
+        return svg;
+    }
+
+    function renderStatusSummary(el, shipment) {
+        var statusTextEl = el.querySelector('#trStatusText');
+        var badgeEl = el.querySelector('#trStatusBadge');
+        var dateEl = el.querySelector('#trDeliveryDate');
         var iconBox = el.querySelector('#trStatusIcon');
-        iconBox.innerHTML = '';
-        iconBox.appendChild(statusIcon(shipment));
+
+        if (iconBox) {
+            iconBox.innerHTML = '';
+            iconBox.appendChild(statusIcon(shipment));
+        }
 
         var st = shipment.currentStatus || 'Pending';
-        el.querySelector('#trStatusText').textContent = st;
+        if (statusTextEl) statusTextEl.textContent = st;
 
-        var parts = [];
-        if (shipment.serviceType) parts.push(shipment.serviceType);
-        if (shipment.weight) parts.push(shipment.weight);
-        el.querySelector('#trServiceInfo').textContent = parts.join(' \u00b7 ') || '';
+        if (badgeEl) {
+            var badgeClass = 'fxg-tr-summary__badge--ontime';
+            var badgeLabel = 'ON TIME';
+            var badgeIcon = badgeSvg();
+            var s = st.toLowerCase();
+
+            if (s === 'delivered') {
+                badgeClass = 'fxg-tr-summary__badge--delivered';
+                badgeLabel = 'DELIVERED';
+            } else if (s === 'out for delivery') {
+                badgeClass = 'fxg-tr-summary__badge--outfordelivery';
+                badgeLabel = 'OUT FOR DELIVERY';
+            } else if (s === 'in transit' || s === 'departed warehouse' || s === 'customs' || s === 'arrived destination') {
+                badgeClass = 'fxg-tr-summary__badge--intransit';
+                badgeLabel = 'IN TRANSIT';
+            } else if (s === 'pending') {
+                badgeClass = 'fxg-tr-summary__badge--pending';
+                badgeLabel = 'PENDING';
+            } else if (s === 'exception') {
+                badgeClass = 'fxg-tr-summary__badge--exception';
+                badgeLabel = 'EXCEPTION';
+            }
+
+            badgeEl.className = 'fxg-tr-summary__badge ' + badgeClass;
+            badgeEl.innerHTML = '';
+            badgeEl.appendChild(badgeIcon);
+            badgeEl.appendChild(document.createTextNode(' ' + badgeLabel));
+        }
 
         var isDel = st === 'Delivered';
-        var dateEl = el.querySelector('#trDeliveryDate');
-        if (isDel) {
-            var tl = shipment.statusTimeline || [];
-            var last = tl.length ? tl[tl.length - 1] : null;
-            if (last && last.timestamp) dateEl.innerHTML = '<strong>Delivered</strong> ' + fmtDate(last.timestamp);
-            else if (shipment.updatedAt) dateEl.innerHTML = '<strong>Delivered</strong> ' + fmtDate(shipment.updatedAt);
-            else dateEl.textContent = 'Delivered';
-        } else if (shipment.estDeliveryDate) {
-            dateEl.innerHTML = '<strong>Scheduled delivery:</strong> ' + fmtShort(shipment.estDeliveryDate);
+        if (dateEl) {
+            if (isDel) {
+                var tl = shipment.statusTimeline || [];
+                var last = tl.length ? tl[tl.length - 1] : null;
+                if (last && last.timestamp) dateEl.innerHTML = '<strong>Delivered:</strong> ' + fmtDate(last.timestamp);
+                else if (shipment.updatedAt) dateEl.innerHTML = '<strong>Delivered:</strong> ' + fmtDate(shipment.updatedAt);
+                else dateEl.innerHTML = '<strong>Delivered</strong>';
+            } else if (shipment.estDeliveryDate) {
+                dateEl.innerHTML = '<strong>Scheduled delivery:</strong> ' + fmtShort(shipment.estDeliveryDate);
+            } else {
+                dateEl.textContent = '';
+            }
+        }
+    }
+
+    function renderAlertBanner(el, shipment) {
+        var alertEl = el.querySelector('#trAlertBanner');
+        if (!alertEl) return;
+
+        var messages = [];
+        if (shipment.signatureRequired) {
+            messages.push('Signature required for delivery');
+        }
+        if (shipment.shipperNote) {
+            messages.push(shipment.shipperNote);
+        }
+
+        if (messages.length > 0) {
+            alertEl.classList.remove('fxg-tr-alert--hidden');
+            alertEl.innerHTML = '';
+            var svg = alertSvg();
+            alertEl.appendChild(svg);
+            alertEl.appendChild(document.createTextNode(' ' + messages.join(' | ')));
         } else {
-            dateEl.textContent = '';
-        }
-
-        var metaEl = el.querySelector('#trHeroMeta');
-        if (metaEl) {
-            var items = [];
-            if (isDel && shipment.signatureName) {
-                items.push('<span class="fxg-tracking-hero__meta-item"><strong>Signed by:</strong> ' + escape(shipment.signatureName) + '</span>');
-            }
-            var rn = (shipment.recipient && shipment.recipient.name) || '';
-            if (rn) {
-                items.push('<span class="fxg-tracking-hero__meta-item"><strong>Recipient:</strong> ' + escape(rn) + '</span>');
-            }
-            var re = shipment.recipient || {};
-            var loc = [];
-            if (re.city) loc.push(escape(re.city));
-            if (re.state) loc.push(escape(re.state));
-            if (re.country) loc.push(escape(re.country));
-            if (re.zip) {
-                if (loc.length) loc[loc.length - 1] += ' ' + escape(re.zip);
-                else loc.push(escape(re.zip));
-            }
-            if (loc.length) {
-                items.push('<span class="fxg-tracking-hero__meta-item"><strong>Location:</strong> ' + loc.join(', ') + '</span>');
-            }
-            metaEl.innerHTML = items.join('');
-        }
-
-        var podEl = el.querySelector('#trProofOfDelivery');
-        if (isDel && shipment.image) {
-            podEl.innerHTML = '<a href="' + escape(shipment.image) + '" target="_blank">' +
-                '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 10h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg>' +
-                ' Obtain proof of delivery</a>';
-        } else if (isDel) {
-            podEl.innerHTML = '<span style="font-size:13px;color:#999;display:inline-flex;align-items:center;gap:6px">' +
-                '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>' +
-                ' Proof of delivery not available</span>';
-        } else {
-            podEl.innerHTML = '';
+            alertEl.classList.add('fxg-tr-alert--hidden');
         }
     }
 
-    function renderStepper(el, shipment) {
-        var wrap = el.querySelector('#trStepperWrap');
-        var status = shipment.currentStatus || 'Pending';
-        if (status === 'Pending' || status === 'Exception') {
-            wrap.style.display = 'none';
-            return;
-        }
-        wrap.style.display = '';
+    function renderVerticalTimeline(el, shipment) {
+        var container = el.querySelector('#trTimelineNodes');
+        if (!container) return;
 
-        var active = stepperStep(status);
-        var steps = wrap.querySelectorAll('.fxg-tracking-stepper__step');
-        var connectors = wrap.querySelectorAll('.fxg-tracking-stepper__connector');
-        var isDel = status === 'Delivered';
-
-        /* Determine dates per stepper step from timeline */
-        var tl = shipment.statusTimeline || [];
-        var stepDates = [null, null, null, null, null];
-        tl.forEach(function (e) {
-            var st = (e.status || '').toLowerCase();
-            var step = 0;
-            if (st === 'shipment created' || st === 'label created') step = 1;
-            else if (st === 'package received' || st === 'picked up') step = 2;
-            else if (st === 'departed warehouse' || st === 'customs' || st === 'in transit' || st === 'arrived destination') step = 3;
-            else if (st === 'out for delivery') step = 4;
-            else if (st === 'delivered') step = 5;
-            if (step && e.timestamp) stepDates[step - 1] = fmtShort(e.timestamp);
-        });
-
-        steps.forEach(function (step) {
-            var num = parseInt(step.getAttribute('data-step'), 10);
-            var circle = step.querySelector('.fxg-tracking-stepper__circle');
-            var dateEl = step.querySelector('.fxg-tracking-stepper__date');
-
-            step.classList.remove('fxg-tracking-stepper__step--completed', 'fxg-tracking-stepper__step--active', 'fxg-tracking-stepper__step--delivered');
-
-            if (isDel && num <= active) {
-                step.classList.add('fxg-tracking-stepper__step--delivered');
-            } else if (num < active) {
-                step.classList.add('fxg-tracking-stepper__step--completed');
-            } else if (num === active) {
-                step.classList.add('fxg-tracking-stepper__step--active');
-            }
-
-            /* Add checkmark SVG inside completed/active/delivered circles */
-            var existingCheck = circle.querySelector('svg');
-            if (existingCheck) existingCheck.remove();
-            if ((num < active) || (num === active) || (isDel && num <= active)) {
-                var ck = checkSvg(0, 0, 24);
-                circle.appendChild(ck);
-            }
-
-            /* Set date */
-            if (dateEl) {
-                dateEl.textContent = stepDates[num - 1] || '';
-            }
-        });
-
-        connectors.forEach(function (conn) {
-            conn.classList.remove('fxg-tracking-stepper__connector--filled', 'fxg-tracking-stepper__connector--delivered');
-        });
-        for (var i = 0; i < active - 1 && i < connectors.length; i++) {
-            connectors[i].classList.add(isDel ? 'fxg-tracking-stepper__connector--delivered' : 'fxg-tracking-stepper__connector--filled');
-        }
-    }
-
-    function renderId(el, shipment) {
-        var idEl = el.querySelector('#trTrackingNumber');
-        var valEl = idEl ? idEl.querySelector('.fxg-tracking-id__value') : null;
-        if (shipment.id && valEl) {
-            valEl.textContent = shipment.id;
-            idEl.style.display = '';
-        } else if (idEl) {
-            idEl.style.display = 'none';
-        }
-    }
-
-    function renderTimeline(el, shipment) {
-        var tl = shipment.statusTimeline || [];
-        var container = el.querySelector('#trTravelHistory');
-        if (!tl.length) {
-            container.innerHTML = '<div style="padding:16px 36px 24px;color:#999;font-size:14px;">No tracking events available.</div>';
+        var timeline = shipment.statusTimeline || [];
+        if (!timeline.length) {
+            container.innerHTML = '<div style="padding:24px;color:#999;font-size:14px;text-align:center;">No tracking events available.</div>';
             return;
         }
 
-        var sorted = tl.slice().sort(function (a, b) { return new Date(a.timestamp) - new Date(b.timestamp); });
-        var html = '<div class="fxg-tracking-timeline">';
-        var curDate = null;
+        var sorted = timeline.slice().sort(function (a, b) {
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        });
 
-        sorted.forEach(function (entry) {
-            var d = entry.timestamp ? fmtShort(entry.timestamp) : '';
-            if (d && d !== curDate) {
-                if (curDate !== null) html += '</div>';
-                curDate = d;
-                html += '<div class="fxg-tracking-timeline__date-group">';
-                html += '<div class="fxg-tracking-timeline__date-header">' + escape(d) + '</div>';
-            } else if (!d && curDate === null) {
-                html += '<div class="fxg-tracking-timeline__date-group">';
-                curDate = '';
+        var currentIdx = -1;
+        var st = (shipment.currentStatus || '').toLowerCase();
+
+        sorted.forEach(function (entry, idx) {
+            var s = (entry.status || '').toLowerCase();
+            if (s === st) currentIdx = idx;
+        });
+
+        if (currentIdx === -1 && sorted.length > 0) {
+            var matchIdx = sorted.findIndex(function (e) {
+                return (e.status || '').toLowerCase() === st;
+            });
+            if (matchIdx >= 0) currentIdx = matchIdx;
+            else currentIdx = sorted.length - 1;
+        }
+
+        var html = '<div class="fxg-tr-timeline__line"></div><div class="fxg-tr-timeline__nodes">';
+
+        sorted.forEach(function (entry, idx) {
+            var isActive = idx === currentIdx;
+            var isCompleted = idx < currentIdx;
+            var isDelivered = isCompleted && (entry.status || '').toLowerCase() === 'delivered';
+            var isFuture = idx > currentIdx;
+
+            var nodeClass = 'fxg-tr-timeline__node';
+            if (isDelivered) nodeClass += ' fxg-tr-timeline__node--delivered';
+            else if (isActive) nodeClass += ' fxg-tr-timeline__node--active';
+            else if (isCompleted) nodeClass += ' fxg-tr-timeline__node--completed';
+            else nodeClass += ' fxg-tr-timeline__node--future';
+
+            var title = entry.status || '';
+            if (idx === 0) title = 'FROM: ' + title;
+
+            var location = entry.location || '';
+            if (idx === 0) {
+                var sender = shipment.sender || {};
+                var originParts = [];
+                if (sender.city) originParts.push(sender.city);
+                if (sender.state) originParts.push(sender.state);
+                if (originParts.length) location = originParts.join(', ');
             }
 
-            var dc = dotClass(entry.status);
-            html += '<div class="fxg-tracking-timeline__item">';
-            html += '<div class="fxg-tracking-timeline__dot ' + dc + '">';
-            if ((entry.status || '').toLowerCase() === 'delivered') {
-                html += '<svg viewBox="0 0 24 24" width="8" height="8"><path d="M6 13l4 4 8-8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            var timeStr = entry.timestamp ? fmtTime(entry.timestamp) : '';
+            var dateStr = entry.timestamp ? fmtShort(entry.timestamp) : '';
+            var fullTime = dateStr && timeStr ? (dateStr + ' at ' + timeStr) : (dateStr || timeStr);
+
+            var remark = entry.remark || '';
+
+            html += '<div class="' + nodeClass + '">';
+            html += '<div class="fxg-tr-timeline__dot">';
+            if ((isCompleted || isActive || isDelivered) && (entry.status || '').toLowerCase() !== 'pending' && (entry.status || '').toLowerCase() !== 'exception') {
+                html += '<svg viewBox="0 0 24 24" width="10" height="10"><path d="M6 13l4 4 8-8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
             }
             html += '</div>';
-            html += '<div class="fxg-tracking-timeline__content">';
-            if (entry.timestamp) html += '<div class="fxg-tracking-timeline__time">' + escape(fmtTime(entry.timestamp)) + '</div>';
-            html += '<div class="fxg-tracking-timeline__status">' + escape(entry.status) + '</div>';
-            if (entry.remark) html += '<div class="fxg-tracking-timeline__remark">' + escape(entry.remark) + '</div>';
-            if (entry.location) html += '<div class="fxg-tracking-timeline__location">' + escape(entry.location) + '</div>';
-            html += '</div></div>';
+            html += '<div class="fxg-tr-timeline__content">';
+            html += '<div class="fxg-tr-timeline__title">' + escape(title) + '</div>';
+            if (location) html += '<div class="fxg-tr-timeline__location">' + escape(location) + '</div>';
+            if (fullTime) html += '<div class="fxg-tr-timeline__time">' + escape(fullTime) + '</div>';
+            if (remark) html += '<div class="fxg-tr-timeline__remark">' + escape(remark) + '</div>';
+            if (isFuture) html += '<div class="fxg-tr-timeline__future-label">Upcoming</div>';
+            html += '</div>';
+            html += '</div>';
         });
-        if (curDate !== null) html += '</div>';
+
         html += '</div>';
         container.innerHTML = html;
-
-        /* Reset collapsible state */
-        if (container.classList.contains('fxg-tracking-section__body--closed')) {
-            container.classList.remove('fxg-tracking-section__body--closed');
-            container.classList.add('fxg-tracking-section__body--open');
-            container.style.maxHeight = container.scrollHeight + 20 + 'px';
-            container.classList.remove('fxg-tracking-section__body--open');
-            container.classList.add('fxg-tracking-section__body--closed');
-            container.style.maxHeight = '0';
-        }
     }
 
     function renderFacts(el, shipment) {
         var container = el.querySelector('#trShipmentFacts');
+        if (!container) return;
+
         var facts = [];
         facts.push({ label: 'TRACKING NUMBER', value: shipment.id || '-' });
         if (shipment.createdAt) facts.push({ label: 'SHIP DATE', value: fmtShort(shipment.createdAt) });
@@ -321,44 +324,62 @@
         if (shipment.currentStatus === 'Delivered' && shipment.signatureName) {
             facts.push({ label: 'SIGNED BY', value: shipment.signatureName });
         }
+
         if (facts.length === 0) {
-            container.innerHTML = '<div style="padding:16px 36px 24px;color:#999;font-size:14px;">No shipment details available.</div>';
+            container.innerHTML = '<div style="padding:16px 0 24px;color:#999;font-size:14px;">No shipment details available.</div>';
             return;
         }
-        var html = '<div class="fxg-tracking-facts">';
+
+        var html = '<div class="fxg-tr-facts">';
         facts.forEach(function (f) {
-            html += '<div class="fxg-tracking-facts__item">';
-            html += '<span class="fxg-tracking-facts__label">' + escape(f.label) + '</span>';
-            html += '<span class="fxg-tracking-facts__value">' + escape(f.value) + '</span>';
+            html += '<div class="fxg-tr-facts__item">';
+            html += '<span class="fxg-tr-facts__label">' + escape(f.label) + '</span>';
+            html += '<span class="fxg-tr-facts__value">' + escape(f.value) + '</span>';
             html += '</div>';
         });
         html += '</div>';
         container.innerHTML = html;
-
-        if (container.classList.contains('fxg-tracking-section__body--closed')) {
-            container.classList.remove('fxg-tracking-section__body--closed');
-            container.classList.add('fxg-tracking-section__body--open');
-            container.style.maxHeight = container.scrollHeight + 20 + 'px';
-            container.classList.remove('fxg-tracking-section__body--open');
-            container.classList.add('fxg-tracking-section__body--closed');
-            container.style.maxHeight = '0';
-        }
     }
 
-    function showBanner(el, type, msg) {
-        var existing = el.querySelector('.fxg-tracking-status-banner');
-        if (existing) existing.remove();
-        var b = document.createElement('div');
-        b.className = 'fxg-tracking-status-banner fxg-tracking-status-banner--' + type;
-        b.textContent = msg;
-        var sw = el.querySelector('#trStepperWrap');
-        if (sw) sw.parentNode.insertBefore(b, sw.nextSibling);
+    function renderTrackingHeader(el, shipment) {
+        var headerEl = el.querySelector('#trHeader');
+        if (!headerEl) return;
+
+        var valueEl = headerEl.querySelector('#trTrackingValue');
+        if (valueEl && shipment.id) {
+            valueEl.textContent = shipment.id;
+        }
+
+        var copyBtn = headerEl.querySelector('#trCopyBtn');
+        var editBtn = headerEl.querySelector('#trEditBtn');
+
+        if (copyBtn) {
+            copyBtn.onclick = function () {
+                navigator.clipboard.writeText(shipment.id || '').then(function () {
+                    var orig = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="currentColor"/></svg>';
+                    copyBtn.style.color = '#4CAF50';
+                    setTimeout(function () {
+                        copyBtn.innerHTML = orig;
+                        copyBtn.style.color = '';
+                    }, 1500);
+                });
+            };
+        }
+
+        if (editBtn) {
+            editBtn.onclick = function () {
+                if (window.FDX && window.FDX.admin && window.FDX.admin.openEditPage) {
+                    window.FDX.admin.openEditPage(shipment.id);
+                }
+            };
+        }
     }
 
     function showNotFound(el, id) {
         el.innerHTML =
-            '<div class="fxg-tracking-not-found">' +
-                '<div class="fxg-tracking-not-found__icon">' +
+            '<div class="fxg-tr-not-found">' +
+                '<div class="fxg-tr-not-found__icon">' +
                     '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>' +
                 '</div>' +
                 '<h2>We don\'t have any information for this tracking number</h2>' +
@@ -368,8 +389,8 @@
 
     function showSystemError(el) {
         el.innerHTML =
-            '<div class="fxg-tracking-error">' +
-                '<div class="fxg-tracking-error__icon">' +
+            '<div class="fxg-tr-error">' +
+                '<div class="fxg-tr-error__icon">' +
                     '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>' +
                 '</div>' +
                 '<h2>We\'re sorry, we can\'t process your request right now</h2>' +
@@ -377,24 +398,150 @@
             '</div>';
     }
 
-    function setupToggle(btn, body) {
-        if (!btn || !body) return;
-        btn.addEventListener('click', function () {
-            var expanded = btn.getAttribute('aria-expanded') === 'true';
-            btn.setAttribute('aria-expanded', !expanded);
-            if (expanded) {
-                body.classList.remove('fxg-tracking-section__body--open');
-                body.classList.add('fxg-tracking-section__body--closed');
-                body.style.maxHeight = '0';
-            } else {
-                body.classList.remove('fxg-tracking-section__body--closed');
-                body.classList.add('fxg-tracking-section__body--open');
-                body.style.maxHeight = body.scrollHeight + 20 + 'px';
-            }
-        });
-    }
+    var overlayHTML = [
+        '<div class="fxg-tracking-overlay" id="fxgTrackingOverlay">',
+        '<button class="fxg-tracking-overlay__close" id="trOverlayClose" aria-label="Close tracking result">',
+        '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
+        '</button>',
+        '<div class="fxg-tracking-wrap">',
+        '<div class="fxg-tracking-loader" id="trLoader">',
+        '<div class="fxg-tracking-loader__spinner" style="width:64px;height:64px;border-width:5px"></div>',
+        '<p class="fxg-tracking-loader__text">Looking up your shipment...</p>',
+        '</div>',
+        '<div class="fxg-tracking-card" id="trCard" style="display:none">',
+        '<div class="fxg-tr-header" id="trHeader">',
+        '<div class="fxg-tr-header__main">',
+        '<span class="fxg-tr-header__label">TRACKING NUMBER</span>',
+        '<span class="fxg-tr-header__value" id="trTrackingValue"></span>',
+        '</div>',
+        '<div class="fxg-tr-header__actions">',
+        '<button class="fxg-tr-header__action" id="trCopyBtn" aria-label="Copy tracking number" title="Copy">',
+        copySvg().outerHTML,
+        '</button>',
+        '<button class="fxg-tr-header__action" id="trEditBtn" aria-label="Edit shipment" title="Edit">',
+        editSvg().outerHTML,
+        '</button>',
+        '</div>',
+        '</div>',
+        '<div class="fxg-tr-summary">',
+        '<div class="fxg-tr-summary__main">',
+        '<div class="fxg-tr-summary__status-row">',
+        '<span class="fxg-tr-summary__status-text" id="trStatusText"></span>',
+        '<span class="fxg-tr-summary__badge" id="trStatusBadge"></span>',
+        '</div>',
+        '<p class="fxg-tr-summary__date" id="trDeliveryDate"></p>',
+        '</div>',
+        '<div class="fxg-tr-summary__icon" id="trStatusIcon"></div>',
+        '</div>',
+        '<div class="fxg-tr-alert fxg-tr-alert--hidden" id="trAlertBanner"></div>',
+        '<div class="fxg-tr-timeline">',
+        '<div id="trTimelineNodes"></div>',
+        '</div>',
+        '<div class="fxg-tr-facts" id="trShipmentFacts"></div>',
+        '</div></div></div>'
+    ].join('');
 
-    /* ---------- Main ---------- */
+    window.FDX.track = function (trackingId) {
+        if (!trackingId) return;
+        var existing = document.getElementById('fxgTrackingOverlay');
+        if (existing) existing.remove();
+        var wrap = document.createElement('div');
+        wrap.innerHTML = overlayHTML;
+        var overlay = wrap.firstElementChild;
+        document.body.appendChild(overlay);
+        var origOverflow = document.body.style.overflow;
+        var origPos = document.body.style.position;
+        var origWidth = document.body.style.width;
+        var origTop = document.body.style.top;
+        var scrollY = window.scrollY;
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.top = '-' + scrollY + 'px';
+
+        var loader = overlay.querySelector('#trLoader');
+        var card = overlay.querySelector('#trCard');
+
+        if (loader) loader.classList.remove('fxg-tracking-loader--hidden');
+        if (card) card.style.display = 'none';
+
+        function closeTrackOverlay() {
+            overlay.remove();
+            document.body.style.overflow = origOverflow;
+            document.body.style.position = origPos;
+            document.body.style.width = origWidth;
+            document.body.style.top = origTop;
+            window.scrollTo(0, scrollY);
+        }
+        var closeBtn = overlay.querySelector('#trOverlayClose');
+        if (closeBtn) closeBtn.addEventListener('click', closeTrackOverlay);
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeTrackOverlay();
+        });
+
+        function renderShipment(shipment) {
+            if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+            if (card) {
+                card.style.display = '';
+                card.style.animation = 'none';
+                void card.offsetHeight;
+                card.style.animation = '';
+            }
+            try {
+                renderTrackingHeader(card, shipment);
+                renderStatusSummary(card, shipment);
+                renderAlertBanner(card, shipment);
+                renderVerticalTimeline(card, shipment);
+                renderFacts(card, shipment);
+            } catch (e) {
+                if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+                if (card) card.style.display = '';
+                showSystemError(card);
+            }
+        }
+
+        function showNoResult() {
+            if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+            if (card) { card.style.display = ''; card.style.animation = 'none'; void card.offsetHeight; card.style.animation = ''; }
+            showNotFound(card, trackingId);
+        }
+
+        setTimeout(function () {
+            var F = window.FDX.admin;
+            console.log('[FDX Track] window.FDX.admin:', !!F);
+            var shipment = null;
+            try {
+                shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
+            } catch (e) {}
+            console.log('[FDX Track] getShipment result:', shipment ? 'found' : 'null');
+
+            if (shipment) {
+                renderShipment(shipment);
+                return;
+            }
+
+            if (F && F.fetchShipment) {
+                console.log('[FDX Track] Calling fetchShipment for:', trackingId);
+                try {
+                    F.fetchShipment(trackingId).then(function (remote) {
+                        console.log('[FDX Track] fetchShipment resolved:', remote ? 'found' : 'null');
+                        if (remote) renderShipment(remote);
+                        else showNoResult();
+                    }).catch(function (err) {
+                        console.log('[FDX Track] fetchShipment error:', err);
+                        showNoResult();
+                    });
+                } catch (e) {
+                    console.log('[FDX Track] fetchShipment threw:', e);
+                    showNoResult();
+                }
+            } else {
+                console.log('[FDX Track] fetchShipment not available');
+                showNoResult();
+            }
+        }, 600);
+    };
+
     window.FDX.components.push(function () {
         var el = document.getElementById('trackingResult');
         if (!el) return;
@@ -426,7 +573,6 @@
             return;
         }
 
-        /* Small delay so user sees the spinner */
         setTimeout(function () {
             try {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
@@ -437,18 +583,11 @@
                     card.style.animation = '';
                 }
 
-                renderHero(card, shipment);
-                renderStepper(card, shipment);
-                renderId(card, shipment);
-                renderTimeline(card, shipment);
-                renderFacts(card, shipment);
-
-                var st = (shipment.currentStatus || '').toLowerCase();
-                if (st === 'pending') showBanner(card, 'pending', 'Your shipment is pending. Additional information may be needed.');
-                else if (st === 'exception') showBanner(card, 'exception', 'There is a delivery exception for this shipment. Please check the travel history for details.');
-
-                setupToggle(el.querySelector('#trHistoryToggle'), el.querySelector('#trTravelHistory'));
-                setupToggle(el.querySelector('#trFactsToggle'), el.querySelector('#trShipmentFacts'));
+                renderTrackingHeader(el, shipment);
+                renderStatusSummary(el, shipment);
+                renderAlertBanner(el, shipment);
+                renderVerticalTimeline(el, shipment);
+                renderFacts(el, shipment);
             } catch (e) {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
                 if (card) card.style.display = '';
@@ -456,157 +595,4 @@
             }
         }, 600);
     });
-
-    /* ---------- Full-screen Overlay ---------- */
-    var overlayHTML = [
-        '<div class="fxg-tracking-overlay" id="fxgTrackingOverlay">',
-        '<button class="fxg-tracking-overlay__close" id="trOverlayClose" aria-label="Close tracking result">',
-        '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
-        '</button>',
-        '<div class="fxg-tracking-wrap">',
-        '<div class="fxg-tracking-loader" id="trLoader">',
-        '<div class="fxg-tracking-loader__spinner" style="width:64px;height:64px;border-width:5px"></div>',
-        '<p class="fxg-tracking-loader__text">Looking up your shipment...</p>',
-        '</div>',
-        '<div class="fxg-tracking" id="trCard" style="display:none">',
-        '<div class="fxg-tracking-hero" id="trHero">',
-        '<div class="fxg-tracking-hero__icon" id="trStatusIcon"></div>',
-        '<div class="fxg-tracking-hero__info">',
-        '<h1 class="fxg-tracking-hero__status" id="trStatusText"></h1>',
-        '<p class="fxg-tracking-hero__service" id="trServiceInfo"></p>',
-        '<p class="fxg-tracking-hero__date" id="trDeliveryDate"></p>',
-        '<div class="fxg-tracking-hero__meta" id="trHeroMeta"></div>',
-        '<div class="fxg-tracking-hero__pod" id="trProofOfDelivery"></div>',
-        '</div></div>',
-        '<div class="fxg-tracking-id" id="trTrackingNumber">',
-        '<span class="fxg-tracking-id__label">Tracking number</span>',
-        '<span class="fxg-tracking-id__value"></span>',
-        '</div>',
-        '<div class="fxg-tracking-stepper-wrap" id="trStepperWrap">',
-        '<div class="fxg-tracking-stepper" id="trProgressStepper">',
-        '<div class="fxg-tracking-stepper__step" data-step="1"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Label Created</span><span class="fxg-tracking-stepper__date" id="trStepDate1"></span></div>',
-        '<div class="fxg-tracking-stepper__connector"></div>',
-        '<div class="fxg-tracking-stepper__step" data-step="2"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Picked Up</span><span class="fxg-tracking-stepper__date" id="trStepDate2"></span></div>',
-        '<div class="fxg-tracking-stepper__connector"></div>',
-        '<div class="fxg-tracking-stepper__step" data-step="3"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">In Transit</span><span class="fxg-tracking-stepper__date" id="trStepDate3"></span></div>',
-        '<div class="fxg-tracking-stepper__connector"></div>',
-        '<div class="fxg-tracking-stepper__step" data-step="4"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Out for Delivery</span><span class="fxg-tracking-stepper__date" id="trStepDate4"></span></div>',
-        '<div class="fxg-tracking-stepper__connector"></div>',
-        '<div class="fxg-tracking-stepper__step" data-step="5"><div class="fxg-tracking-stepper__circle"></div><span class="fxg-tracking-stepper__label">Delivered</span><span class="fxg-tracking-stepper__date" id="trStepDate5"></span></div>',
-        '</div></div>',
-        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trHistoryToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Travel history</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trTravelHistory"></div></div>',
-        '<div class="fxg-tracking-section"><button class="fxg-tracking-section__toggle" id="trFactsToggle" aria-expanded="false"><svg class="fxg-tracking-section__toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.29 6.71a1 1 0 0 0 0 1.42L13.17 12l-3.88 3.88a1 1 0 0 0 1.42 1.42l4.59-4.59a1 1 0 0 0 0-1.42L10.7 6.71a1 1 0 0 0-1.41 0z"/></svg>Shipment facts</button><div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trShipmentFacts"></div></div>',
-        '</div></div></div>'
-    ].join('');
-
-    window.FDX.track = function (trackingId) {
-        if (!trackingId) return;
-        var existing = document.getElementById('fxgTrackingOverlay');
-        if (existing) existing.remove();
-        var wrap = document.createElement('div');
-        wrap.innerHTML = overlayHTML;
-        var overlay = wrap.firstElementChild;
-        document.body.appendChild(overlay);
-        var origOverflow = document.body.style.overflow;
-        var origPos = document.body.style.position;
-        var origWidth = document.body.style.width;
-        var origTop = document.body.style.top;
-        var scrollY = window.scrollY;
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = '-' + scrollY + 'px';
-
-        var loader = overlay.querySelector('#trLoader');
-        var card = overlay.querySelector('#trCard');
-
-        /* Ensure loader visible, card hidden */
-        if (loader) loader.classList.remove('fxg-tracking-loader--hidden');
-        if (card) card.style.display = 'none';
-
-        function closeTrackOverlay() {
-            overlay.remove();
-            document.body.style.overflow = origOverflow;
-            document.body.style.position = origPos;
-            document.body.style.width = origWidth;
-            document.body.style.top = origTop;
-            window.scrollTo(0, scrollY);
-        }
-        var closeBtn = overlay.querySelector('#trOverlayClose');
-        if (closeBtn) closeBtn.addEventListener('click', closeTrackOverlay);
-        overlay.addEventListener('click', function (e) {
-            if (e.target === overlay) closeTrackOverlay();
-        });
-
-        function renderShipment(shipment) {
-            if (loader) loader.classList.add('fxg-tracking-loader--hidden');
-            if (card) {
-                card.style.display = '';
-                card.style.animation = 'none';
-                void card.offsetHeight;
-                card.style.animation = '';
-            }
-            try {
-                renderHero(card, shipment);
-                renderStepper(card, shipment);
-                renderId(card, shipment);
-                renderTimeline(card, shipment);
-                renderFacts(card, shipment);
-
-                var st = (shipment.currentStatus || '').toLowerCase();
-                if (st === 'pending') showBanner(card, 'pending', 'Your shipment is pending. Additional information may be needed.');
-                else if (st === 'exception') showBanner(card, 'exception', 'There is a delivery exception for this shipment. Please check the travel history for details.');
-
-                setupToggle(card.querySelector('#trHistoryToggle'), card.querySelector('#trTravelHistory'));
-                setupToggle(card.querySelector('#trFactsToggle'), card.querySelector('#trShipmentFacts'));
-            } catch (e) {
-                if (loader) loader.classList.add('fxg-tracking-loader--hidden');
-                if (card) card.style.display = '';
-                showSystemError(card);
-            }
-        }
-
-        function showNoResult() {
-            if (loader) loader.classList.add('fxg-tracking-loader--hidden');
-            if (card) { card.style.display = ''; card.style.animation = 'none'; void card.offsetHeight; card.style.animation = ''; }
-            showNotFound(card, trackingId);
-        }
-
-        /* Brief spinner, then try local */
-        setTimeout(function () {
-            var F = window.FDX.admin;
-            console.log('[FDX Track] window.FDX.admin:', !!F);
-            var shipment = null;
-            try {
-                shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
-            } catch (e) {}
-            console.log('[FDX Track] getShipment result:', shipment ? 'found' : 'null');
-
-            if (shipment) {
-                renderShipment(shipment);
-                return;
-            }
-
-            /* Not found locally — try Supabase */
-            if (F && F.fetchShipment) {
-                console.log('[FDX Track] Calling fetchShipment for:', trackingId);
-                try {
-                    F.fetchShipment(trackingId).then(function (remote) {
-                        console.log('[FDX Track] fetchShipment resolved:', remote ? 'found' : 'null');
-                        if (remote) renderShipment(remote);
-                        else showNoResult();
-                    }).catch(function (err) {
-                        console.log('[FDX Track] fetchShipment error:', err);
-                        showNoResult();
-                    });
-                } catch (e) {
-                    console.log('[FDX Track] fetchShipment threw:', e);
-                    showNoResult();
-                }
-            } else {
-                console.log('[FDX Track] fetchShipment not available');
-                showNoResult();
-            }
-        }, 600);
-    };
 })();
