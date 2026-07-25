@@ -216,7 +216,7 @@
             var existingCheck = circle.querySelector('svg');
             if (existingCheck) existingCheck.remove();
             if ((num < active) || (num === active) || (isDel && num <= active)) {
-                var ck = checkSvg();
+                var ck = checkSvg(0, 0, 24);
                 circle.appendChild(ck);
             }
 

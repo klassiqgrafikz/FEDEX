@@ -609,18 +609,18 @@
     position: fixed;
     inset: 0;
     z-index: 10000;
-    background: #f4f4f6;
+    background: #fff;
     overflow-y: auto;
     -webkit-font-smoothing: antialiased;
 }
 
 .fxg-tracking-overlay__close {
     position: fixed;
-    top: 16px;
-    right: 16px;
+    top: 20px;
+    right: 20px;
     z-index: 10001;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border: none;
     border-radius: 50%;
     background: rgba(0,0,0,0.06);
@@ -638,19 +638,76 @@
 
 .fxg-tracking-overlay .fxg-tracking-wrap {
     width: 100%;
-    max-width: 780px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 48px 24px 80px;
+    padding: 48px 0 80px;
+}
+
+.fxg-tracking-overlay .fxg-tracking {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+}
+
+.fxg-tracking-overlay .fxg-tracking-hero {
+    padding: 48px 48px 28px;
+}
+
+.fxg-tracking-overlay .fxg-tracking-stepper-wrap {
+    padding: 28px 48px 24px;
+}
+
+.fxg-tracking-overlay .fxg-tracking-id {
+    padding: 18px 48px;
+}
+
+.fxg-tracking-overlay .fxg-tracking-section__toggle {
+    padding: 18px 48px;
+}
+
+.fxg-tracking-overlay .fxg-tracking-timeline {
+    padding: 0 48px 24px;
+}
+
+.fxg-tracking-overlay .fxg-tracking-facts {
+    padding: 4px 48px 24px;
+}
+
+.fxg-tracking-overlay .fxg-tracking-status-banner {
+    padding: 14px 48px;
 }
 
 @media (max-width: 700px) {
     .fxg-tracking-overlay .fxg-tracking-wrap {
-        padding: 68px 12px 60px;
+        padding: 68px 0 60px;
     }
     .fxg-tracking-overlay__close {
         top: 12px;
         right: 12px;
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
+    }
+    .fxg-tracking-overlay .fxg-tracking-hero {
+        padding: 28px 20px 24px;
+    }
+    .fxg-tracking-overlay .fxg-tracking-stepper-wrap {
+        padding: 20px 16px 18px;
+    }
+    .fxg-tracking-overlay .fxg-tracking-id {
+        padding: 14px 20px;
+    }
+    .fxg-tracking-overlay .fxg-tracking-section__toggle {
+        padding: 14px 20px;
+    }
+    .fxg-tracking-overlay .fxg-tracking-timeline {
+        padding: 0 20px 20px;
+    }
+    .fxg-tracking-overlay .fxg-tracking-facts {
+        padding: 4px 20px 20px;
+    }
+    .fxg-tracking-overlay .fxg-tracking-status-banner {
+        padding: 12px 20px;
     }
 }
