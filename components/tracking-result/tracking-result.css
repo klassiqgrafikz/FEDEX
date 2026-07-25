@@ -106,6 +106,13 @@
     font-weight: 500;
 }
 
+.fxg-tracking-hero__recipient {
+    font-size: 15px;
+    color: var(--fedex-dark);
+    margin: 0 0 4px;
+    font-weight: 500;
+}
+
 .fxg-tracking-hero__location {
     font-size: 15px;
     color: var(--fedex-graytext);

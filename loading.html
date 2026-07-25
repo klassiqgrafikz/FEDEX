@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Your Shipment | FedEx</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #fff;
+            font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
+        .fxg-loading {
+            text-align: center;
+        }
+        .fxg-loading__spinner {
+            width: 96px;
+            height: 96px;
+            border: 6px solid #e8e4ee;
+            border-top-color: #660099;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 32px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .fxg-loading__text {
+            font-size: 18px;
+            font-weight: 500;
+            color: #666;
+            letter-spacing: 0.3px;
+        }
+        .fxg-loading__sub {
+            font-size: 14px;
+            color: #999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="fxg-loading" id="loadingScreen">
+        <div class="fxg-loading__spinner"></div>
+        <p class="fxg-loading__text">Looking up your shipment...</p>
+        <p class="fxg-loading__sub" id="loadingSub">Please wait while we retrieve the latest information</p>
+    </div>
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var trackingId = params.get('tracking');
+            if (!trackingId) {
+                document.getElementById('loadingSub').textContent = 'No tracking number provided. Redirecting...';
+                setTimeout(function() { window.location.href = 'index.html'; }, 2000);
+                return;
+            }
+            var MIN_DELAY = 5000;
+            var start = Date.now();
+            var target = 'tracking-result.html?tracking=' + encodeURIComponent(trackingId);
+            function go() {
+                var elapsed = Date.now() - start;
+                var remaining = MIN_DELAY - elapsed;
+                if (remaining > 0) {
+                    setTimeout(go, remaining);
+                } else {
+                    window.location.href = target;
+                }
+            }
+            setTimeout(go, MIN_DELAY);
+        })();
+    </script>
+</body>
+</html>

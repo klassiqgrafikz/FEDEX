@@ -73,8 +73,7 @@
                     var err = input.parentElement.querySelector('.fxg-field__error_text');
                     if (err) err.style.display = 'block';
                 } else {
-                    var prefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
-                    window.location.href = prefix + 'tracking-result.html?tracking=' + encodeURIComponent(val);
+                    window.location.href = 'loading.html?tracking=' + encodeURIComponent(val);
                 }
             });
         }
@@ -123,8 +122,7 @@
                 } else {
                     trackInput.style.borderColor = '';
                     trackInput.placeholder = 'Tracking number';
-                    var prefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
-                    window.location.href = prefix + 'tracking-result.html?tracking=' + encodeURIComponent(val);
+                    window.location.href = 'loading.html?tracking=' + encodeURIComponent(val);
                 }
             }
 
@@ -977,6 +975,12 @@
         }
         var sigEl = el.querySelector('#trSignedBy');
         sigEl.textContent = (isDel && shipment.signatureName) ? 'Signed for by: ' + shipment.signatureName : '';
+        var recipEl = el.querySelector('#trRecipientName');
+        if (recipEl) {
+            var rn = (shipment.recipient && shipment.recipient.name) || '';
+            if (rn) { recipEl.textContent = 'Recipient: ' + rn; recipEl.style.display = ''; }
+            else { recipEl.style.display = 'none'; }
+        }
         var locEl = el.querySelector('#trDeliveryLocation');
         var re = shipment.recipient || {};
         var loc = [];

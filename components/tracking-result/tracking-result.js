@@ -137,7 +137,12 @@
 
         var sigEl = el.querySelector('#trSignedBy');
         sigEl.textContent = (isDel && shipment.signatureName) ? 'Signed for by: ' + shipment.signatureName : '';
-
+        var recipEl = el.querySelector('#trRecipientName');
+        if (recipEl) {
+            var rn = (shipment.recipient && shipment.recipient.name) || '';
+            if (rn) { recipEl.textContent = 'Recipient: ' + rn; recipEl.style.display = ''; }
+            else { recipEl.style.display = 'none'; }
+        }
         var locEl = el.querySelector('#trDeliveryLocation');
         var re = shipment.recipient || {};
         var loc = [];

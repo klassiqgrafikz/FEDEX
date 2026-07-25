@@ -49,6 +49,5 @@
   {"id":"terms","url":"https://www.fedex.com/en-us/terms-of-use.html","title":"Terms of Use"},
   {"id":"trust-center","url":"https://www.fedex.com/en-us/trust-center.html","title":"Privacy & Security"},
   {"id":"ad-choices","url":"https://www.fedex.com/en-us/trust-center/privacy.html#section7","title":"Ad Choices"},
-  {"id":"espanol","url":"https://www.fedex.com/es-us/home.html","title":"FedEx Español"},
-  {"id":"tracking-result","url":"https://www.fedex.com/apps/fedextrack/internal","title":"Tracking Result"}
+  {"id":"espanol","url":"https://www.fedex.com/es-us/home.html","title":"FedEx Español"}
 ]
