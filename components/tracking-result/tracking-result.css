@@ -10,6 +10,10 @@
 .fxg-tracking-loader--hidden {
     opacity: 0;
     pointer-events: none;
+    height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .fxg-tracking-loader__spinner {
