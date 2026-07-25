@@ -373,6 +373,27 @@
         return data.shipments[id] || null;
     }
 
+    function fetchShipment(id) {
+        var data = getData();
+        if (data.shipments[id]) return Promise.resolve(data.shipments[id]);
+        return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
+            headers: { 'Prefer': '' }
+        }).then(function(res) {
+            if (!res.ok) return null;
+            return res.json();
+        }).then(function(rows) {
+            if (rows && rows.length > 0) {
+                var s = fromDb(rows[0]);
+                data.shipments[id] = s;
+                saveData(data);
+                return s;
+            }
+            return null;
+        }).catch(function() {
+            return null;
+        });
+    }
+
     function saveShipment(shipment) {
         var data = getData();
         data.shipments[shipment.id] = shipment;
@@ -483,12 +504,15 @@
     }
 
     window.FDX.admin = {
+        SUPABASE_URL: SUPABASE_URL,
+        SUPABASE_ANON_KEY: SUPABASE_ANON_KEY,
         STATUSES: STATUSES,
         getData: getData,
         saveData: saveData,
         generateTrackingId: generateTrackingId,
         getAllShipments: getAllShipments,
         getShipment: getShipment,
+        fetchShipment: fetchShipment,
         saveShipment: saveShipment,
         deleteShipment: deleteShipment,
         getStats: getStats,
@@ -1373,14 +1397,7 @@
             if (e.target === overlay) closeTrackOverlay();
         });
 
-        /* Brief spinner, then render */
-        setTimeout(function () {
-            var F = window.FDX.admin;
-            var shipment = null;
-            try {
-                shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
-            } catch (e) {}
-
+        function renderShipment(shipment) {
             if (loader) loader.classList.add('fxg-tracking-loader--hidden');
             if (card) {
                 card.style.display = '';
@@ -1388,12 +1405,6 @@
                 void card.offsetHeight;
                 card.style.animation = '';
             }
-
-            if (!shipment) {
-                showNotFound(card, trackingId);
-                return;
-            }
-
             try {
                 renderHero(card, shipment);
                 renderStepper(card, shipment);
@@ -1411,6 +1422,42 @@
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
                 if (card) card.style.display = '';
                 showSystemError(card);
+            }
+        }
+
+        function showNoResult() {
+            if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+            if (card) { card.style.display = ''; card.style.animation = 'none'; void card.offsetHeight; card.style.animation = ''; }
+            showNotFound(card, trackingId);
+        }
+
+        /* Brief spinner, then try local */
+        setTimeout(function () {
+            var F = window.FDX.admin;
+            var shipment = null;
+            try {
+                shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
+            } catch (e) {}
+
+            if (shipment) {
+                renderShipment(shipment);
+                return;
+            }
+
+            /* Not found locally — try Supabase */
+            if (F && F.fetchShipment) {
+                try {
+                    F.fetchShipment(trackingId).then(function (remote) {
+                        if (remote) renderShipment(remote);
+                        else showNoResult();
+                    }).catch(function () {
+                        showNoResult();
+                    });
+                } catch (e) {
+                    showNoResult();
+                }
+            } else {
+                showNoResult();
             }
         }, 600);
     };

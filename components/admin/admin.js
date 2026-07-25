@@ -136,6 +136,27 @@
         return data.shipments[id] || null;
     }
 
+    function fetchShipment(id) {
+        var data = getData();
+        if (data.shipments[id]) return Promise.resolve(data.shipments[id]);
+        return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
+            headers: { 'Prefer': '' }
+        }).then(function(res) {
+            if (!res.ok) return null;
+            return res.json();
+        }).then(function(rows) {
+            if (rows && rows.length > 0) {
+                var s = fromDb(rows[0]);
+                data.shipments[id] = s;
+                saveData(data);
+                return s;
+            }
+            return null;
+        }).catch(function() {
+            return null;
+        });
+    }
+
     function saveShipment(shipment) {
         var data = getData();
         data.shipments[shipment.id] = shipment;
@@ -246,12 +267,15 @@
     }
 
     window.FDX.admin = {
+        SUPABASE_URL: SUPABASE_URL,
+        SUPABASE_ANON_KEY: SUPABASE_ANON_KEY,
         STATUSES: STATUSES,
         getData: getData,
         saveData: saveData,
         generateTrackingId: generateTrackingId,
         getAllShipments: getAllShipments,
         getShipment: getShipment,
+        fetchShipment: fetchShipment,
         saveShipment: saveShipment,
         deleteShipment: deleteShipment,
         getStats: getStats,

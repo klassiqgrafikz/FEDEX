@@ -519,14 +519,7 @@
             if (e.target === overlay) closeTrackOverlay();
         });
 
-        /* Brief spinner, then render */
-        setTimeout(function () {
-            var F = window.FDX.admin;
-            var shipment = null;
-            try {
-                shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
-            } catch (e) {}
-
+        function renderShipment(shipment) {
             if (loader) loader.classList.add('fxg-tracking-loader--hidden');
             if (card) {
                 card.style.display = '';
@@ -534,12 +527,6 @@
                 void card.offsetHeight;
                 card.style.animation = '';
             }
-
-            if (!shipment) {
-                showNotFound(card, trackingId);
-                return;
-            }
-
             try {
                 renderHero(card, shipment);
                 renderStepper(card, shipment);
@@ -557,6 +544,42 @@
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
                 if (card) card.style.display = '';
                 showSystemError(card);
+            }
+        }
+
+        function showNoResult() {
+            if (loader) loader.classList.add('fxg-tracking-loader--hidden');
+            if (card) { card.style.display = ''; card.style.animation = 'none'; void card.offsetHeight; card.style.animation = ''; }
+            showNotFound(card, trackingId);
+        }
+
+        /* Brief spinner, then try local */
+        setTimeout(function () {
+            var F = window.FDX.admin;
+            var shipment = null;
+            try {
+                shipment = F && F.getShipment ? F.getShipment(trackingId) : null;
+            } catch (e) {}
+
+            if (shipment) {
+                renderShipment(shipment);
+                return;
+            }
+
+            /* Not found locally — try Supabase */
+            if (F && F.fetchShipment) {
+                try {
+                    F.fetchShipment(trackingId).then(function (remote) {
+                        if (remote) renderShipment(remote);
+                        else showNoResult();
+                    }).catch(function () {
+                        showNoResult();
+                    });
+                } catch (e) {
+                    showNoResult();
+                }
+            } else {
+                showNoResult();
             }
         }, 600);
     };
