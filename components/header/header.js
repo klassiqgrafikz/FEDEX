@@ -71,7 +71,8 @@
                     var err = input.parentElement.querySelector('.fxg-field__error_text');
                     if (err) err.style.display = 'block';
                 } else {
-                    window.open('https://www.fedex.com/apps/fedextrack/?tracknumbers=' + encodeURIComponent(val), '_blank');
+                    var prefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
+                    window.location.href = prefix + 'tracking-result.html?tracking=' + encodeURIComponent(val);
                 }
             });
         }

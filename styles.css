@@ -9,6 +9,7 @@
 @import url("components/legal/legal.css");
 @import url("components/footer/footer.css");
 @import url("components/admin/admin.css");
+@import url("components/tracking-result/tracking-result.css");
 
 *, *::before, *::after {
     margin: 0;

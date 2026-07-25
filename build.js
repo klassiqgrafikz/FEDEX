@@ -12,7 +12,8 @@ const MANIFEST_FILE = path.join(__dirname, 'pages-manifest.json');
 
 const componentOrder = [
     'header', 'hero', 'floating-widget', 'quicklinks',
-    'cta', 'whyship', 'cards', 'featured', 'legal', 'footer', 'admin'
+    'cta', 'whyship', 'cards', 'featured', 'legal', 'footer', 'admin',
+    'tracking-result'
 ];
 
 function readComponent(name) {
@@ -112,6 +113,7 @@ const SOCIAL_DOMAINS = [
 function isPreservedLink(href) {
     if (href === 'index.html' || href === '../index.html') return true;
     if (href.includes('login.html') || href.includes('dashboard.html') || href.includes('create.html') || href.includes('shipments.html') || href.includes('shipment.html')) return true;
+    if (href.includes('tracking-result.html')) return true;
     return SOCIAL_DOMAINS.some(d => href.includes(d));
 }
 

@@ -1,0 +1,64 @@
+<div id="trackingResult" data-page="tracking-result">
+    <div class="fxg-tracking">
+
+        <div class="fxg-tracking-hero" id="trHero">
+            <div class="fxg-tracking-hero__icon" id="trStatusIcon"></div>
+            <div class="fxg-tracking-hero__info">
+                <h1 class="fxg-tracking-hero__status" id="trStatusText"></h1>
+                <p class="fxg-tracking-hero__service" id="trServiceInfo"></p>
+                <p class="fxg-tracking-hero__date" id="trDeliveryDate"></p>
+                <p class="fxg-tracking-hero__signature" id="trSignedBy"></p>
+                <p class="fxg-tracking-hero__location" id="trDeliveryLocation"></p>
+                <div class="fxg-tracking-hero__pod" id="trProofOfDelivery"></div>
+            </div>
+        </div>
+
+        <div class="fxg-tracking-stepper-wrap" id="trStepperWrap">
+            <div class="fxg-tracking-stepper" id="trProgressStepper">
+                <div class="fxg-tracking-stepper__step" data-step="1">
+                    <div class="fxg-tracking-stepper__circle"></div>
+                    <span class="fxg-tracking-stepper__label">Label Created</span>
+                </div>
+                <div class="fxg-tracking-stepper__connector"></div>
+                <div class="fxg-tracking-stepper__step" data-step="2">
+                    <div class="fxg-tracking-stepper__circle"></div>
+                    <span class="fxg-tracking-stepper__label">Picked Up</span>
+                </div>
+                <div class="fxg-tracking-stepper__connector"></div>
+                <div class="fxg-tracking-stepper__step" data-step="3">
+                    <div class="fxg-tracking-stepper__circle"></div>
+                    <span class="fxg-tracking-stepper__label">In Transit</span>
+                </div>
+                <div class="fxg-tracking-stepper__connector"></div>
+                <div class="fxg-tracking-stepper__step" data-step="4">
+                    <div class="fxg-tracking-stepper__circle"></div>
+                    <span class="fxg-tracking-stepper__label">Out for Delivery</span>
+                </div>
+                <div class="fxg-tracking-stepper__connector"></div>
+                <div class="fxg-tracking-stepper__step" data-step="5">
+                    <div class="fxg-tracking-stepper__circle"></div>
+                    <span class="fxg-tracking-stepper__label">Delivered</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="fxg-tracking-id" id="trTrackingNumber"></div>
+
+        <div class="fxg-tracking-section">
+            <button class="fxg-tracking-section__toggle" id="trHistoryToggle" aria-expanded="false">
+                <span class="fxg-tracking-section__toggle-icon">&#9654;</span>
+                View travel history
+            </button>
+            <div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trTravelHistory"></div>
+        </div>
+
+        <div class="fxg-tracking-section">
+            <button class="fxg-tracking-section__toggle" id="trFactsToggle" aria-expanded="false">
+                <span class="fxg-tracking-section__toggle-icon">&#9654;</span>
+                Shipment facts
+            </button>
+            <div class="fxg-tracking-section__body fxg-tracking-section__body--closed" id="trShipmentFacts"></div>
+        </div>
+
+    </div>
+</div>
