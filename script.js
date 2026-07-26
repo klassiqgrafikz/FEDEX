@@ -1150,85 +1150,118 @@
         }
     }
 
-    function renderVerticalTimeline(el, shipment) {
-        var container = el.querySelector('#trTimelineNodes');
-        if (!container) return;
-
-        var timeline = shipment.statusTimeline || [];
-        if (!timeline.length) {
-            container.innerHTML = '<div style="padding:24px;color:#999;font-size:14px;text-align:center;">No tracking events available.</div>';
+    function renderStepper(el, shipment) {
+        var wrap = el.querySelector('#trStepperWrap');
+        if (!wrap) return;
+        var status = shipment.currentStatus || 'Pending';
+        if (status === 'Pending' || status === 'Exception') {
+            wrap.style.display = 'none';
             return;
         }
+        wrap.style.display = '';
 
-        var sorted = timeline.slice().sort(function (a, b) {
-            return new Date(a.timestamp) - new Date(b.timestamp);
+        var active = stepperStep(status);
+        var steps = wrap.querySelectorAll('.fxg-tr-stepper__step');
+        var connectors = wrap.querySelectorAll('.fxg-tr-stepper__connector');
+        var isDel = status === 'Delivered';
+
+        var tl = shipment.statusTimeline || [];
+        var stepDates = [null, null, null, null, null];
+        tl.forEach(function (e) {
+            var st = (e.status || '').toLowerCase();
+            var step = 0;
+            if (st === 'shipment created' || st === 'label created') step = 1;
+            else if (st === 'package received' || st === 'picked up') step = 2;
+            else if (st === 'departed warehouse' || st === 'customs' || st === 'in transit' || st === 'arrived destination') step = 3;
+            else if (st === 'out for delivery') step = 4;
+            else if (st === 'delivered') step = 5;
+            if (step && e.timestamp) stepDates[step - 1] = fmtShort(e.timestamp);
         });
 
-        var currentIdx = -1;
-        var st = (shipment.currentStatus || '').toLowerCase();
+        steps.forEach(function (step) {
+            var num = parseInt(step.getAttribute('data-step'), 10);
+            var circle = step.querySelector('.fxg-tr-stepper__circle');
+            var dateEl = step.querySelector('.fxg-tr-stepper__date');
 
-        sorted.forEach(function (entry, idx) {
-            var s = (entry.status || '').toLowerCase();
-            if (s === st) currentIdx = idx;
+            step.classList.remove('fxg-tr-stepper__step--completed', 'fxg-tr-stepper__step--active', 'fxg-tr-stepper__step--delivered');
+
+            if (isDel && num <= active) {
+                step.classList.add('fxg-tr-stepper__step--delivered');
+            } else if (num < active) {
+                step.classList.add('fxg-tr-stepper__step--completed');
+            } else if (num === active) {
+                step.classList.add('fxg-tr-stepper__step--active');
+            }
+
+            var existingCheck = circle.querySelector('svg');
+            if (existingCheck) existingCheck.remove();
+            if ((num < active) || (num === active) || (isDel && num <= active)) {
+                var ck = checkSvg(0, 0, 24);
+                circle.appendChild(ck);
+            }
+
+            if (dateEl) {
+                dateEl.textContent = stepDates[num - 1] || '';
+            }
         });
 
-        if (currentIdx === -1 && sorted.length > 0) {
-            var matchIdx = sorted.findIndex(function (e) {
-                return (e.status || '').toLowerCase() === st;
-            });
-            if (matchIdx >= 0) currentIdx = matchIdx;
-            else currentIdx = sorted.length - 1;
+        connectors.forEach(function (conn) {
+            conn.classList.remove('fxg-tr-stepper__connector--filled', 'fxg-tr-stepper__connector--delivered');
+        });
+        for (var i = 0; i < active - 1 && i < connectors.length; i++) {
+            connectors[i].classList.add(isDel ? 'fxg-tr-stepper__connector--delivered' : 'fxg-tr-stepper__connector--filled');
         }
+    }
 
-        var html = '<div class="fxg-tr-timeline__line"></div><div class="fxg-tr-timeline__nodes">';
+    function scanDotClass(status) {
+        var s = (status || '').toLowerCase();
+        if (s === 'delivered') return 'fxg-tr-scans__dot--delivered';
+        if (s === 'out for delivery') return 'fxg-tr-scans__dot--outfordelivery';
+        if (s === 'exception') return 'fxg-tr-scans__dot--exception';
+        if (s === 'pending') return 'fxg-tr-scans__dot--pending';
+        return '';
+    }
 
-        sorted.forEach(function (entry, idx) {
-            var isActive = idx === currentIdx;
-            var isCompleted = idx < currentIdx;
-            var isDelivered = isCompleted && (entry.status || '').toLowerCase() === 'delivered';
-            var isFuture = idx > currentIdx;
+    function renderScanEvents(el, shipment) {
+        var container = el.querySelector('#trScansContainer');
+        if (!container) return;
 
-            var nodeClass = 'fxg-tr-timeline__node';
-            if (isDelivered) nodeClass += ' fxg-tr-timeline__node--delivered';
-            else if (isActive) nodeClass += ' fxg-tr-timeline__node--active';
-            else if (isCompleted) nodeClass += ' fxg-tr-timeline__node--completed';
-            else nodeClass += ' fxg-tr-timeline__node--future';
+        var tl = shipment.statusTimeline || [];
+        if (!tl.length) {
+            container.innerHTML = '';
+            container.classList.add('fxg-tr-scans--empty');
+            return;
+        }
+        container.classList.remove('fxg-tr-scans--empty');
 
-            var title = entry.status || '';
-            if (idx === 0) title = 'FROM: ' + title;
+        var sorted = tl.slice().sort(function (a, b) { return new Date(a.timestamp) - new Date(b.timestamp); });
+        var html = '';
+        var curDate = null;
 
-            var location = entry.location || '';
-            if (idx === 0) {
-                var sender = shipment.sender || {};
-                var originParts = [];
-                if (sender.city) originParts.push(sender.city);
-                if (sender.state) originParts.push(sender.state);
-                if (originParts.length) location = originParts.join(', ');
+        sorted.forEach(function (entry) {
+            var d = entry.timestamp ? fmtShort(entry.timestamp) : '';
+            if (d && d !== curDate) {
+                if (curDate !== null) html += '</div>';
+                curDate = d;
+                html += '<div class="fxg-tr-scans__date-group">';
+                html += '<div class="fxg-tr-scans__date-header">' + escape(d) + '</div>';
+            } else if (!d && curDate === null) {
+                html += '<div class="fxg-tr-scans__date-group">';
+                curDate = '';
             }
 
-            var timeStr = entry.timestamp ? fmtTime(entry.timestamp) : '';
-            var dateStr = entry.timestamp ? fmtShort(entry.timestamp) : '';
-            var fullTime = dateStr && timeStr ? (dateStr + ' at ' + timeStr) : (dateStr || timeStr);
-
-            var remark = entry.remark || '';
-
-            html += '<div class="' + nodeClass + '">';
-            html += '<div class="fxg-tr-timeline__dot">';
-            if ((isCompleted || isActive || isDelivered) && (entry.status || '').toLowerCase() !== 'pending' && (entry.status || '').toLowerCase() !== 'exception') {
-                html += '<svg viewBox="0 0 24 24" width="10" height="10"><path d="M6 13l4 4 8-8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-            }
-            html += '</div>';
-            html += '<div class="fxg-tr-timeline__content">';
-            html += '<div class="fxg-tr-timeline__title">' + escape(title) + '</div>';
-            if (location) html += '<div class="fxg-tr-timeline__location">' + escape(location) + '</div>';
-            if (fullTime) html += '<div class="fxg-tr-timeline__time">' + escape(fullTime) + '</div>';
-            if (remark) html += '<div class="fxg-tr-timeline__remark">' + escape(remark) + '</div>';
-            if (isFuture) html += '<div class="fxg-tr-timeline__future-label">Upcoming</div>';
-            html += '</div>';
-            html += '</div>';
+            var sc = scanDotClass(entry.status);
+            html += '<div class="fxg-tr-scans__item">';
+            html += '<div class="fxg-tr-scans__dot ' + sc + '"></div>';
+            html += '<div class="fxg-tr-scans__content">';
+            if (entry.timestamp) html += '<div class="fxg-tr-scans__time">' + escape(fmtTime(entry.timestamp)) + '</div>';
+            html += '<div class="fxg-tr-scans__status">' + escape(entry.status) + '</div>';
+            if (entry.remark) html += '<div class="fxg-tr-scans__remark">' + escape(entry.remark) + '</div>';
+            if (entry.location) html += '<div class="fxg-tr-scans__location">' + escape(entry.location) + '</div>';
+            html += '</div></div>';
         });
+        if (curDate !== null) html += '</div>';
 
-        html += '</div>';
         container.innerHTML = html;
     }
 
@@ -1362,9 +1395,19 @@
         '<div class="fxg-tr-summary__icon" id="trStatusIcon"></div>',
         '</div>',
         '<div class="fxg-tr-alert fxg-tr-alert--hidden" id="trAlertBanner"></div>',
-        '<div class="fxg-tr-timeline">',
-        '<div id="trTimelineNodes"></div>',
-        '</div>',
+        '<div class="fxg-tr-stepper-wrap" id="trStepperWrap">',
+        '<div class="fxg-tr-stepper" id="trProgressStepper">',
+        '<div class="fxg-tr-stepper__step" data-step="1"><div class="fxg-tr-stepper__circle"></div><span class="fxg-tr-stepper__label">Label Created</span><span class="fxg-tr-stepper__date" id="trStepDate1"></span></div>',
+        '<div class="fxg-tr-stepper__connector"></div>',
+        '<div class="fxg-tr-stepper__step" data-step="2"><div class="fxg-tr-stepper__circle"></div><span class="fxg-tr-stepper__label">Picked Up</span><span class="fxg-tr-stepper__date" id="trStepDate2"></span></div>',
+        '<div class="fxg-tr-stepper__connector"></div>',
+        '<div class="fxg-tr-stepper__step" data-step="3"><div class="fxg-tr-stepper__circle"></div><span class="fxg-tr-stepper__label">In Transit</span><span class="fxg-tr-stepper__date" id="trStepDate3"></span></div>',
+        '<div class="fxg-tr-stepper__connector"></div>',
+        '<div class="fxg-tr-stepper__step" data-step="4"><div class="fxg-tr-stepper__circle"></div><span class="fxg-tr-stepper__label">Out for Delivery</span><span class="fxg-tr-stepper__date" id="trStepDate4"></span></div>',
+        '<div class="fxg-tr-stepper__connector"></div>',
+        '<div class="fxg-tr-stepper__step" data-step="5"><div class="fxg-tr-stepper__circle"></div><span class="fxg-tr-stepper__label">Delivered</span><span class="fxg-tr-stepper__date" id="trStepDate5"></span></div>',
+        '</div></div>',
+        '<div class="fxg-tr-scans" id="trScansContainer"></div>',
         '<div class="fxg-tr-facts" id="trShipmentFacts"></div>',
         '</div></div></div>'
     ].join('');
@@ -1419,7 +1462,8 @@
                 renderTrackingHeader(card, shipment);
                 renderStatusSummary(card, shipment);
                 renderAlertBanner(card, shipment);
-                renderVerticalTimeline(card, shipment);
+                renderStepper(card, shipment);
+                renderScanEvents(card, shipment);
                 renderFacts(card, shipment);
             } catch (e) {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
@@ -1514,7 +1558,8 @@
                 renderTrackingHeader(el, shipment);
                 renderStatusSummary(el, shipment);
                 renderAlertBanner(el, shipment);
-                renderVerticalTimeline(el, shipment);
+                renderStepper(el, shipment);
+                renderScanEvents(el, shipment);
                 renderFacts(el, shipment);
             } catch (e) {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
