@@ -1254,8 +1254,13 @@
 
             var sc = scanDotClass(entry.status);
             var isActive = (idx === sorted.length - 1);
-            html += '<div class="fxg-tr-scans__item' + (isActive ? ' fxg-tr-scans__item--active' : '') + '">';
-            html += '<div class="fxg-tr-scans__dot ' + sc + '"></div>';
+            var statusKey = (entry.status || '').toLowerCase().replace(/\s+/g, '');
+            html += '<div class="fxg-tr-scans__item' + (isActive ? ' fxg-tr-scans__item--active fxg-tr-scans__item--' + escape(statusKey) : '') + '">';
+            html += '<div class="fxg-tr-scans__dot ' + sc + '">';
+            if (isActive) {
+                html += '<svg viewBox="0 0 64 64" width="28" height="28" fill="#fff"><rect x="18" y="26" width="12" height="12" rx="2"/><rect x="30" y="28" width="16" height="10" rx="1.5"/><circle cx="23" cy="44" r="5"/><circle cx="41" cy="44" r="5"/><path d="M18 38l-4-6h8l4 6z"/></svg>';
+            }
+            html += '</div>';
             html += '<div class="fxg-tr-scans__content">';
             if (entry.timestamp) html += '<div class="fxg-tr-scans__time">' + escape(fmtTime(entry.timestamp)) + '</div>';
             html += '<div class="fxg-tr-scans__status">' + escape(entry.status) + '</div>';
