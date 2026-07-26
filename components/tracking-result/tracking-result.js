@@ -325,6 +325,7 @@
         if (shipment.referenceNumber) facts.push({ label: 'REFERENCE', value: shipment.referenceNumber });
         if (shipment.signatureRequired) facts.push({ label: 'SIGNATURE SERVICES', value: 'Yes' });
         var re = shipment.recipient || {};
+        if (re.name) facts.push({ label: 'RECIPIENT', value: re.name });
         var addrParts = [re.address, re.city, re.state, re.zip, re.country].filter(Boolean);
         if (addrParts.length > 0) facts.push({ label: 'DELIVERED TO', value: addrParts.join(', ') });
         if (shipment.currentStatus === 'Delivered' && shipment.signatureName) {
