@@ -32,8 +32,6 @@
         return {
             id: s.id,
             package_name: s.packageName,
-            image: s.image,
-            package_video: s.packageVideo,
             sender: s.sender,
             recipient: s.recipient,
             weight: s.weight,
@@ -53,8 +51,7 @@
         return {
             id: r.id,
             packageName: r.package_name,
-            image: r.image,
-            packageVideo: r.package_video,
+            media: r.shipment_media || [],
             sender: r.sender,
             recipient: r.recipient,
             weight: r.weight,
@@ -131,7 +128,7 @@
     }
 
     function fetchShipment(id) {
-        return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
+        return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id) + '&select=*,shipment_media(*)', {
             headers: { 'Prefer': '' }
         }).then(function(res) {
             console.log('[FDX fetchShipment] Supabase response status:', res && res.status);
@@ -160,6 +157,13 @@
             method: 'POST',
             body: toDb(shipment),
             headers: { 'Prefer': 'resolution=merge-duplicates' }
+        });
+    }
+
+    function saveShipmentMedia(shipmentId, mediaType, data) {
+        return supabaseFetch('shipment_media', {
+            method: 'POST',
+            body: { shipment_id: shipmentId, media_type: mediaType, data: data }
         });
     }
 
@@ -232,7 +236,7 @@
         };
 
         migrateLocal().then(function() {
-            return supabaseFetch('shipments?order=created_at.desc', {
+            return supabaseFetch('shipments?order=created_at.desc&select=*,shipment_media(*)', {
                 headers: { 'Prefer': '' }
             });
         }).then(function(res) {
@@ -270,6 +274,7 @@
         getShipment: getShipment,
         fetchShipment: fetchShipment,
         saveShipment: saveShipment,
+        saveShipmentMedia: saveShipmentMedia,
         deleteShipment: deleteShipment,
         getStats: getStats,
         formatDate: formatDate,
@@ -439,11 +444,13 @@
             e.preventDefault();
             var id = window.FDX.admin.generateTrackingId();
 
+            var imgData = previewEl ? (previewEl.dataset.image || '') : '';
+            var videoData = videoPreviewEl ? (videoPreviewEl.dataset.video || '') : '';
+
             var shipment = {
                 id: id,
                 packageName: form.querySelector('#pkgName').value.trim(),
-                image: previewEl ? (previewEl.dataset.image || '') : '',
-                packageVideo: videoPreviewEl ? (videoPreviewEl.dataset.video || '') : '',
+                media: [],
                 sender: {
                     name: form.querySelector('#senderName').value.trim(),
                     company: form.querySelector('#senderCompany').value.trim(),
@@ -481,32 +488,43 @@
                 updatedAt: new Date().toISOString()
             };
 
-            window.FDX.admin.saveShipment(shipment);
+            window.FDX.admin.saveShipment(shipment).then(function() {
+                var mediaPromises = [];
+                if (imgData) mediaPromises.push(window.FDX.admin.saveShipmentMedia(id, 'image', imgData));
+                if (videoData) mediaPromises.push(window.FDX.admin.saveShipmentMedia(id, 'video', videoData));
+                return Promise.all(mediaPromises);
+            }).then(function() {
+                if (trackingDisplay) {
+                    var span = trackingDisplay.querySelector('#newTrackingIdSpan');
+                    if (span) span.textContent = id;
+                    trackingDisplay.style.display = 'block';
+                }
 
-            if (trackingDisplay) {
-                var span = trackingDisplay.querySelector('#newTrackingIdSpan');
-                if (span) span.textContent = id;
-                trackingDisplay.style.display = 'block';
-            }
+                if (alertEl) {
+                    alertEl.className = 'fxg-admin-alert fxg-admin-alert--success';
+                    alertEl.textContent = 'Shipment ' + id + ' created successfully!';
+                    alertEl.style.display = 'block';
+                }
 
-            if (alertEl) {
-                alertEl.className = 'fxg-admin-alert fxg-admin-alert--success';
-                alertEl.textContent = 'Shipment ' + id + ' created successfully!';
-                alertEl.style.display = 'block';
-            }
-
-            form.reset();
-            if (previewEl) {
-                previewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package image</div>';
-                previewEl.dataset.image = '';
-            }
-            if (videoPreviewEl) {
-                videoPreviewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package video</div>';
-                videoPreviewEl.dataset.video = '';
-            }
-            setTimeout(function() {
-                if (alertEl) alertEl.style.display = 'none';
-            }, 5000);
+                form.reset();
+                if (previewEl) {
+                    previewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package image</div>';
+                    previewEl.dataset.image = '';
+                }
+                if (videoPreviewEl) {
+                    videoPreviewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package video</div>';
+                    videoPreviewEl.dataset.video = '';
+                }
+                setTimeout(function() {
+                    if (alertEl) alertEl.style.display = 'none';
+                }, 5000);
+            }).catch(function() {
+                if (alertEl) {
+                    alertEl.className = 'fxg-admin-alert fxg-admin-alert--error';
+                    alertEl.textContent = 'Failed to create shipment. Please try again.';
+                    alertEl.style.display = 'block';
+                }
+            });
         });
     }
 
@@ -607,18 +625,26 @@
         el.querySelector('#shipmentCreatedDate').textContent = F.formatDate(shipment.createdAt);
 
         var imgWrap = el.querySelector('#shipmentImage');
-        if (shipment.image) {
-            imgWrap.innerHTML = '<img src="' + shipment.image + '" alt="Package">';
+        var videoWrap = el.querySelector('#shipmentVideo');
+        var mediaList = shipment.media || [];
+        var imgItem = null;
+        var vidItem = null;
+        for (var mi = 0; mi < mediaList.length; mi++) {
+            if (mediaList[mi].media_type === 'image') imgItem = mediaList[mi];
+            else if (mediaList[mi].media_type === 'video') vidItem = mediaList[mi];
+        }
+
+        if (imgItem && imgItem.data) {
+            imgWrap.innerHTML = '<img src="' + imgItem.data + '" alt="Package">';
             imgWrap.className = 'fxg-admin-detail-header__image';
         } else {
             imgWrap.innerHTML = 'No image';
             imgWrap.className = 'fxg-admin-detail-header__image--empty';
         }
 
-        var videoWrap = el.querySelector('#shipmentVideo');
         if (videoWrap) {
-            if (shipment.packageVideo) {
-                videoWrap.innerHTML = '<video src="' + shipment.packageVideo + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
+            if (vidItem && vidItem.data) {
+                videoWrap.innerHTML = '<video src="' + vidItem.data + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
                 videoWrap.className = 'fxg-admin-detail-header__image';
             } else {
                 videoWrap.innerHTML = 'No video';

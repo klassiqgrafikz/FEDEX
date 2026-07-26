@@ -348,15 +348,18 @@
     function renderPackageMedia(el, shipment) {
         var container = el.querySelector('#trPackageMedia');
         if (!container) return;
-        var hasImage = shipment.image;
-        var hasVideo = shipment.packageVideo;
-        if (!hasImage && !hasVideo) { container.innerHTML = ''; return; }
+        var mediaList = shipment.media || [];
+        var hasMedia = mediaList.some(function(m) { return m && m.data; });
+        if (!hasMedia) { container.innerHTML = ''; return; }
         var html = '<div class="fxg-tr-media__inner">';
-        if (hasImage) {
-            html += '<div class="fxg-tr-media__item"><img src="' + shipment.image + '" alt="Package image"></div>';
-        }
-        if (hasVideo) {
-            html += '<div class="fxg-tr-media__item"><video src="' + shipment.packageVideo + '" muted controls></video></div>';
+        for (var mi = 0; mi < mediaList.length; mi++) {
+            var m = mediaList[mi];
+            if (!m || !m.data) continue;
+            if (m.media_type === 'image') {
+                html += '<div class="fxg-tr-media__item"><img src="' + m.data + '" alt="Package image"></div>';
+            } else if (m.media_type === 'video') {
+                html += '<div class="fxg-tr-media__item"><video src="' + m.data + '" muted controls></video></div>';
+            }
         }
         html += '</div>';
         container.innerHTML = html;
