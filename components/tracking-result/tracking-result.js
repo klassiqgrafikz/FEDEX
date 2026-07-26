@@ -422,11 +422,30 @@
             '</div>';
     }
 
+    var headerHTML = '<header class="fxg-header" id="trOverlayHeader">' +
+        '<fedex-smart-banner><script type="application/json" data-config="js-smartbanner-config">{"title":"FedEx Mobile","buttonText":"VIEW","description":"Track, ship, and more.","android_enabled":true,"android_image":"https://lh3.googleusercontent.com/YtXTsa-6SaaMl02-OUo8iRztlX5Thu4aCLavunIV1M5hm9y4ySTPpMjpY44fL4ayz7Se","android_url":"https://play.google.com/store/apps/details?id=com.fedex.ida.android","android_instore":"Get on the Google Play store.","ios_enabled":true,"ios_image":"https://is1-ssl.mzstatic.com/image/thumb/Purple124/v4/16/9f/c2/169fc22b-b2b5-5e5a-097a-c0bc3a5dbddc/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/246x0w.png","ios_url":"https://apps.apple.com/app/fedex/id1010729050","ios_instore":"Get on the App Store."}</script></fedex-smart-banner>' +
+        '<nav class="fxg-nav"><div class="fxg-wrapper">' +
+        '<a class="fxg-header__logo_wrapper" href="index.html" aria-label="FedEx Logo"><svg class="fxg-header__logo" viewBox="0 0 451.694 220.997" aria-hidden="true"><defs><style>.fxg-logo-ex{fill:#FF6600;}.fxg-logo-fed{fill:#660099;}</style></defs><polygon class="fxg-logo-ex" points="360.671 159 346.805 143.415 333.547 159.009 306.001 159.012 332.991 127.8 306.001 97.012 335.001 97.012 348.006 111.984 361.001 97.012 388.001 97.012 361.62 127.6 389.705 159 360.671 159"/><polygon class="fxg-logo-ex" points="252.001 159.012 252.001 62.012 306.001 62.012 306.001 84.012 275.001 84.012 275.001 97.012 306.001 97.012 306.001 118.012 275.001 118.012 275.001 137.012 306.001 137.012 306.001 159.012 252.001 159.012"/><path class="fxg-logo-fed" d="M230,62.012v40l-.814-.639c-5.005-5.7-11.879-7.361-19.186-7.361-14.915,0-25.458,9.664-29.362,23.077C176.134,102.374,164.118,94.012,147,94.012c-13.914,0-25.294,5.789-31,16v-13H88v-13h31v-22H62v97H88v-41l25.571-.222a36.939,36.939,0,0,0-1.2,9.509c0,20.12,15.316,34.535,34.935,34.535,16.517,0,26.89-7.708,32.7-21.822H158c-3,4.2-4.69,5.205-10.6,5.205-6.907,0-13.113-6.206-13.113-13.413h45.045c1.9,16.016,14.41,30.208,31.528,30.208A24.082,24.082,0,0,0,230,151.755v7.257h22v-97ZM135.293,118.09c1.4-6.106,6.206-10.11,12.112-10.11,6.507,0,11.011,3.9,12.213,10.11Zm80.381,25.626c-8.309,0-13.514-7.808-13.514-15.916,0-8.709,4.5-17.017,13.514-17.017,9.309,0,13.113,8.308,13.113,17.017C228.787,136.108,224.783,143.716,215.674,143.716Z"/></svg></a>' +
+        '<button class="fxg-hamburger" aria-label="Toggle navigation menu"><span class="fxg-hamburger__line"></span><span class="fxg-hamburger__line"></span><span class="fxg-hamburger__line"></span></button>' +
+        '<a href="javascript:void(0)" class="cc-aem-c-button cc-aem-c-button--tertiary fxg-skip-to-main-content">Skip to main content</a>' +
+        '<div class="fxg-dropdown fxg-global-nav"><div class="fxg-dropdown__list">' +
+        '<div class="fxg-dropdown__item"><a href="#" aria-label="Open Shipping Menu" class="fxg-link fxg-dropdown-js">Shipping</a><div class="fxg-dropdown__sub-menu"><div class="link fxg-button-link"><a href="pages/create-shipment.html" class="fxg-link">Create a Shipment</a></div><div class="link fxg-button-link"><a href="pages/rates.html" class="fxg-link">Shipping Rates &amp; Delivery Times</a></div><div class="link fxg-button-link"><a href="pages/schedule-pickup.html" class="fxg-link">Schedule &amp; Manage Pickups</a></div><div class="link fxg-button-link"><a href="pages/packing.html" class="fxg-link">Packing &amp; Shipping Supplies</a></div><div class="link fxg-button-link"><a href="pages/international.html" class="fxg-link">International Shipping Guide</a></div><div class="link fxg-button-link"><a href="pages/freight.html" class="fxg-link">Freight</a></div><div class="link fxg-button-link"><a href="pages/returns.html" class="fxg-link">Manage a Return</a></div><div class="link fxg-button-link"><a href="pages/shipping.html" class="fxg-link fxg-link--blue">ALL SHIPPING SERVICES</a></div></div></div>' +
+        '<div class="fxg-dropdown__item"><a href="#" aria-label="Open Tracking Menu" class="fxg-link fxg-dropdown-js">Tracking</a><div class="fxg-dropdown__sub-menu"><div class="fxg-tracking-module fxg-field__default"><form method="POST" action="#" class="fxg-form" id="HeaderTrackingModule"><div class="fxg-field"><label class="fxg-field__label" for="trackingModuleTrackingNum">Tracking ID</label><input id="trackingModuleTrackingNum" tabindex="0" type="text" class="fxg-field__input-text fxg-field__input--required" name="trackingNumber" required title="Tracking ID" placeholder="Tracking ID" aria-required="true" data-errmsg="Please enter at least one tracking number."><div class="fxg-field__error_text"><span>Please enter at least one tracking number.</span></div></div><button type="submit" aria-label="Click here to track your package" class="cc-aem-c-button cc-aem-c-button--primary">TRACK</button></form></div><div class="link fxg-button-link"><a href="pages/advanced-tracking.html" class="fxg-link">Advanced Shipment Tracking</a></div><div class="link fxg-button-link"><a href="pages/manage-delivery.html" class="fxg-link">Manage Your Delivery</a></div><div class="link fxg-button-link"><a href="pages/tracking.html" class="fxg-link fxg-link--blue">ALL TRACKING SERVICES</a></div></div></div>' +
+        '<div class="fxg-dropdown__item"><a href="#" aria-label="Open Design & Print menu" class="fxg-link fxg-dropdown-js">Design &amp; Print</a><div class="fxg-dropdown__sub-menu"><div class="link fxg-button-link"><a href="pages/office-print.html" class="fxg-link">Explore Print, Products &amp; Design</a></div><div class="link fxg-button-link"><a href="pages/office-services.html" class="fxg-link">Browse Services</a></div><div class="link fxg-button-link"><a href="pages/office.html" class="fxg-link fxg-link--blue">VISIT NEW MARKETPLACE</a></div></div></div>' +
+        '<div class="fxg-dropdown__item"><a href="#" aria-label="Open Locations Menu" class="fxg-link fxg-dropdown-js">Locations</a><div class="fxg-dropdown__sub-menu"><div class="link fxg-button-link"><a href="pages/drop-off.html" class="fxg-link">Drop Off a Package</a></div><div class="link fxg-button-link"><a href="pages/locations.html" class="fxg-link fxg-link--blue">Find a Location</a></div></div></div>' +
+        '<div class="fxg-dropdown__item"><a href="#" aria-label="Open Customer Support Menu" class="fxg-link fxg-dropdown-js">Support</a><div class="fxg-dropdown__sub-menu"><div class="link fxg-button-link"><a href="pages/small-business.html" class="fxg-link">Small Business Center</a></div><div class="link fxg-button-link"><a href="pages/service-guide.html" class="fxg-link">FedEx Service Guide</a></div><div class="link fxg-button-link"><a href="pages/manage-account.html" class="fxg-link">Account Management Tools</a></div><div class="link fxg-button-link"><a href="pages/faq.html" class="fxg-link">Frequently Asked Questions</a></div><div class="link fxg-button-link"><a href="pages/claims.html" class="fxg-link">File a Claim</a></div><div class="link fxg-button-link"><a href="pages/billing.html" class="fxg-link">Billing &amp; Invoicing</a></div><div class="link fxg-button-link"><a href="pages/customer-support.html" class="fxg-link fxg-link--blue">Customer Support</a></div></div></div>' +
+        '</div></div>' +
+        '<div class="fxg-header__right"><div class="fxg-header__search"><a href="#" class="fxg-link fxg-search-js" aria-label="Search"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg><span>Search</span></a></div>' +
+        '<div class="fxg-header__account"><a href="#" class="fxg-link" aria-label="Sign Up or Log In"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg><span>Sign Up or Log In</span></a></div></div>' +
+        '</div></nav></header>';
+
     var overlayHTML = [
         '<div class="fxg-tracking-overlay" id="fxgTrackingOverlay">',
+        headerHTML,
         '<button class="fxg-tracking-overlay__close" id="trOverlayClose" aria-label="Close tracking result">',
         '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
         '</button>',
+        '<div class="fxg-tracking-scroll" id="trScrollArea">',
         '<div class="fxg-tracking-wrap">',
         '<div class="fxg-tracking-loader" id="trLoader">',
         '<div class="fxg-tracking-loader__spinner" style="width:64px;height:64px;border-width:5px"></div>',
@@ -472,7 +491,7 @@
         '<div class="fxg-tr-scans" id="trScansContainer"></div>',
         '<div class="fxg-tr-media" id="trPackageMedia"></div>',
         '<div class="fxg-tr-facts" id="trShipmentFacts"></div>',
-        '</div></div></div>'
+        '</div></div></div></div>'
     ].join('');
 
     window.FDX.track = function (trackingId) {
@@ -483,6 +502,86 @@
         wrap.innerHTML = overlayHTML;
         var overlay = wrap.firstElementChild;
         document.body.appendChild(overlay);
+
+        /* Init header inside overlay */
+        (function initOverlayHeader() {
+            var header = overlay.querySelector('.fxg-header');
+            if (!header) return;
+            var hamburger = header.querySelector('.fxg-hamburger');
+            var globalNav = header.querySelector('.fxg-global-nav');
+            var dropdownItems = header.querySelectorAll('.fxg-dropdown__item');
+
+            if (hamburger) {
+                hamburger.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    header.classList.toggle('fxg-header--mobile-open');
+                    hamburger.setAttribute('aria-label',
+                        header.classList.contains('fxg-header--mobile-open')
+                            ? 'Close navigation menu' : 'Toggle navigation menu');
+                });
+            }
+
+            header.querySelectorAll('.fxg-dropdown__sub-menu a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    header.classList.remove('fxg-header--mobile-open');
+                    if (hamburger) hamburger.setAttribute('aria-label', 'Toggle navigation menu');
+                });
+            });
+
+            var overlayEl = header.querySelector('.fxg-header__overlay');
+            if (!overlayEl) {
+                overlayEl = document.createElement('div');
+                overlayEl.className = 'fxg-header__overlay';
+                header.appendChild(overlayEl);
+            }
+            overlayEl.addEventListener('click', function () {
+                header.classList.remove('fxg-header--mobile-open');
+                if (hamburger) hamburger.setAttribute('aria-label', 'Toggle navigation menu');
+            });
+
+            dropdownItems.forEach(function (item) {
+                var toggle = item.querySelector('.fxg-dropdown-js');
+                if (toggle) {
+                    toggle.addEventListener('click', function (e) {
+                        if (window.innerWidth <= 900) {
+                            e.preventDefault();
+                            item.classList.toggle('fxg-dropdown--open');
+                        }
+                    });
+                }
+            });
+
+            var headerForm = header.querySelector('#HeaderTrackingModule');
+            if (headerForm) {
+                headerForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    var input = headerForm.querySelector('input[name="trackingNumber"]');
+                    var val = input.value.trim();
+                    if (!val) {
+                        input.style.borderColor = '#CC0000';
+                        var err = input.parentElement.querySelector('.fxg-field__error_text');
+                        if (err) err.style.display = 'block';
+                    } else {
+                        window.FDX.track(val);
+                    }
+                });
+            }
+
+            var resizeTimer;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    if (window.innerWidth > 900 && header.classList.contains('fxg-header--mobile-open')) {
+                        header.classList.remove('fxg-header--mobile-open');
+                        if (hamburger) hamburger.setAttribute('aria-label', 'Toggle navigation menu');
+                        dropdownItems.forEach(function (item) {
+                            item.classList.remove('fxg-dropdown--open');
+                        });
+                    }
+                }, 200);
+            });
+        })();
+
         var origOverflow = document.body.style.overflow;
         var origPos = document.body.style.position;
         var origWidth = document.body.style.width;

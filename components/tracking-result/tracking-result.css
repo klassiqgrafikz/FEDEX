@@ -42,9 +42,21 @@
     inset: 0;
     z-index: 10000;
     background: linear-gradient(135deg, #f7f5fa 0%, #eeecf3 100%);
-    overflow-y: auto;
+    overflow: hidden;
     overscroll-behavior: contain;
     -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+}
+
+.fxg-tracking-overlay .fxg-tracking-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.fxg-tracking-overlay #trOverlayHeader {
+    flex-shrink: 0;
 }
 
 .fxg-tracking-overlay__close {
