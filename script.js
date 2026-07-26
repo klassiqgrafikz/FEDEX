@@ -893,13 +893,11 @@
         });
 
         var statusSelect = el.querySelector('#updateStatus');
-        var currentIdx = F.STATUSES.indexOf(shipment.currentStatus);
-        F.STATUSES.forEach(function(s, idx) {
+        F.STATUSES.forEach(function(s) {
             var opt = document.createElement('option');
             opt.value = s;
             opt.textContent = s;
             if (s === shipment.currentStatus) opt.selected = true;
-            if (idx < currentIdx) opt.disabled = true;
             statusSelect.appendChild(opt);
         });
 
