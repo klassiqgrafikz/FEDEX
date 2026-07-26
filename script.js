@@ -439,9 +439,12 @@
         var ids = Object.keys(_cache.shipments);
         if (ids.length === 0) return Promise.resolve();
         _cache.shipments = {};
-        return supabaseFetch('shipments', {
-            method: 'DELETE'
+        var promises = ids.map(function(id) {
+            return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
+                method: 'DELETE'
+            });
         });
+        return Promise.all(promises);
     }
 
     function getStats() {
@@ -715,11 +718,15 @@
 
         if (!form) return;
 
-        function uploadMediaToStorage(file, id, mediaType) {
+        function uploadMedia(file, id, mediaType, fallbackBase64) {
             var ext = file.name.split('.').pop() || (mediaType === 'image' ? 'png' : 'mp4');
             var filepath = id + '/' + mediaType + '.' + ext;
             return uploadToStorage(file, 'shipment-media', filepath).then(function(publicUrl) {
                 return window.FDX.admin.saveShipmentMedia(id, mediaType, publicUrl);
+            }).catch(function() {
+                if (fallbackBase64) {
+                    return window.FDX.admin.saveShipmentMedia(id, mediaType, fallbackBase64);
+                }
             });
         }
 
@@ -727,6 +734,8 @@
             e.preventDefault();
             try {
             var id = window.FDX.admin.generateTrackingId();
+            var imgBase64 = previewEl ? (previewEl.dataset.image || '') : '';
+            var vidBase64 = videoPreviewEl ? (videoPreviewEl.dataset.video || '') : '';
 
             var shipment = {
                 id: id,
@@ -796,8 +805,8 @@
                 }, 5000);
 
                 var mediaPromises = [];
-                if (imageFile && imageFile.size > 0) mediaPromises.push(uploadMediaToStorage(imageFile, id, 'image'));
-                if (videoFile && videoFile.size > 0) mediaPromises.push(uploadMediaToStorage(videoFile, id, 'video'));
+                if (imageFile && imageFile.size > 0) mediaPromises.push(uploadMedia(imageFile, id, 'image', imgBase64));
+                if (videoFile && videoFile.size > 0) mediaPromises.push(uploadMedia(videoFile, id, 'video', vidBase64));
                 if (mediaPromises.length > 0) {
                     Promise.all(mediaPromises).catch(function(err) {
                         console.error('[Create] Media upload failed:', err);
@@ -1057,11 +1066,12 @@
             return '<div class="fxg-admin-form__group"><label class="fxg-admin-form__label">' + label + '</label><input type="' + type + '" class="fxg-admin-form__input" data-field="' + name + '" value="' + escapeHtml(value || '') + '"></div>';
         }
 
+        var displayIdMap = { sender: 'senderDisplay', recipient: 'recipientDisplay', package: 'shipmentDetails' };
+        var editIdMap = { sender: 'senderEdit', recipient: 'recipientEdit', package: 'packageEdit' };
+
         function showEdit(section, fields, obj) {
-            var displayId = section + 'Display';
-            var editId = section + 'Edit';
-            var displayEl = el.querySelector('#' + displayId);
-            var editEl = el.querySelector('#' + editId);
+            var displayEl = el.querySelector('#' + (displayIdMap[section] || section + 'Display'));
+            var editEl = el.querySelector('#' + (editIdMap[section] || section + 'Edit'));
             if (!editEl) return;
 
             var html = '<div class="fxg-admin-form__row">';
@@ -1074,13 +1084,13 @@
             html += '<button class="fxg-admin-btn fxg-admin-btn--outline fxg-admin-btn--small" data-edit-cancel="' + section + '">Cancel</button>';
             html += '</div>';
             editEl.innerHTML = html;
-            displayEl.style.display = 'none';
+            if (displayEl) displayEl.style.display = 'none';
             editEl.style.display = 'block';
         }
 
         function hideEdit(section) {
-            var displayEl = el.querySelector('#' + section + 'Display');
-            var editEl = el.querySelector('#' + section + 'Edit');
+            var displayEl = el.querySelector('#' + (displayIdMap[section] || section + 'Display'));
+            var editEl = el.querySelector('#' + (editIdMap[section] || section + 'Edit'));
             if (displayEl) displayEl.style.display = '';
             if (editEl) editEl.style.display = 'none';
         }
@@ -1838,6 +1848,7 @@
                 renderAlertBanner(el, shipment);
                 renderStepper(el, shipment);
                 renderScanEvents(el, shipment);
+                renderPackageMedia(el, shipment);
                 renderFacts(el, shipment);
             } catch (e) {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');

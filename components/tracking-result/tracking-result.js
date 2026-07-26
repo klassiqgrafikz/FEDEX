@@ -624,6 +624,7 @@
                 renderAlertBanner(el, shipment);
                 renderStepper(el, shipment);
                 renderScanEvents(el, shipment);
+                renderPackageMedia(el, shipment);
                 renderFacts(el, shipment);
             } catch (e) {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
