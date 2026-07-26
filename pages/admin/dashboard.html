@@ -112,6 +112,35 @@
         </div>
     </div>
 </div>
+
+    <div class="fxg-admin-section" id="tawkSettingsSection">
+        <div class="fxg-admin-form-card" style="max-width:100%">
+            <div class="fxg-admin-form-card__section">
+                <h3 class="fxg-admin-form-card__heading">Live Chat Settings (Tawk.to)</h3>
+                <div class="fxg-admin-form__group fxg-admin-form__group--full" style="margin-bottom:16px">
+                    <label class="fxg-admin-form__checkbox">
+                        <input type="checkbox" id="tawkEnabled">
+                        Enable Tawk.to live chat
+                    </label>
+                </div>
+                <div class="fxg-admin-form__row">
+                    <div class="fxg-admin-form__group">
+                        <label class="fxg-admin-form__label">Property / Project ID</label>
+                        <input type="text" id="tawkPropertyId" class="fxg-admin-form__input" placeholder="e.g. 6a66333abfed411d4618f20c">
+                    </div>
+                    <div class="fxg-admin-form__group">
+                        <label class="fxg-admin-form__label">Widget ID</label>
+                        <input type="text" id="tawkWidgetId" class="fxg-admin-form__input" placeholder="e.g. default">
+                    </div>
+                </div>
+            </div>
+            <div class="fxg-admin-form-card__actions">
+                <button class="fxg-admin-btn fxg-admin-btn--primary" id="saveTawkBtn">Save Settings</button>
+                <span id="tawkSaveMsg" style="font-size:12px;color:#2E7D32;align-self:center;display:none"></span>
+            </div>
+        </div>
+    </div>
+</div>
             </div>
         </main>
     </div>

@@ -416,6 +416,59 @@
                 }
             }
         });
+
+        initTawkSettings(el);
+    }
+
+    function initTawkSettings(el) {
+        var section = el.querySelector('#tawkSettingsSection');
+        if (!section) return;
+
+        var enabledCb = section.querySelector('#tawkEnabled');
+        var propertyInput = section.querySelector('#tawkPropertyId');
+        var widgetInput = section.querySelector('#tawkWidgetId');
+        var saveBtn = section.querySelector('#saveTawkBtn');
+        var msgEl = section.querySelector('#tawkSaveMsg');
+
+        function loadConfig() {
+            supabaseFetch('tawkto_config?id=eq.1').then(function(r) {
+                if (r.status === 404) throw new Error('Table not found');
+                return r.json();
+            }).then(function(data) {
+                if (data && data.length > 0) {
+                    var cfg = data[0];
+                    if (enabledCb) enabledCb.checked = cfg.enabled;
+                    if (propertyInput) propertyInput.value = cfg.property_id || '';
+                    if (widgetInput) widgetInput.value = cfg.widget_id || '';
+                }
+            }).catch(function(err) {
+                console.warn('[Tawk] Could not load config:', err.message);
+                if (msgEl) { msgEl.textContent = 'Table not found — run SQL migration'; msgEl.style.color = '#C62828'; msgEl.style.display = ''; }
+            });
+        }
+
+        function saveConfig() {
+            var body = {
+                id: 1,
+                enabled: enabledCb ? enabledCb.checked : false,
+                property_id: propertyInput ? propertyInput.value.trim() : '',
+                widget_id: widgetInput ? widgetInput.value.trim() || 'default' : 'default'
+            };
+            supabaseFetch('tawkto_config', {
+                method: 'POST',
+                body: body,
+                headers: { 'Prefer': 'resolution=merge-duplicates' }
+            }).then(function() {
+                if (msgEl) { msgEl.textContent = 'Settings saved!'; msgEl.style.color = '#2E7D32'; msgEl.style.display = ''; }
+                setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000);
+            }).catch(function(err) {
+                console.error('[Tawk] Save failed:', err.message);
+                if (msgEl) { msgEl.textContent = 'Save failed: ' + err.message; msgEl.style.color = '#C62828'; msgEl.style.display = ''; }
+            });
+        }
+
+        loadConfig();
+        if (saveBtn) saveBtn.addEventListener('click', saveConfig);
     }
 
     function showToast(msg, type) {

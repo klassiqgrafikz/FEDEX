@@ -2,48 +2,35 @@
     if (!window.FDX) window.FDX = {};
     if (!window.FDX.components) window.FDX.components = [];
 
-    /* ===========================================
-       Tawk.to white-label setup
-       =========================================== */
-    window.Tawk_API = window.Tawk_API || {};
+    var SUPABASE_URL = 'https://ytbrsiswpoqaaparfgon.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0YnJzaXN3cG9xYWFwYXJmZ29uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MzMyNjIsImV4cCI6MjEwMDUwOTI2Mn0.KkpG3hiscVSBtYDqZFCqHZnoNDOOJPnPWZ8vvV_UaN0';
 
-    window.Tawk_API.onLoad = function() {
-        Tawk_API.maximize();
-        setTimeout(function() { Tawk_API.minimize(); }, 200);
-    };
-
-    window.Tawk_API.onStatusChange = function(status) {
-        var el = document.querySelector('.fxg-chat-panel__status');
-        if (el) el.textContent = status === 'online' ? 'Online' : 'Offline';
-    };
-
-    window.Tawk_API.onChatMessage = function(msg) {
-        if (!msg || msg.type !== 'agent') return;
-        var text = msg.message || msg.text || msg.content || '';
-        if (!text) return;
-        var area = document.getElementById('chatMessages');
-        if (!area) return;
-        var div = document.createElement('div');
-        div.className = 'fxg-chat-msg fxg-chat-msg--bot';
-        div.innerHTML =
-            '<div class="fxg-chat-msg__avatar">' +
-                '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>' +
-            '</div>' +
-            '<div class="fxg-chat-msg__content"><p>' + escHtml(text) + '</p></div>';
-        area.appendChild(div);
-        area.scrollTop = area.scrollHeight;
-    };
-
-    window.Tawk_LoadStart = new Date();
-    (function() {
-        var s1 = document.createElement('script');
-        var s0 = document.getElementsByTagName('script')[0];
-        s1.async = true;
-        s1.src = 'https://embed.tawk.to/6a66333abfed411d4618f20c/default';
-        s1.charset = 'UTF-8';
-        s1.setAttribute('crossorigin', '*');
-        s0.parentNode.insertBefore(s1, s0);
-    })();
+    function supabaseFetch(path, options) {
+        var url = SUPABASE_URL + '/rest/v1/' + path;
+        var method = (options && options.method) || 'GET';
+        var headers = {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Prefer': 'return=minimal'
+        };
+        if (method === 'POST' || method === 'PATCH' || method === 'PUT') {
+            headers['Content-Type'] = 'application/json';
+        }
+        if (options && options.headers) {
+            for (var k in options.headers) headers[k] = options.headers[k];
+        }
+        return fetch(url, {
+            method: method,
+            headers: headers,
+            body: options && options.body ? JSON.stringify(options.body) : null
+        }).then(function(r) {
+            if (!r.ok) { return r.text().then(function(t) { throw new Error(method + ' ' + path + ' ' + r.status + ': ' + t.slice(0, 200)); }); }
+            return r;
+        }).catch(function(err) {
+            console.warn('[Tawk] Supabase request failed:', err.message);
+            throw err;
+        });
+    }
 
     function escHtml(str) {
         var d = document.createElement('div');
@@ -134,32 +121,88 @@
                 });
             });
 
-            /* Enable chat input and wire to Tawk.to */
-            var chatInput = document.querySelector('.fxg-chat-panel__input input');
-            var sendBtn = document.querySelector('.fxg-chat-panel__input button');
-            var chatArea = document.getElementById('chatMessages');
-
-            function sendMessage() {
-                var val = chatInput.value.trim();
-                if (!val) return;
-                var div = document.createElement('div');
-                div.className = 'fxg-chat-msg fxg-chat-msg--user';
-                div.innerHTML = '<div class="fxg-chat-msg__content"><p>' + escHtml(val) + '</p></div>';
-                chatArea.appendChild(div);
-                chatArea.scrollTop = chatArea.scrollHeight;
-                if (window.Tawk_API && Tawk_API.sendMessage) Tawk_API.sendMessage(val);
-                chatInput.value = '';
-            }
-
-            if (chatInput && sendBtn) {
-                chatInput.disabled = false;
-                chatInput.placeholder = 'Type your message...';
-                sendBtn.disabled = false;
-                sendBtn.addEventListener('click', sendMessage);
-                chatInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') sendMessage();
-                });
-            }
+            /* Fetch Tawk.to config from Supabase */
+            supabaseFetch('tawkto_config?id=eq.1').then(function(r) {
+                return r.json();
+            }).then(function(data) {
+                if (data && data.length > 0 && data[0].enabled) {
+                    initTawk(data[0].property_id, data[0].widget_id || 'default');
+                }
+            }).catch(function(err) {
+                console.warn('[Tawk] Config not loaded, chat stays default:', err.message);
+            });
         }
     });
+
+    /* ===========================================
+       Tawk.to initialization (called when enabled)
+       =========================================== */
+    function initTawk(propertyId, widgetId) {
+        window.Tawk_API = window.Tawk_API || {};
+
+        window.Tawk_API.onLoad = function() {
+            Tawk_API.maximize();
+            setTimeout(function() { Tawk_API.minimize(); }, 200);
+        };
+
+        window.Tawk_API.onStatusChange = function(status) {
+            var el = document.querySelector('.fxg-chat-panel__status');
+            if (el) el.textContent = status === 'online' ? 'Online' : 'Offline';
+        };
+
+        window.Tawk_API.onChatMessage = function(msg) {
+            if (!msg || msg.type !== 'agent') return;
+            var text = msg.message || msg.text || msg.content || '';
+            if (!text) return;
+            var area = document.getElementById('chatMessages');
+            if (!area) return;
+            var div = document.createElement('div');
+            div.className = 'fxg-chat-msg fxg-chat-msg--bot';
+            div.innerHTML =
+                '<div class="fxg-chat-msg__avatar">' +
+                    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>' +
+                '</div>' +
+                '<div class="fxg-chat-msg__content"><p>' + escHtml(text) + '</p></div>';
+            area.appendChild(div);
+            area.scrollTop = area.scrollHeight;
+        };
+
+        window.Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement('script');
+            var s0 = document.getElementsByTagName('script')[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/' + propertyId + '/' + widgetId;
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+
+        /* Enable chat input */
+        var chatInput = document.querySelector('.fxg-chat-panel__input input');
+        var sendBtn = document.querySelector('.fxg-chat-panel__input button');
+        var chatArea = document.getElementById('chatMessages');
+
+        function sendMessage() {
+            var val = chatInput.value.trim();
+            if (!val) return;
+            var div = document.createElement('div');
+            div.className = 'fxg-chat-msg fxg-chat-msg--user';
+            div.innerHTML = '<div class="fxg-chat-msg__content"><p>' + escHtml(val) + '</p></div>';
+            chatArea.appendChild(div);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            if (window.Tawk_API && Tawk_API.sendMessage) Tawk_API.sendMessage(val);
+            chatInput.value = '';
+        }
+
+        if (chatInput && sendBtn) {
+            chatInput.disabled = false;
+            chatInput.placeholder = 'Type your message...';
+            sendBtn.disabled = false;
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        }
+    }
 })();
