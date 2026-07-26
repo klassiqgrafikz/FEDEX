@@ -46,6 +46,6 @@
 }
 
 @media (max-width: 480px) {
-    .fxg-quicklinks__grid { grid-template-columns: 1fr; gap: 2px; }
-    .fxg-quicklink { padding: 12px 16px; }
+    .fxg-quicklinks__grid { grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .fxg-quicklink { padding: 12px 10px; gap: 8px; }
 }
