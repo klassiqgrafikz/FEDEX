@@ -784,13 +784,12 @@
             supabaseFetch('tawkto_config', {
                 method: 'POST',
                 body: body,
-                headers: { 'Prefer': 'resolution=merge-duplicates' }
+                headers: { 'Prefer': 'resolution=merge-duplicates, return=minimal' }
             }).then(function() {
-                if (msgEl) { msgEl.textContent = 'Settings saved!'; msgEl.style.color = '#2E7D32'; msgEl.style.display = ''; }
-                setTimeout(function() { if (msgEl) msgEl.style.display = 'none'; }, 3000);
+                showToast('Tawk.to settings saved', 'success');
             }).catch(function(err) {
                 console.error('[Tawk] Save failed:', err.message);
-                if (msgEl) { msgEl.textContent = 'Save failed: ' + err.message; msgEl.style.color = '#C62828'; msgEl.style.display = ''; }
+                showToast('Save failed: ' + err.message, 'error');
             });
         }
 
