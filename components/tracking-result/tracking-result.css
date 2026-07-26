@@ -464,7 +464,7 @@
     content: '';
     position: absolute;
     left: 40px;
-    top: 0;
+    top: 44px;
     bottom: 0;
     width: 22px;
     background: #4b1567;
@@ -712,7 +712,7 @@
     .fxg-tr-stepper__label { font-size: 9px; max-width: 55px; margin-top: 6px; letter-spacing: 0.1px; }
     .fxg-tr-stepper__date { font-size: 9px; }
     .fxg-tr-scans { padding: 0 20px 16px; }
-    .fxg-tr-scans::before { left: 28px; width: 16px; border-radius: 8px 8px 0 0; }
+    .fxg-tr-scans::before { left: 28px; top: 40px; width: 16px; border-radius: 8px 8px 0 0; }
     .fxg-tr-scans__item { gap: 14px; padding: 10px 0; }
     .fxg-tr-scans__time { font-size: 11px; }
     .fxg-tr-scans__status { font-size: 13px; }

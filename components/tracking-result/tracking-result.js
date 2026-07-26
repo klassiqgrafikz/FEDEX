@@ -328,7 +328,7 @@
             html += '<div class="fxg-tr-scans__item' + (isActive ? ' fxg-tr-scans__item--active fxg-tr-scans__item--' + escape(statusKey) : '') + '">';
             html += '<div class="fxg-tr-scans__dot ' + sc + '">';
             if (isActive) {
-                html += '<svg viewBox="0 0 64 64" width="28" height="28"><circle cx="32" cy="32" r="14" stroke="#fff" stroke-width="3" fill="none"/><polyline points="26,24 36,32 26,40" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                html += '<svg viewBox="0 0 64 64" width="28" height="28"><circle cx="32" cy="32" r="20" stroke="#fff" stroke-width="3" fill="none"/><polyline points="24,24 38,32 24,40" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
             }
             html += '</div>';
             html += '<div class="fxg-tr-scans__content">';
