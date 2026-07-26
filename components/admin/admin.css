@@ -624,6 +624,33 @@
     background: #FAFBFC;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
+    position: relative;
+}
+
+.fxg-admin-remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.15s;
+    z-index: 2;
+}
+
+.fxg-admin-remove-btn:hover {
+    background: rgba(0,0,0,0.8);
 }
 
 .fxg-admin-image-upload__preview:hover {

@@ -191,6 +191,16 @@
         });
     }
 
+    function deleteFromStorage(bucket, filepath) {
+        return fetch(SUPABASE_URL + '/storage/v1/object/' + bucket + '/' + filepath, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+            }
+        });
+    }
+
     function deleteShipment(id) {
         delete _cache.shipments[id];
         return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
@@ -311,6 +321,7 @@
         fetchShipment: fetchShipment,
         saveShipment: saveShipment,
         saveShipmentMedia: saveShipmentMedia,
+        deleteFromStorage: deleteFromStorage,
         deleteShipment: deleteShipment,
         deleteAllShipments: deleteAllShipments,
         getStats: getStats,
@@ -427,6 +438,19 @@
         });
     }
 
+    function showToast(msg, type) {
+        var toast = document.createElement('div');
+        var bg = type === 'success' ? '#2E7D32' : '#C62828';
+        toast.textContent = msg;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;padding:12px 20px;border-radius:8px;background:' + bg + ';color:#fff;font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.3s;font-family:inherit';
+        document.body.appendChild(toast);
+        requestAnimationFrame(function() { toast.style.opacity = '1'; });
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3500);
+    }
+
     function initCreate(el) {
         supabaseFetch('tracking_config?id=eq.1', {
             headers: { 'Prefer': '' }
@@ -446,59 +470,100 @@
         var videoPreviewEl = el.querySelector('#videoPreview');
         var videoInput = el.querySelector('#packageVideo');
         var trackingDisplay = el.querySelector('#newTrackingId');
-        var imageFile = null;
-        var videoFile = null;
+        var uploadedImageUrl = null;
+        var uploadedVideoUrl = null;
+        var imageStoragePath = null;
+        var videoStoragePath = null;
+
+        function handleFile(file, isImage) {
+            var preview = isImage ? previewEl : videoPreviewEl;
+            var input = isImage ? fileInput : videoInput;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var ext = file.name.split('.').pop() || (isImage ? 'png' : 'mp4');
+                var ts = Date.now();
+                var rand = Math.random().toString(36).slice(2, 6);
+                var path = ts + '_' + rand + '.' + ext;
+                var dataUrl = e.target.result;
+
+                if (isImage) {
+                    previewEl.innerHTML = '<img src="' + dataUrl + '" alt="Package image"><button class="fxg-admin-remove-btn" data-remove="image" title="Remove image">&times;</button>';
+                } else {
+                    videoPreviewEl.innerHTML = '<video src="' + dataUrl + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video><button class="fxg-admin-remove-btn" data-remove="video" title="Remove video">&times;</button>';
+                }
+
+                uploadToStorage(file, 'shipment-media', path).then(function(publicUrl) {
+                    if (isImage) {
+                        uploadedImageUrl = publicUrl;
+                        imageStoragePath = path;
+                    } else {
+                        uploadedVideoUrl = publicUrl;
+                        videoStoragePath = path;
+                    }
+                    showToast((isImage ? 'Image' : 'Video') + ' saved', 'success');
+                }).catch(function() {
+                    showToast('Failed to upload ' + (isImage ? 'image' : 'video'), 'error');
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearMedia(isImage) {
+            var path = isImage ? imageStoragePath : videoStoragePath;
+            if (path) deleteFromStorage('shipment-media', path);
+            if (isImage) {
+                uploadedImageUrl = null;
+                imageStoragePath = null;
+                previewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package image</div>';
+                fileInput.value = '';
+            } else {
+                uploadedVideoUrl = null;
+                videoStoragePath = null;
+                videoPreviewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package video</div>';
+                videoInput.value = '';
+            }
+        }
 
         if (previewEl && fileInput) {
-            previewEl.addEventListener('click', function() { fileInput.click(); });
+            previewEl.addEventListener('click', function(e) {
+                if (e.target.closest('.fxg-admin-remove-btn')) return;
+                fileInput.click();
+            });
             fileInput.addEventListener('change', function() {
                 var file = fileInput.files[0];
                 if (!file) return;
-                imageFile = file;
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    previewEl.innerHTML = '<img src="' + e.target.result + '" alt="Package image">';
-                    previewEl.dataset.image = e.target.result;
-                };
-                reader.readAsDataURL(file);
+                clearMedia(true);
+                handleFile(file, true);
             });
         }
 
         if (videoPreviewEl && videoInput) {
-            videoPreviewEl.addEventListener('click', function() { videoInput.click(); });
+            videoPreviewEl.addEventListener('click', function(e) {
+                if (e.target.closest('.fxg-admin-remove-btn')) return;
+                videoInput.click();
+            });
             videoInput.addEventListener('change', function() {
                 var file = videoInput.files[0];
                 if (!file) return;
-                videoFile = file;
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    videoPreviewEl.innerHTML = '<video src="' + e.target.result + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
-                    videoPreviewEl.dataset.video = e.target.result;
-                };
-                reader.readAsDataURL(file);
+                clearMedia(false);
+                handleFile(file, false);
             });
         }
+
+        el.addEventListener('click', function(e) {
+            var rmBtn = e.target.closest('[data-remove]');
+            if (rmBtn) {
+                e.preventDefault();
+                clearMedia(rmBtn.getAttribute('data-remove') === 'image');
+            }
+        });
 
         if (!form) return;
-
-        function uploadMedia(file, id, mediaType, fallbackBase64) {
-            var ext = file.name.split('.').pop() || (mediaType === 'image' ? 'png' : 'mp4');
-            var filepath = id + '/' + mediaType + '.' + ext;
-            return uploadToStorage(file, 'shipment-media', filepath).then(function(publicUrl) {
-                return saveShipmentMedia(id, mediaType, publicUrl).then(function() { return publicUrl; });
-            }).catch(function() {
-                if (fallbackBase64) {
-                    return saveShipmentMedia(id, mediaType, fallbackBase64).then(function() { return fallbackBase64; });
-                }
-            });
-        }
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             try {
             var id = window.FDX.admin.generateTrackingId();
-            var imgBase64 = previewEl ? (previewEl.dataset.image || '') : '';
-            var vidBase64 = videoPreviewEl ? (videoPreviewEl.dataset.video || '') : '';
 
             var shipment = {
                 id: id,
@@ -557,26 +622,27 @@
                 form.reset();
                 if (previewEl) {
                     previewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package image</div>';
-                    previewEl.dataset.image = '';
                 }
                 if (videoPreviewEl) {
                     videoPreviewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package video</div>';
-                    videoPreviewEl.dataset.video = '';
                 }
                 setTimeout(function() {
                     if (alertEl) alertEl.style.display = 'none';
                 }, 5000);
 
-                var mediaTasks = [];
-                if (imageFile && imageFile.size > 0) mediaTasks.push({ type: 'image', promise: uploadMedia(imageFile, id, 'image', imgBase64) });
-                if (videoFile && videoFile.size > 0) mediaTasks.push({ type: 'video', promise: uploadMedia(videoFile, id, 'video', vidBase64) });
-                if (mediaTasks.length > 0) {
-                    Promise.all(mediaTasks.map(function(t) { return t.promise; })).then(function(results) {
-                        _cache.shipments[id].media = results.filter(Boolean).map(function(dataUrl, idx) {
-                            return { media_type: mediaTasks[idx].type, data: dataUrl };
-                        });
-                    }).catch(function(err) {
-                        console.error('[Create] Media upload failed:', err);
+                var mediaPromise = null;
+                if (uploadedImageUrl) {
+                    mediaPromise = saveShipmentMedia(id, 'image', uploadedImageUrl);
+                }
+                if (uploadedVideoUrl) {
+                    var p = saveShipmentMedia(id, 'video', uploadedVideoUrl);
+                    mediaPromise = mediaPromise ? Promise.all([mediaPromise, p]) : p;
+                }
+                if (mediaPromise) {
+                    mediaPromise.then(function() {
+                        _cache.shipments[id].media = [];
+                        if (uploadedImageUrl) _cache.shipments[id].media.push({ media_type: 'image', data: uploadedImageUrl });
+                        if (uploadedVideoUrl) _cache.shipments[id].media.push({ media_type: 'video', data: uploadedVideoUrl });
                     });
                 }
             }).catch(function() {
