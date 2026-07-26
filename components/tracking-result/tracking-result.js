@@ -309,14 +309,18 @@
         var sorted = tl.slice().sort(function (a, b) { return new Date(a.timestamp) - new Date(b.timestamp); });
         var html = '';
         var curDate = null;
+        var dateGroups = 0;
 
         sorted.forEach(function (entry, idx) {
             var d = entry.timestamp ? fmtShort(entry.timestamp) : '';
             if (d && d !== curDate) {
                 if (curDate !== null) html += '</div>';
                 curDate = d;
+                dateGroups++;
                 html += '<div class="fxg-tr-scans__date-group">';
-                html += '<div class="fxg-tr-scans__date-header">' + escape(d) + '</div>';
+                if (dateGroups > 1) {
+                    html += '<div class="fxg-tr-scans__date-header">' + escape(d) + '</div>';
+                }
             } else if (!d && curDate === null) {
                 html += '<div class="fxg-tr-scans__date-group">';
                 curDate = '';
@@ -328,7 +332,7 @@
             html += '<div class="fxg-tr-scans__item' + (isActive ? ' fxg-tr-scans__item--active fxg-tr-scans__item--' + escape(statusKey) : '') + '">';
             html += '<div class="fxg-tr-scans__dot ' + sc + '">';
             if (isActive) {
-                html += '<svg viewBox="0 0 64 64" width="28" height="28"><circle cx="32" cy="32" r="20" stroke="#fff" stroke-width="3" fill="none"/><polyline points="24,24 38,32 24,40" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                html += '<svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="23" stroke="#fff" stroke-width="3" fill="none"/><polyline points="18,18 34,26 18,34" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
             }
             html += '</div>';
             html += '<div class="fxg-tr-scans__content">';
