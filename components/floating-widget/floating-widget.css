@@ -216,6 +216,7 @@
     white-space: nowrap;
     opacity: 1;
     pointer-events: none;
+    margin-right: 42px;
     animation: askMeBlink 1.5s ease-in-out infinite;
 }
 
