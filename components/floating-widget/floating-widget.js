@@ -82,7 +82,6 @@
             });
 
             /* Start the ASK ME slide cycle */
-            startTooltipCycle();
         }
     });
 })();

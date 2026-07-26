@@ -158,7 +158,6 @@
                 panel.classList.remove('fxg-chat-panel--open');
                 bubble.classList.remove('fxg-chat-bubble--active');
             });
-            });
 
             /* Option buttons */
             var optionBtns = document.querySelectorAll('.fxg-chat-options__btn');
@@ -190,7 +189,6 @@
             });
 
             /* Start the ASK ME slide cycle */
-            startTooltipCycle();
         }
     });
 })();
