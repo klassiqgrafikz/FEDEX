@@ -109,6 +109,54 @@
     if (!window.FDX) window.FDX = {};
     if (!window.FDX.components) window.FDX.components = [];
 
+    /* ===========================================
+       Tawk.to white-label setup
+       =========================================== */
+    window.Tawk_API = window.Tawk_API || {};
+
+    window.Tawk_API.onLoad = function() {
+        Tawk_API.hideWidget();
+    };
+
+    window.Tawk_API.onStatusChange = function(status) {
+        var el = document.querySelector('.fxg-chat-panel__status');
+        if (el) el.textContent = status === 'online' ? 'Online' : 'Offline';
+    };
+
+    window.Tawk_API.onChatMessage = function(msg) {
+        if (!msg || msg.type !== 'agent') return;
+        var text = msg.message || msg.text || msg.content || '';
+        if (!text) return;
+        var area = document.getElementById('chatMessages');
+        if (!area) return;
+        var div = document.createElement('div');
+        div.className = 'fxg-chat-msg fxg-chat-msg--bot';
+        div.innerHTML =
+            '<div class="fxg-chat-msg__avatar">' +
+                '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>' +
+            '</div>' +
+            '<div class="fxg-chat-msg__content"><p>' + escHtml(text) + '</p></div>';
+        area.appendChild(div);
+        area.scrollTop = area.scrollHeight;
+    };
+
+    window.Tawk_LoadStart = new Date();
+    (function() {
+        var s1 = document.createElement('script');
+        var s0 = document.getElementsByTagName('script')[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/6a66333abfed411d4618f20c/default';
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+    })();
+
+    function escHtml(str) {
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(str));
+        return d.innerHTML;
+    }
+
     window.FDX.components.push(function() {
         var trackBtn = document.getElementById('floatingTrackBtn');
         var trackInput = document.getElementById('floatingTrackingInput');
@@ -185,10 +233,39 @@
 
                     messagesArea.appendChild(msgDiv);
                     messagesArea.scrollTop = messagesArea.scrollHeight;
+
+                    if (window.Tawk_API && Tawk_API.sendMessage) {
+                        Tawk_API.sendMessage(label);
+                    }
                 });
             });
 
-            /* Start the ASK ME slide cycle */
+            /* Enable chat input and wire to Tawk.to */
+            var chatInput = document.querySelector('.fxg-chat-panel__input input');
+            var sendBtn = document.querySelector('.fxg-chat-panel__input button');
+            var chatArea = document.getElementById('chatMessages');
+
+            function sendMessage() {
+                var val = chatInput.value.trim();
+                if (!val) return;
+                var div = document.createElement('div');
+                div.className = 'fxg-chat-msg fxg-chat-msg--user';
+                div.innerHTML = '<div class="fxg-chat-msg__content"><p>' + escHtml(val) + '</p></div>';
+                chatArea.appendChild(div);
+                chatArea.scrollTop = chatArea.scrollHeight;
+                if (window.Tawk_API && Tawk_API.sendMessage) Tawk_API.sendMessage(val);
+                chatInput.value = '';
+            }
+
+            if (chatInput && sendBtn) {
+                chatInput.disabled = false;
+                chatInput.placeholder = 'Type your message...';
+                sendBtn.disabled = false;
+                sendBtn.addEventListener('click', sendMessage);
+                chatInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') sendMessage();
+                });
+            }
         }
     });
 })();

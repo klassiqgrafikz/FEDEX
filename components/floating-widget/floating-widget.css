@@ -372,6 +372,17 @@
 .fxg-chat-msg--bot {
     align-self: flex-start;
 }
+.fxg-chat-msg--user {
+    align-self: flex-end;
+}
+.fxg-chat-msg--user .fxg-chat-msg__content {
+    background: #660099;
+    color: #fff;
+    border-radius: 14px 4px 14px 14px;
+}
+.fxg-chat-msg--user .fxg-chat-msg__content p {
+    color: #fff;
+}
 
 .fxg-chat-msg__avatar {
     width: 32px;
