@@ -129,8 +129,6 @@
     }
 
     function fetchShipment(id) {
-        if (_cache.shipments[id]) return Promise.resolve(_cache.shipments[id]);
-        console.log('[FDX fetchShipment] Querying Supabase for:', id);
         return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
             headers: { 'Prefer': '' }
         }).then(function(res) {
