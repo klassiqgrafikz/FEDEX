@@ -909,8 +909,7 @@
             var newStatus = statusSelect.value;
             var remark = el.querySelector('#updateRemark').value.trim();
 
-            if (newStatus === shipment.currentStatus) return;
-
+            var isSame = newStatus === shipment.currentStatus;
             shipment.currentStatus = newStatus;
             shipment.updatedAt = new Date().toISOString();
             shipment.statusTimeline.push({
@@ -918,11 +917,10 @@
                 timestamp: shipment.updatedAt,
                 remark: remark
             });
-
             var toast = document.createElement('div');
             toast.className = 'fxg-admin-alert fxg-admin-alert--success';
             toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:16px 24px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.3s;max-width:400px';
-            toast.textContent = 'Status updated to "' + newStatus + '" successfully!';
+            toast.textContent = isSame ? 'Remark added to "' + newStatus + '"' : 'Status updated to "' + newStatus + '" successfully!';
             document.body.appendChild(toast);
             requestAnimationFrame(function() { toast.style.opacity = '1'; });
             setTimeout(function() { toast.style.opacity = '0'; }, 2200);
