@@ -1065,6 +1065,55 @@
 
         renderAll();
 
+        /* Tracking ID edit toggle */
+        var editIdBtn = el.querySelector('#editTrackingIdBtn');
+        var saveIdBtn = el.querySelector('#saveTrackingIdBtn');
+        var cancelIdBtn = el.querySelector('#cancelTrackingIdBtn');
+        var idWrap = el.querySelector('#trackingIdWrap');
+        var idEdit = el.querySelector('#trackingIdEdit');
+        var idInput = el.querySelector('#trackingIdInput');
+
+        function showTrackingIdEdit() {
+            if (idInput) idInput.value = shipment.id || '';
+            if (idWrap) idWrap.style.display = 'none';
+            if (idEdit) idEdit.style.display = 'block';
+        }
+
+        function hideTrackingIdEdit() {
+            if (idWrap) idWrap.style.display = 'flex';
+            if (idEdit) idEdit.style.display = 'none';
+        }
+
+        if (editIdBtn) {
+            editIdBtn.addEventListener('click', showTrackingIdEdit);
+        }
+        if (cancelIdBtn) {
+            cancelIdBtn.addEventListener('click', hideTrackingIdEdit);
+        }
+        if (saveIdBtn) {
+            saveIdBtn.addEventListener('click', function() {
+                var newId = idInput ? idInput.value.trim() : '';
+                if (!newId) {
+                    showToast('Tracking ID cannot be empty', 'error');
+                    return;
+                }
+                if (newId === shipment.id) {
+                    hideTrackingIdEdit();
+                    return;
+                }
+                var oldId = shipment.id;
+                shipment.id = newId;
+                shipment.updatedAt = new Date().toISOString();
+                F.saveShipment(shipment).then(function() {
+                    var newUrl = window.location.pathname + '?id=' + encodeURIComponent(newId);
+                    window.location.href = newUrl;
+                }).catch(function() {
+                    shipment.id = oldId;
+                    showToast('Failed to update tracking ID', 'error');
+                });
+            });
+        }
+
         if (!shipment.media || shipment.media.length === 0) {
             F.fetchShipment(id).then(function(fresh) {
                 if (fresh && fresh.media && fresh.media.length > 0) {

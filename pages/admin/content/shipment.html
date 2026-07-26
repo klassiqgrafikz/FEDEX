@@ -1,7 +1,24 @@
 <div id="adminContent" data-page-type="shipment">
     <div class="fxg-admin-detail-header">
         <div class="fxg-admin-detail-header__info">
-            <h1 id="shipmentTrackingId"></h1>
+            <div id="trackingIdWrap" style="display:flex;align-items:center;gap:10px;">
+                <h1 id="shipmentTrackingId"></h1>
+                <button class="fxg-admin-btn-icon" id="editTrackingIdBtn" title="Edit Tracking ID">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                </button>
+            </div>
+            <div id="trackingIdEdit" style="display:none">
+                <div class="fxg-admin-form__row">
+                    <div class="fxg-admin-form__group">
+                        <label class="fxg-admin-form__label">Tracking ID</label>
+                        <input type="text" id="trackingIdInput" class="fxg-admin-form__input">
+                    </div>
+                </div>
+                <div class="fxg-admin-edit-actions">
+                    <button class="fxg-admin-btn fxg-admin-btn--success fxg-admin-btn--small" id="saveTrackingIdBtn">Save</button>
+                    <button class="fxg-admin-btn fxg-admin-btn--outline fxg-admin-btn--small" id="cancelTrackingIdBtn">Cancel</button>
+                </div>
+            </div>
             <p id="shipmentPackageName"></p>
             <p style="font-size:12px;color:#999;margin-top:4px">Created <span id="shipmentCreatedDate"></span> &mdash; Status: <span id="shipmentStatus"></span></p>
         </div>
