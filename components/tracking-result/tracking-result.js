@@ -310,7 +310,7 @@
         var html = '';
         var curDate = null;
 
-        sorted.forEach(function (entry) {
+        sorted.forEach(function (entry, idx) {
             var d = entry.timestamp ? fmtShort(entry.timestamp) : '';
             if (d && d !== curDate) {
                 if (curDate !== null) html += '</div>';
@@ -323,7 +323,8 @@
             }
 
             var sc = scanDotClass(entry.status);
-            html += '<div class="fxg-tr-scans__item">';
+            var isActive = (idx === sorted.length - 1);
+            html += '<div class="fxg-tr-scans__item' + (isActive ? ' fxg-tr-scans__item--active' : '') + '">';
             html += '<div class="fxg-tr-scans__dot ' + sc + '"></div>';
             html += '<div class="fxg-tr-scans__content">';
             if (entry.timestamp) html += '<div class="fxg-tr-scans__time">' + escape(fmtTime(entry.timestamp)) + '</div>';
