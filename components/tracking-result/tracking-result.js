@@ -314,6 +314,7 @@
 
         var facts = [];
         facts.push({ label: 'TRACKING NUMBER', value: shipment.id || '-' });
+        if (shipment.packageName) facts.push({ label: 'PACKAGE NAME', value: shipment.packageName });
         if (shipment.createdAt) facts.push({ label: 'SHIP DATE', value: fmtShort(shipment.createdAt) });
         if (shipment.serviceType) facts.push({ label: 'SERVICE', value: shipment.serviceType });
         if (shipment.weight) facts.push({ label: 'WEIGHT', value: shipment.weight });
@@ -324,7 +325,8 @@
         if (shipment.referenceNumber) facts.push({ label: 'REFERENCE', value: shipment.referenceNumber });
         if (shipment.signatureRequired) facts.push({ label: 'SIGNATURE SERVICES', value: 'Yes' });
         var re = shipment.recipient || {};
-        if (re.isResidential) facts.push({ label: 'DELIVERED TO', value: 'Residence' });
+        var addrParts = [re.address, re.city, re.state, re.zip, re.country].filter(Boolean);
+        if (addrParts.length > 0) facts.push({ label: 'DELIVERED TO', value: addrParts.join(', ') });
         if (shipment.currentStatus === 'Delivered' && shipment.signatureName) {
             facts.push({ label: 'SIGNED BY', value: shipment.signatureName });
         }
