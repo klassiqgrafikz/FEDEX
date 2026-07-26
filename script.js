@@ -141,44 +141,15 @@
         var bubble = document.getElementById('chatBubble');
         var panel = document.getElementById('chatPanel');
         var closeBtn = document.getElementById('chatClose');
-        var tooltip = document.getElementById('chatTooltip');
-        var tooltipTimer = null;
-        var tooltipTimeout = null;
-
-        function showTooltip() {
-            if (!tooltip || panel.classList.contains('fxg-chat-panel--open')) return;
-            tooltip.classList.add('fxg-chat-bubble__tooltip--visible');
-            clearTimeout(tooltipTimeout);
-            tooltipTimeout = setTimeout(function() {
-                tooltip.classList.remove('fxg-chat-bubble__tooltip--visible');
-                clearTimeout(tooltipTimer);
-                tooltipTimer = setTimeout(showTooltip, 3000);
-            }, 5000);
-        }
-
-        function startTooltipCycle() {
-            clearTimeout(tooltipTimer);
-            clearTimeout(tooltipTimeout);
-            tooltipTimer = setTimeout(showTooltip, 3000);
-        }
-
-        function stopTooltipCycle() {
-            clearTimeout(tooltipTimer);
-            clearTimeout(tooltipTimeout);
-            if (tooltip) tooltip.classList.remove('fxg-chat-bubble__tooltip--visible');
-        }
-
         if (bubble && panel && closeBtn) {
             bubble.addEventListener('click', function() {
                 var isOpen = panel.classList.contains('fxg-chat-panel--open');
                 if (isOpen) {
                     panel.classList.remove('fxg-chat-panel--open');
                     bubble.classList.remove('fxg-chat-bubble--active');
-                    startTooltipCycle();
                 } else {
                     panel.classList.add('fxg-chat-panel--open');
                     bubble.classList.add('fxg-chat-bubble--active');
-                    stopTooltipCycle();
                 }
             });
 
@@ -186,7 +157,7 @@
                 e.stopPropagation();
                 panel.classList.remove('fxg-chat-panel--open');
                 bubble.classList.remove('fxg-chat-bubble--active');
-                startTooltipCycle();
+            });
             });
 
             /* Option buttons */
