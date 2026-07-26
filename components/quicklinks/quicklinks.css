@@ -15,7 +15,7 @@
     gap: 12px;
     padding: 16px 20px;
     background: var(--fedex-white);
-    border: 1px solid var(--fedex-lightgray);
+    border: 1px solid #fff;
     transition: all 0.2s;
 }
 .fxg-quicklink:hover {
