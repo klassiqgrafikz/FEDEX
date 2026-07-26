@@ -345,6 +345,23 @@
         container.innerHTML = html;
     }
 
+    function renderPackageMedia(el, shipment) {
+        var container = el.querySelector('#trPackageMedia');
+        if (!container) return;
+        var hasImage = shipment.image;
+        var hasVideo = shipment.packageVideo;
+        if (!hasImage && !hasVideo) { container.innerHTML = ''; return; }
+        var html = '<div class="fxg-tr-media__inner">';
+        if (hasImage) {
+            html += '<div class="fxg-tr-media__item"><img src="' + shipment.image + '" alt="Package image"></div>';
+        }
+        if (hasVideo) {
+            html += '<div class="fxg-tr-media__item"><video src="' + shipment.packageVideo + '" muted controls></video></div>';
+        }
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
     function renderTrackingHeader(el, shipment) {
         var headerEl = el.querySelector('#trHeader');
         if (!headerEl) return;
@@ -450,6 +467,7 @@
         '<div class="fxg-tr-stepper__step" data-step="5"><div class="fxg-tr-stepper__circle"></div><span class="fxg-tr-stepper__label">Delivered</span><span class="fxg-tr-stepper__date" id="trStepDate5"></span></div>',
         '</div></div>',
         '<div class="fxg-tr-scans" id="trScansContainer"></div>',
+        '<div class="fxg-tr-media" id="trPackageMedia"></div>',
         '<div class="fxg-tr-facts" id="trShipmentFacts"></div>',
         '</div></div></div>'
     ].join('');
@@ -506,6 +524,7 @@
                 renderAlertBanner(card, shipment);
                 renderStepper(card, shipment);
                 renderScanEvents(card, shipment);
+                renderPackageMedia(card, shipment);
                 renderFacts(card, shipment);
             } catch (e) {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');

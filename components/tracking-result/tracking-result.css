@@ -588,6 +588,37 @@
     margin-top: 2px;
 }
 
+/* ====== Package Media ====== */
+.fxg-tr-media {
+    padding: 20px 32px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.fxg-tr-media__inner {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.fxg-tr-media__item {
+    flex: 1 1 280px;
+    max-width: 400px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e8e8e8;
+    background: #fafafa;
+}
+
+.fxg-tr-media__item img,
+.fxg-tr-media__item video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: contain;
+}
+
 /* ====== Shipment Facts ====== */
 .fxg-tr-facts {
     padding: 20px 32px 28px;

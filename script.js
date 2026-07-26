@@ -270,6 +270,7 @@
             id: s.id,
             package_name: s.packageName,
             image: s.image,
+            package_video: s.packageVideo,
             sender: s.sender,
             recipient: s.recipient,
             weight: s.weight,
@@ -290,6 +291,7 @@
             id: r.id,
             packageName: r.package_name,
             image: r.image,
+            packageVideo: r.package_video,
             sender: r.sender,
             recipient: r.recipient,
             weight: r.weight,
@@ -636,6 +638,8 @@
         var alertEl = el.querySelector('#createAlert');
         var previewEl = el.querySelector('#imagePreview');
         var fileInput = el.querySelector('#packageImage');
+        var videoPreviewEl = el.querySelector('#videoPreview');
+        var videoInput = el.querySelector('#packageVideo');
         var trackingDisplay = el.querySelector('#newTrackingId');
 
         if (previewEl && fileInput) {
@@ -652,6 +656,20 @@
             });
         }
 
+        if (videoPreviewEl && videoInput) {
+            videoPreviewEl.addEventListener('click', function() { videoInput.click(); });
+            videoInput.addEventListener('change', function() {
+                var file = videoInput.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    videoPreviewEl.innerHTML = '<video src="' + e.target.result + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
+                    videoPreviewEl.dataset.video = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         if (!form) return;
 
         form.addEventListener('submit', function(e) {
@@ -662,6 +680,7 @@
                 id: id,
                 packageName: form.querySelector('#pkgName').value.trim(),
                 image: previewEl ? (previewEl.dataset.image || '') : '',
+                packageVideo: videoPreviewEl ? (videoPreviewEl.dataset.video || '') : '',
                 sender: {
                     name: form.querySelector('#senderName').value.trim(),
                     company: form.querySelector('#senderCompany').value.trim(),
@@ -717,6 +736,10 @@
             if (previewEl) {
                 previewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package image</div>';
                 previewEl.dataset.image = '';
+            }
+            if (videoPreviewEl) {
+                videoPreviewEl.innerHTML = '<div class="fxg-admin-image-upload__preview--empty">Click to upload<br>package video</div>';
+                videoPreviewEl.dataset.video = '';
             }
             setTimeout(function() {
                 if (alertEl) alertEl.style.display = 'none';
@@ -827,6 +850,17 @@
         } else {
             imgWrap.innerHTML = 'No image';
             imgWrap.className = 'fxg-admin-detail-header__image--empty';
+        }
+
+        var videoWrap = el.querySelector('#shipmentVideo');
+        if (videoWrap) {
+            if (shipment.packageVideo) {
+                videoWrap.innerHTML = '<video src="' + shipment.packageVideo + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
+                videoWrap.className = 'fxg-admin-detail-header__image';
+            } else {
+                videoWrap.innerHTML = 'No video';
+                videoWrap.className = 'fxg-admin-detail-header__image--empty';
+            }
         }
 
         el.querySelector('#shipmentStatus').innerHTML = F.badgeHtml(shipment.currentStatus);
@@ -1275,6 +1309,23 @@
         container.innerHTML = html;
     }
 
+    function renderPackageMedia(el, shipment) {
+        var container = el.querySelector('#trPackageMedia');
+        if (!container) return;
+        var hasImage = shipment.image;
+        var hasVideo = shipment.packageVideo;
+        if (!hasImage && !hasVideo) { container.innerHTML = ''; return; }
+        var html = '<div class="fxg-tr-media__inner">';
+        if (hasImage) {
+            html += '<div class="fxg-tr-media__item"><img src="' + shipment.image + '" alt="Package image"></div>';
+        }
+        if (hasVideo) {
+            html += '<div class="fxg-tr-media__item"><video src="' + shipment.packageVideo + '" muted controls></video></div>';
+        }
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
     function renderTrackingHeader(el, shipment) {
         var headerEl = el.querySelector('#trHeader');
         if (!headerEl) return;
@@ -1380,6 +1431,7 @@
         '<div class="fxg-tr-stepper__step" data-step="5"><div class="fxg-tr-stepper__circle"></div><span class="fxg-tr-stepper__label">Delivered</span><span class="fxg-tr-stepper__date" id="trStepDate5"></span></div>',
         '</div></div>',
         '<div class="fxg-tr-scans" id="trScansContainer"></div>',
+        '<div class="fxg-tr-media" id="trPackageMedia"></div>',
         '<div class="fxg-tr-facts" id="trShipmentFacts"></div>',
         '</div></div></div>'
     ].join('');
@@ -1436,6 +1488,7 @@
                 renderAlertBanner(card, shipment);
                 renderStepper(card, shipment);
                 renderScanEvents(card, shipment);
+                renderPackageMedia(card, shipment);
                 renderFacts(card, shipment);
             } catch (e) {
                 if (loader) loader.classList.add('fxg-tracking-loader--hidden');
