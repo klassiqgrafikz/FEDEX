@@ -317,11 +317,29 @@
         var contentEl = document.getElementById('adminContent');
         if (!contentEl) return;
 
-        if (hamburger) {
-            hamburger.addEventListener('click', function() {
-                sidebar.classList.toggle('fxg-admin__sidebar--open');
-            });
+        var overlay = document.createElement('div');
+        overlay.className = 'fxg-admin__overlay';
+        document.body.appendChild(overlay);
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('fxg-admin__sidebar--open');
+            overlay.classList.toggle('fxg-admin__overlay--visible');
         }
+
+        function closeSidebar() {
+            sidebar.classList.remove('fxg-admin__sidebar--open');
+            overlay.classList.remove('fxg-admin__overlay--visible');
+        }
+
+        if (hamburger) {
+            hamburger.addEventListener('click', toggleSidebar);
+        }
+
+        overlay.addEventListener('click', closeSidebar);
+
+        sidebar.querySelectorAll('.fxg-admin__nav-item').forEach(function(el) {
+            el.addEventListener('click', closeSidebar);
+        });
 
         var page = document.body.getAttribute('data-admin-page');
         if (page) {

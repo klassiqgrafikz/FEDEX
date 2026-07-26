@@ -22,6 +22,11 @@
     --fx-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+.fxg-main-content {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
 .fxg-admin {
     display: flex;
     min-height: 100vh;
@@ -43,6 +48,24 @@
     height: 100vh;
     z-index: 200;
     transition: transform 0.3s ease;
+}
+
+.fxg-admin__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 199;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.fxg-admin__overlay--visible {
+    opacity: 1;
+    visibility: visible;
 }
 
 .fxg-admin__sidebar-brand {
@@ -1035,6 +1058,14 @@
     .fxg-admin-status-update .fxg-admin-form__row {
         grid-template-columns: 1fr;
     }
+
+    .fxg-admin-table th {
+        white-space: normal;
+    }
+
+    .fxg-admin-table td.fxg-admin-actions {
+        white-space: normal;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1048,6 +1079,88 @@
 
     .fxg-admin__header-brand {
         display: none;
+    }
+
+    .fxg-admin-search {
+        flex-wrap: wrap;
+    }
+
+    .fxg-admin-search input {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .fxg-admin-section__title {
+        font-size: 14px;
+    }
+
+    .fxg-admin__content {
+        padding: 16px 12px;
+    }
+
+    .fxg-admin-form-card__section {
+        padding: 18px 16px;
+    }
+
+    .fxg-admin-form-card__actions {
+        padding: 14px 16px;
+    }
+
+    .fxg-admin-form__input,
+    .fxg-admin-form__textarea,
+    .fxg-admin-form__select {
+        font-size: 16px;
+    }
+
+    .fxg-admin-stat__value {
+        font-size: 24px;
+    }
+
+    .fxg-admin-table td {
+        font-size: 12px;
+    }
+
+    .fxg-admin-detail-header {
+        padding: 16px;
+    }
+
+    .fxg-admin-detail-header__info h1 {
+        font-size: 20px;
+    }
+
+    .fxg-admin-detail-header__image,
+    .fxg-admin-detail-header__image--empty {
+        width: 100px;
+        height: 100px;
+    }
+
+    .fxg-admin-detail-card {
+        padding: 16px;
+    }
+
+    .fxg-admin-detail-card p {
+        font-size: 12px;
+    }
+
+    .fxg-admin-status-update {
+        padding: 16px;
+    }
+
+    .fxg-admin-timeline__status {
+        font-size: 13px;
+    }
+
+    .fxg-admin-empty {
+        padding: 32px 16px;
+    }
+
+    .fxg-admin-loading {
+        padding: 40px 16px;
+    }
+
+    .fxg-admin-image-upload__preview {
+        width: 100px;
+        height: 100px;
     }
 }
 
