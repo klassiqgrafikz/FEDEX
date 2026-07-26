@@ -192,6 +192,9 @@
     .fxg-floating-track-btn { border-radius: 0 8px 8px 0; }
 }
 
+/* Hide Tawk.to white-label iframe */
+iframe[src*="tawk.to"] { display: none !important; }
+
 /* ========================================
    Chat Bubble (fixed bottom-right)
    ======================================== */

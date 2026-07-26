@@ -115,7 +115,8 @@
     window.Tawk_API = window.Tawk_API || {};
 
     window.Tawk_API.onLoad = function() {
-        Tawk_API.hideWidget();
+        Tawk_API.maximize();
+        setTimeout(function() { Tawk_API.minimize(); }, 200);
     };
 
     window.Tawk_API.onStatusChange = function(status) {
