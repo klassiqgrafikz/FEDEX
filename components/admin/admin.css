@@ -1024,6 +1024,47 @@
     }
 }
 
+/* ===== Edit Section Toggle ===== */
+.fxg-admin-detail-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--fx-border-light);
+}
+.fxg-admin-detail-card__header h3 {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+.fxg-admin-btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--fx-text-muted);
+    transition: all 0.15s;
+}
+.fxg-admin-btn-icon:hover {
+    color: var(--fx-purple-light);
+    background: var(--fx-purple-bg);
+    border-color: var(--fx-border);
+}
+.fxg-admin-edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+.fxg-admin-edit-actions .fxg-admin-btn--small {
+    padding: 6px 14px;
+    font-size: 11px;
+}
+
 /* ===== Actions Column ===== */
 .fxg-admin-table td.fxg-admin-actions {
     white-space: nowrap;

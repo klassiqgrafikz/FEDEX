@@ -175,9 +175,34 @@
         });
     }
 
+    function uploadToStorage(file, bucket, filepath) {
+        var url = SUPABASE_URL + '/storage/v1/object/' + bucket + '/' + filepath;
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': file.type
+            },
+            body: file
+        }).then(function(res) {
+            if (!res.ok) return res.text().then(function(t) { throw new Error('Storage upload failed: ' + t.slice(0, 200)); });
+            return SUPABASE_URL + '/storage/v1/object/public/' + bucket + '/' + filepath;
+        });
+    }
+
     function deleteShipment(id) {
         delete _cache.shipments[id];
         return supabaseFetch('shipments?id=eq.' + encodeURIComponent(id), {
+            method: 'DELETE'
+        });
+    }
+
+    function deleteAllShipments() {
+        var ids = Object.keys(_cache.shipments);
+        if (ids.length === 0) return Promise.resolve();
+        _cache.shipments = {};
+        return supabaseFetch('shipments', {
             method: 'DELETE'
         });
     }
@@ -284,6 +309,7 @@
         saveShipment: saveShipment,
         saveShipmentMedia: saveShipmentMedia,
         deleteShipment: deleteShipment,
+        deleteAllShipments: deleteAllShipments,
         getStats: getStats,
         formatDate: formatDate,
         formatDateShort: formatDateShort,
@@ -417,12 +443,15 @@
         var videoPreviewEl = el.querySelector('#videoPreview');
         var videoInput = el.querySelector('#packageVideo');
         var trackingDisplay = el.querySelector('#newTrackingId');
+        var imageFile = null;
+        var videoFile = null;
 
         if (previewEl && fileInput) {
             previewEl.addEventListener('click', function() { fileInput.click(); });
             fileInput.addEventListener('change', function() {
                 var file = fileInput.files[0];
                 if (!file) return;
+                imageFile = file;
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     previewEl.innerHTML = '<img src="' + e.target.result + '" alt="Package image">';
@@ -437,6 +466,7 @@
             videoInput.addEventListener('change', function() {
                 var file = videoInput.files[0];
                 if (!file) return;
+                videoFile = file;
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     videoPreviewEl.innerHTML = '<video src="' + e.target.result + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
@@ -448,13 +478,18 @@
 
         if (!form) return;
 
+        function uploadMediaToStorage(file, id, mediaType) {
+            var ext = file.name.split('.').pop() || (mediaType === 'image' ? 'png' : 'mp4');
+            var filepath = id + '/' + mediaType + '.' + ext;
+            return uploadToStorage(file, 'shipment-media', filepath).then(function(publicUrl) {
+                return window.FDX.admin.saveShipmentMedia(id, mediaType, publicUrl);
+            });
+        }
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             try {
             var id = window.FDX.admin.generateTrackingId();
-
-            var imgData = previewEl ? (previewEl.dataset.image || '') : '';
-            var videoData = videoPreviewEl ? (videoPreviewEl.dataset.video || '') : '';
 
             var shipment = {
                 id: id,
@@ -498,11 +533,6 @@
             };
 
             window.FDX.admin.saveShipment(shipment).then(function() {
-                var mediaPromises = [];
-                if (imgData) mediaPromises.push(window.FDX.admin.saveShipmentMedia(id, 'image', imgData));
-                if (videoData) mediaPromises.push(window.FDX.admin.saveShipmentMedia(id, 'video', videoData));
-                return Promise.all(mediaPromises);
-            }).then(function() {
                 if (trackingDisplay) {
                     var span = trackingDisplay.querySelector('#newTrackingIdSpan');
                     if (span) span.textContent = id;
@@ -527,6 +557,15 @@
                 setTimeout(function() {
                     if (alertEl) alertEl.style.display = 'none';
                 }, 5000);
+
+                var mediaPromises = [];
+                if (imageFile && imageFile.size > 0) mediaPromises.push(uploadMediaToStorage(imageFile, id, 'image'));
+                if (videoFile && videoFile.size > 0) mediaPromises.push(uploadMediaToStorage(videoFile, id, 'video'));
+                if (mediaPromises.length > 0) {
+                    Promise.all(mediaPromises).catch(function(err) {
+                        console.error('[Create] Media upload failed:', err);
+                    });
+                }
             }).catch(function() {
                 if (alertEl) {
                     alertEl.className = 'fxg-admin-alert fxg-admin-alert--error';
@@ -623,146 +662,314 @@
                 }, 300);
             });
         }
+
+        var clearAllBtn = el.querySelector('#clearAllBtn');
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', function() {
+                if (confirm('Delete ALL shipments? This cannot be undone.')) {
+                    window.FDX.admin.deleteAllShipments().then(function() {
+                        _cache.shipments = {};
+                        render('');
+                    });
+                }
+            });
+        }
     }
 
     function initShipmentDetail(el) {
         var params = new URLSearchParams(window.location.search);
         var id = params.get('id');
         var shipment = window.FDX.admin.getShipment(id);
+        var F = window.FDX.admin;
 
         if (!shipment) {
             el.innerHTML = '<div class="fxg-admin-alert fxg-admin-alert--error">Shipment <strong>' + escapeHtml(id) + '</strong> not found.</div>';
             return;
         }
 
-        var F = window.FDX.admin;
+        var se = shipment.sender || {};
+        var re = shipment.recipient || {};
 
-        el.querySelector('#shipmentTrackingId').textContent = shipment.id;
-        el.querySelector('#shipmentPackageName').textContent = shipment.packageName || '(no name)';
-        el.querySelector('#shipmentCreatedDate').textContent = F.formatDate(shipment.createdAt);
+        function renderAll() {
+            el.querySelector('#shipmentTrackingId').textContent = shipment.id;
+            el.querySelector('#shipmentPackageName').textContent = shipment.packageName || '(no name)';
+            el.querySelector('#shipmentCreatedDate').textContent = F.formatDate(shipment.createdAt);
 
-        var imgWrap = el.querySelector('#shipmentImage');
-        var videoWrap = el.querySelector('#shipmentVideo');
-        var mediaList = shipment.media || [];
-        var imgItem = null;
-        var vidItem = null;
-        for (var mi = 0; mi < mediaList.length; mi++) {
-            if (mediaList[mi].media_type === 'image') imgItem = mediaList[mi];
-            else if (mediaList[mi].media_type === 'video') vidItem = mediaList[mi];
-        }
+            var imgWrap = el.querySelector('#shipmentImage');
+            var videoWrap = el.querySelector('#shipmentVideo');
+            var mediaList = shipment.media || [];
+            var imgItem = null;
+            var vidItem = null;
+            for (var mi = 0; mi < mediaList.length; mi++) {
+                if (mediaList[mi].media_type === 'image') imgItem = mediaList[mi];
+                else if (mediaList[mi].media_type === 'video') vidItem = mediaList[mi];
+            }
 
-        if (imgItem && imgItem.data) {
-            imgWrap.innerHTML = '<img src="' + imgItem.data + '" alt="Package">';
-            imgWrap.className = 'fxg-admin-detail-header__image';
-        } else {
-            imgWrap.innerHTML = 'No image';
-            imgWrap.className = 'fxg-admin-detail-header__image--empty';
-        }
-
-        if (videoWrap) {
-            if (vidItem && vidItem.data) {
-                videoWrap.innerHTML = '<video src="' + vidItem.data + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
-                videoWrap.className = 'fxg-admin-detail-header__image';
+            if (imgItem && imgItem.data) {
+                imgWrap.innerHTML = '<img src="' + imgItem.data + '" alt="Package">';
+                imgWrap.className = 'fxg-admin-detail-header__image';
             } else {
-                videoWrap.innerHTML = 'No video';
-                videoWrap.className = 'fxg-admin-detail-header__image--empty';
+                imgWrap.innerHTML = 'No image';
+                imgWrap.className = 'fxg-admin-detail-header__image--empty';
+            }
+
+            if (videoWrap) {
+                if (vidItem && vidItem.data) {
+                    videoWrap.innerHTML = '<video src="' + vidItem.data + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
+                    videoWrap.className = 'fxg-admin-detail-header__image';
+                } else {
+                    videoWrap.innerHTML = 'No video';
+                    videoWrap.className = 'fxg-admin-detail-header__image--empty';
+                }
+            }
+
+            el.querySelector('#shipmentStatus').innerHTML = F.badgeHtml(shipment.currentStatus);
+
+            renderSenderDisplay();
+            renderRecipientDisplay();
+            renderPackageDisplay();
+
+            var timelineEl = el.querySelector('#statusTimeline');
+            var timeline = shipment.statusTimeline || [];
+            timelineEl.innerHTML = '';
+            timeline.forEach(function(entry, idx) {
+                var isActive = (idx === timeline.length - 1);
+                var div = document.createElement('div');
+                div.className = 'fxg-admin-timeline__item' + (isActive ? ' fxg-admin-timeline__item--active' : '');
+                div.innerHTML =
+                    '<div class="fxg-admin-timeline__dot"></div>' +
+                    '<div class="fxg-admin-timeline__status">' + escapeHtml(entry.status) + '</div>' +
+                    '<div class="fxg-admin-timeline__meta">' + F.formatDate(entry.timestamp) + '</div>' +
+                    (entry.remark ? '<div class="fxg-admin-timeline__remark">' + escapeHtml(entry.remark) + '</div>' : '');
+                timelineEl.appendChild(div);
+            });
+
+            var statusSelect = el.querySelector('#updateStatus');
+            if (statusSelect.options.length === 0) {
+                F.STATUSES.forEach(function(s) {
+                    var opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    if (s === shipment.currentStatus) opt.selected = true;
+                    statusSelect.appendChild(opt);
+                });
             }
         }
 
-        el.querySelector('#shipmentStatus').innerHTML = F.badgeHtml(shipment.currentStatus);
-
-        var se = shipment.sender || {};
-        var senderHtml = '';
-        if (se.name) senderHtml += '<p><strong>Name:</strong> ' + escapeHtml(se.name) + '</p>';
-        if (se.company) senderHtml += '<p><strong>Company:</strong> ' + escapeHtml(se.company) + '</p>';
-        if (se.address) senderHtml += '<p><strong>Address:</strong> ' + escapeHtml(se.address) + '</p>';
-        if (se.city || se.state || se.zip) {
-            var sloc = '';
-            if (se.city) sloc += escapeHtml(se.city);
-            if (se.state) sloc += (sloc ? ', ' : '') + escapeHtml(se.state);
-            if (se.zip) sloc += ' ' + escapeHtml(se.zip);
-            senderHtml += '<p>' + sloc + '</p>';
+        function renderSenderDisplay() {
+            var html = '';
+            if (se.name) html += '<p><strong>Name:</strong> ' + escapeHtml(se.name) + '</p>';
+            if (se.company) html += '<p><strong>Company:</strong> ' + escapeHtml(se.company) + '</p>';
+            if (se.address) html += '<p><strong>Address:</strong> ' + escapeHtml(se.address) + '</p>';
+            if (se.city || se.state || se.zip) {
+                var sloc = '';
+                if (se.city) sloc += escapeHtml(se.city);
+                if (se.state) sloc += (sloc ? ', ' : '') + escapeHtml(se.state);
+                if (se.zip) sloc += ' ' + escapeHtml(se.zip);
+                html += '<p>' + sloc + '</p>';
+            }
+            if (se.country) html += '<p><strong>Country:</strong> ' + escapeHtml(se.country) + '</p>';
+            if (se.phone) html += '<p><strong>Phone:</strong> ' + escapeHtml(se.phone) + '</p>';
+            if (se.email) html += '<p><strong>Email:</strong> ' + escapeHtml(se.email) + '</p>';
+            el.querySelector('#senderDisplay').innerHTML = html || '<p class="fxg-admin-empty">No sender information provided.</p>';
         }
-        if (se.country) senderHtml += '<p><strong>Country:</strong> ' + escapeHtml(se.country) + '</p>';
-        if (se.phone) senderHtml += '<p><strong>Phone:</strong> ' + escapeHtml(se.phone) + '</p>';
-        if (se.email) senderHtml += '<p><strong>Email:</strong> ' + escapeHtml(se.email) + '</p>';
-        el.querySelector('#senderDisplay').innerHTML = senderHtml || '<p class="fxg-admin-empty">No sender information provided.</p>';
 
-        var re = shipment.recipient || {};
-        var recipHtml = '';
-        if (re.name) recipHtml += '<p><strong>Name:</strong> ' + escapeHtml(re.name) + '</p>';
-        if (re.company) recipHtml += '<p><strong>Company:</strong> ' + escapeHtml(re.company) + '</p>';
-        if (re.address) recipHtml += '<p><strong>Address:</strong> ' + escapeHtml(re.address) + '</p>';
-        if (re.city || re.state || re.zip) {
-            var rloc = '';
-            if (re.city) rloc += escapeHtml(re.city);
-            if (re.state) rloc += (rloc ? ', ' : '') + escapeHtml(re.state);
-            if (re.zip) rloc += ' ' + escapeHtml(re.zip);
-            recipHtml += '<p>' + rloc + '</p>';
+        function renderRecipientDisplay() {
+            var html = '';
+            if (re.name) html += '<p><strong>Name:</strong> ' + escapeHtml(re.name) + '</p>';
+            if (re.company) html += '<p><strong>Company:</strong> ' + escapeHtml(re.company) + '</p>';
+            if (re.address) html += '<p><strong>Address:</strong> ' + escapeHtml(re.address) + '</p>';
+            if (re.city || re.state || re.zip) {
+                var rloc = '';
+                if (re.city) rloc += escapeHtml(re.city);
+                if (re.state) rloc += (rloc ? ', ' : '') + escapeHtml(re.state);
+                if (re.zip) rloc += ' ' + escapeHtml(re.zip);
+                html += '<p>' + rloc + '</p>';
+            }
+            if (re.country) html += '<p><strong>Country:</strong> ' + escapeHtml(re.country) + '</p>';
+            if (re.phone) html += '<p><strong>Phone:</strong> ' + escapeHtml(re.phone) + '</p>';
+            if (re.email) html += '<p><strong>Email:</strong> ' + escapeHtml(re.email) + '</p>';
+            if (re.isResidential) html += '<p><span class="fxg-admin-badge fxg-admin-badge--received">Residential</span></p>';
+            el.querySelector('#recipientDisplay').innerHTML = html || '<p class="fxg-admin-empty">No recipient information provided.</p>';
         }
-        if (re.country) recipHtml += '<p><strong>Country:</strong> ' + escapeHtml(re.country) + '</p>';
-        if (re.phone) recipHtml += '<p><strong>Phone:</strong> ' + escapeHtml(re.phone) + '</p>';
-        if (re.email) recipHtml += '<p><strong>Email:</strong> ' + escapeHtml(re.email) + '</p>';
-        if (re.isResidential) recipHtml += '<p><span class="fxg-admin-badge fxg-admin-badge--received">Residential</span></p>';
-        el.querySelector('#recipientDisplay').innerHTML = recipHtml || '<p class="fxg-admin-empty">No recipient information provided.</p>';
 
-        var detailsHtml = '';
-        if (shipment.weight) detailsHtml += '<p><strong>Weight:</strong> ' + escapeHtml(shipment.weight) + '</p>';
-        if (shipment.serviceType) detailsHtml += '<p><strong>Service:</strong> ' + escapeHtml(shipment.serviceType) + '</p>';
-        if (shipment.departureDate) detailsHtml += '<p><strong>Departure:</strong> ' + F.formatDateShort(shipment.departureDate) + '</p>';
-        if (shipment.estDeliveryDate) detailsHtml += '<p><strong>Est. Delivery:</strong> ' + F.formatDateShort(shipment.estDeliveryDate) + '</p>';
-        if (shipment.signatureRequired) detailsHtml += '<p><strong>Signature Required:</strong> Yes</p>';
-        if (shipment.referenceNumber) detailsHtml += '<p><strong>Reference:</strong> ' + escapeHtml(shipment.referenceNumber) + '</p>';
-        el.querySelector('#shipmentDetails').innerHTML = detailsHtml || '<p class="fxg-admin-empty">No package details provided.</p>';
+        function renderPackageDisplay() {
+            var html = '';
+            if (shipment.weight) html += '<p><strong>Weight:</strong> ' + escapeHtml(shipment.weight) + '</p>';
+            if (shipment.serviceType) html += '<p><strong>Service:</strong> ' + escapeHtml(shipment.serviceType) + '</p>';
+            if (shipment.departureDate) html += '<p><strong>Departure:</strong> ' + F.formatDateShort(shipment.departureDate) + '</p>';
+            if (shipment.estDeliveryDate) html += '<p><strong>Est. Delivery:</strong> ' + F.formatDateShort(shipment.estDeliveryDate) + '</p>';
+            if (shipment.signatureRequired) html += '<p><strong>Signature Required:</strong> Yes</p>';
+            if (shipment.referenceNumber) html += '<p><strong>Reference:</strong> ' + escapeHtml(shipment.referenceNumber) + '</p>';
+            el.querySelector('#shipmentDetails').innerHTML = html || '<p class="fxg-admin-empty">No package details provided.</p>';
+        }
 
-        var timelineEl = el.querySelector('#statusTimeline');
-        var timeline = shipment.statusTimeline || [];
-        timelineEl.innerHTML = '';
-        timeline.forEach(function(entry, idx) {
-            var isActive = (idx === timeline.length - 1);
-            var div = document.createElement('div');
-            div.className = 'fxg-admin-timeline__item' + (isActive ? ' fxg-admin-timeline__item--active' : '');
-            div.innerHTML =
-                '<div class="fxg-admin-timeline__dot"></div>' +
-                '<div class="fxg-admin-timeline__status">' + escapeHtml(entry.status) + '</div>' +
-                '<div class="fxg-admin-timeline__meta">' + F.formatDate(entry.timestamp) + '</div>' +
-                (entry.remark ? '<div class="fxg-admin-timeline__remark">' + escapeHtml(entry.remark) + '</div>' : '');
-            timelineEl.appendChild(div);
-        });
+        function buildField(name, label, value, type) {
+            type = type || 'text';
+            if (type === 'select') {
+                var opts = ['FedEx Priority Overnight', 'FedEx Standard Overnight', 'FedEx 2Day', 'FedEx Express Saver', 'FedEx Ground', 'FedEx Home Delivery'];
+                var s = '<div class="fxg-admin-form__group"><label class="fxg-admin-form__label">' + label + '</label><select class="fxg-admin-form__select" data-field="' + name + '">';
+                opts.forEach(function(o) {
+                    s += '<option value="' + escapeHtml(o) + '"' + (o === value ? ' selected' : '') + '>' + escapeHtml(o) + '</option>';
+                });
+                return s + '</select></div>';
+            }
+            if (type === 'checkbox') {
+                return '<div class="fxg-admin-form__group fxg-admin-form__group--full"><label class="fxg-admin-form__checkbox"><input type="checkbox" data-field="' + name + '"' + (value ? ' checked' : '') + '> ' + label + '</label></div>';
+            }
+            return '<div class="fxg-admin-form__group"><label class="fxg-admin-form__label">' + label + '</label><input type="' + type + '" class="fxg-admin-form__input" data-field="' + name + '" value="' + escapeHtml(value || '') + '"></div>';
+        }
 
-        var statusSelect = el.querySelector('#updateStatus');
-        F.STATUSES.forEach(function(s) {
-            var opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s;
-            if (s === shipment.currentStatus) opt.selected = true;
-            statusSelect.appendChild(opt);
+        function showEdit(section, fields, obj) {
+            var displayId = section + 'Display';
+            var editId = section + 'Edit';
+            var displayEl = el.querySelector('#' + displayId);
+            var editEl = el.querySelector('#' + editId);
+            if (!editEl) return;
+
+            var html = '<div class="fxg-admin-form__row">';
+            fields.forEach(function(f) {
+                html += buildField(f.name, f.label, obj[f.name] !== undefined ? obj[f.name] : '', f.type || 'text');
+            });
+            html += '</div>';
+            html += '<div class="fxg-admin-edit-actions">';
+            html += '<button class="fxg-admin-btn fxg-admin-btn--success fxg-admin-btn--small" data-edit-save="' + section + '">Save</button>';
+            html += '<button class="fxg-admin-btn fxg-admin-btn--outline fxg-admin-btn--small" data-edit-cancel="' + section + '">Cancel</button>';
+            html += '</div>';
+            editEl.innerHTML = html;
+            displayEl.style.display = 'none';
+            editEl.style.display = 'block';
+        }
+
+        function hideEdit(section) {
+            var displayEl = el.querySelector('#' + section + 'Display');
+            var editEl = el.querySelector('#' + section + 'Edit');
+            if (displayEl) displayEl.style.display = '';
+            if (editEl) editEl.style.display = 'none';
+        }
+
+        function collectEdit(section, fields, obj) {
+            var editEl = el.querySelector('#' + section + 'Edit');
+            if (!editEl) return;
+            fields.forEach(function(f) {
+                var input = editEl.querySelector('[data-field="' + f.name + '"]');
+                if (!input) return;
+                if (input.type === 'checkbox') {
+                    obj[f.name] = input.checked;
+                } else {
+                    obj[f.name] = input.value;
+                }
+            });
+        }
+
+        var editSections = {
+            sender: {
+                fields: [
+                    { name: 'name', label: 'Name' },
+                    { name: 'company', label: 'Company' },
+                    { name: 'address', label: 'Address' },
+                    { name: 'city', label: 'City' },
+                    { name: 'state', label: 'State' },
+                    { name: 'zip', label: 'ZIP' },
+                    { name: 'country', label: 'Country' },
+                    { name: 'phone', label: 'Phone' },
+                    { name: 'email', label: 'Email', type: 'email' }
+                ]
+            },
+            recipient: {
+                fields: [
+                    { name: 'name', label: 'Name' },
+                    { name: 'company', label: 'Company' },
+                    { name: 'address', label: 'Address' },
+                    { name: 'city', label: 'City' },
+                    { name: 'state', label: 'State' },
+                    { name: 'zip', label: 'ZIP' },
+                    { name: 'country', label: 'Country' },
+                    { name: 'phone', label: 'Phone' },
+                    { name: 'email', label: 'Email', type: 'email' },
+                    { name: 'isResidential', label: 'Residential Address', type: 'checkbox' }
+                ]
+            },
+            package: {
+                fields: [
+                    { name: 'weight', label: 'Weight' },
+                    { name: 'serviceType', label: 'Service', type: 'select' },
+                    { name: 'departureDate', label: 'Departure Date', type: 'date' },
+                    { name: 'estDeliveryDate', label: 'Est. Delivery Date', type: 'date' },
+                    { name: 'signatureRequired', label: 'Signature Required', type: 'checkbox' },
+                    { name: 'referenceNumber', label: 'Reference Number' }
+                ]
+            }
+        };
+
+        renderAll();
+
+        el.addEventListener('click', function(e) {
+            var toggleBtn = e.target.closest('[data-toggle-edit]');
+            if (toggleBtn) {
+                var sectionName = toggleBtn.getAttribute('data-toggle-edit');
+                var section = editSections[sectionName];
+                if (!section) return;
+                var obj = sectionName === 'package' ? shipment : (sectionName === 'sender' ? se : re);
+                showEdit(sectionName, section.fields, obj);
+                return;
+            }
+
+            var saveBtn = e.target.closest('[data-edit-save]');
+            if (saveBtn) {
+                var sectionName = saveBtn.getAttribute('data-edit-save');
+                var section = editSections[sectionName];
+                if (!section) return;
+                var obj = sectionName === 'package' ? shipment : (sectionName === 'sender' ? se : re);
+                collectEdit(sectionName, section.fields, obj);
+                shipment.updatedAt = new Date().toISOString();
+                F.saveShipment(shipment).then(function() {
+                    hideEdit(sectionName);
+                    if (sectionName === 'sender') renderSenderDisplay();
+                    else if (sectionName === 'recipient') renderRecipientDisplay();
+                    else renderPackageDisplay();
+                });
+                return;
+            }
+
+            var cancelBtn = e.target.closest('[data-edit-cancel]');
+            if (cancelBtn) {
+                var sectionName = cancelBtn.getAttribute('data-edit-cancel');
+                hideEdit(sectionName);
+                if (sectionName === 'sender') renderSenderDisplay();
+                else if (sectionName === 'recipient') renderRecipientDisplay();
+                else renderPackageDisplay();
+                return;
+            }
         });
 
         var updateForm = el.querySelector('#updateStatusForm');
-        updateForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var newStatus = statusSelect.value;
-            var remark = el.querySelector('#updateRemark').value.trim();
+        var statusSelect = el.querySelector('#updateStatus');
+        if (updateForm) {
+            updateForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var newStatus = statusSelect.value;
+                var remark = el.querySelector('#updateRemark').value.trim();
 
-            var isSame = newStatus === shipment.currentStatus;
-            shipment.currentStatus = newStatus;
-            shipment.updatedAt = new Date().toISOString();
-            shipment.statusTimeline.push({
-                status: newStatus,
-                timestamp: shipment.updatedAt,
-                remark: remark
-            });
+                var isSame = newStatus === shipment.currentStatus;
+                shipment.currentStatus = newStatus;
+                shipment.updatedAt = new Date().toISOString();
+                shipment.statusTimeline.push({
+                    status: newStatus,
+                    timestamp: shipment.updatedAt,
+                    remark: remark
+                });
 
-            F.saveShipment(shipment).then(function() {
-                var toast = document.createElement('div');
-                toast.className = 'fxg-admin-alert fxg-admin-alert--success';
-                toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:16px 24px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.3s;max-width:400px';
-                toast.textContent = isSame ? 'Remark added to "' + newStatus + '"' : 'Status updated to "' + newStatus + '" successfully!';
-                document.body.appendChild(toast);
-                requestAnimationFrame(function() { toast.style.opacity = '1'; });
-                setTimeout(function() { window.location.reload(); }, 1500);
+                F.saveShipment(shipment).then(function() {
+                    var toast = document.createElement('div');
+                    toast.className = 'fxg-admin-alert fxg-admin-alert--success';
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:16px 24px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.3s;max-width:400px';
+                    toast.textContent = isSame ? 'Remark added to "' + newStatus + '"' : 'Status updated to "' + newStatus + '" successfully!';
+                    document.body.appendChild(toast);
+                    requestAnimationFrame(function() { toast.style.opacity = '1'; });
+                    setTimeout(function() { window.location.reload(); }, 1500);
+                });
             });
-        });
+        }
     }
 })();
