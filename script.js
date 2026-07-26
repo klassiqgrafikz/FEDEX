@@ -152,7 +152,7 @@
             tooltipTimeout = setTimeout(function() {
                 tooltip.classList.remove('fxg-chat-bubble__tooltip--visible');
                 clearTimeout(tooltipTimer);
-                tooltipTimer = setTimeout(showTooltip, 12000);
+                tooltipTimer = setTimeout(showTooltip, 3000);
             }, 5000);
         }
 
@@ -325,7 +325,7 @@
         'Exception'
     ];
 
-    var _cache = { shipments: {}, nextNum: 1 };
+    var _cache = { shipments: {} };
 
     var STATUS_CLASSES = {
         'Shipment Created': 'fxg-admin-badge--created',
@@ -341,18 +341,8 @@
     };
 
     function generateTrackingId() {
-        var d = new Date();
-        var y = d.getFullYear().toString().slice(-2);
-        var m = ('0' + (d.getMonth() + 1)).slice(-2);
-        var day = ('0' + d.getDate()).slice(-2);
-        var num = ('000000' + _cache.nextNum).slice(-6);
-        _cache.nextNum++;
-        supabaseFetch('tracking_config', {
-            method: 'POST',
-            body: { id: 1, next_num: _cache.nextNum },
-            headers: { 'Prefer': 'resolution=merge-duplicates' }
-        });
-        return 'FDX' + y + m + day + num;
+        var rand = Math.floor(Math.random() * 100000000000).toString().padStart(11, '0');
+        return '8' + rand;
     }
 
     function getAllShipments() {
@@ -532,16 +522,6 @@
                     _cache.shipments[row.id] = fromDb(row);
                 });
             }
-            return supabaseFetch('tracking_config?id=eq.1', {
-                headers: { 'Prefer': '' }
-            });
-        }).then(function(r) {
-            if (!r) return;
-            return r.json();
-        }).then(function(config) {
-            if (config && config.length > 0) {
-                _cache.nextNum = config[0].next_num || 1;
-            }
             if (callback) callback();
         }).catch(function() {
             if (callback) callback();
@@ -689,17 +669,6 @@
     }
 
     function initCreate(el) {
-        supabaseFetch('tracking_config?id=eq.1', {
-            headers: { 'Prefer': '' }
-        }).then(function(r) {
-            if (!r) return;
-            return r.json();
-        }).then(function(config) {
-            if (config && config.length > 0) {
-                _cache.nextNum = config[0].next_num || 1;
-            }
-        }).catch(function() {});
-
         var form = el.querySelector('#createForm');
         var alertEl = el.querySelector('#createAlert');
         var previewEl = el.querySelector('#imagePreview');

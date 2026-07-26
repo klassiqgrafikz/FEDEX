@@ -45,7 +45,7 @@
             tooltipTimeout = setTimeout(function() {
                 tooltip.classList.remove('fxg-chat-bubble__tooltip--visible');
                 clearTimeout(tooltipTimer);
-                tooltipTimer = setTimeout(showTooltip, 12000);
+                tooltipTimer = setTimeout(showTooltip, 3000);
             }, 5000);
         }
 

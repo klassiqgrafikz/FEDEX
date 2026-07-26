@@ -187,21 +187,22 @@
     position: fixed;
     bottom: 28px;
     right: 28px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 160px;
+    height: 56px;
+    border-radius: 28px;
     background: linear-gradient(135deg, #660099, #4a0080);
     border: none;
     cursor: pointer;
     z-index: 9999;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-right: 14px;
     box-shadow: 0 6px 24px rgba(102, 0, 153, 0.35);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .fxg-chat-bubble:hover {
-    transform: scale(1.08);
+    transform: scale(1.05);
     box-shadow: 0 8px 32px rgba(102, 0, 153, 0.45);
 }
 
@@ -245,6 +246,7 @@
     height: 28px;
     color: #fff;
     position: absolute;
+    right: 14px;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .fxg-chat-bubble__close {
@@ -263,7 +265,10 @@
 /* Pulse ring */
 .fxg-chat-bubble__ring {
     position: absolute;
-    inset: -8px;
+    right: 0;
+    top: -6px;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
     border: 3px solid rgba(102, 0, 153, 0.3);
     animation: chatPulse 2.5s ease-in-out infinite;
