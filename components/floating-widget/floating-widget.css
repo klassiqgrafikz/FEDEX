@@ -487,22 +487,6 @@
 }
 
 @media (max-width: 480px) {
-    .fxg-chat-bubble {
-        bottom: 16px;
-        right: 16px;
-        width: 52px;
-        height: 52px;
-    }
-    .fxg-chat-bubble__icon,
-    .fxg-chat-bubble__close {
-        width: 24px;
-        height: 24px;
-    }
-    .fxg-chat-bubble__tooltip {
-        font-size: 11px;
-        padding: 8px 14px;
-        right: calc(100% + 10px);
-    }
     .fxg-chat-panel {
         right: 12px;
         left: 12px;
