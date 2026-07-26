@@ -492,8 +492,10 @@
         '<div class="fxg-tr-stepper__step" data-step="5"><div class="fxg-tr-stepper__circle"></div><span class="fxg-tr-stepper__label">Delivered</span><span class="fxg-tr-stepper__date" id="trStepDate5"></span></div>',
         '</div></div>',
         '<div class="fxg-tr-scans" id="trScansContainer"></div>',
+        '<div class="fxg-tr-bottom-row">',
         '<div class="fxg-tr-media" id="trPackageMedia"></div>',
         '<div class="fxg-tr-facts" id="trShipmentFacts"></div>',
+        '</div>',
         '</div></div></div></div>'
     ].join('');
 

@@ -600,13 +600,35 @@
     margin-top: 2px;
 }
 
-/* ====== Package Media ====== */
-.fxg-tr-media {
-    padding: 20px 32px;
+/* ====== Bottom Row (Media + Facts side by side) ====== */
+.fxg-tr-bottom-row {
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 1px solid #e8e8e8;
     background: #fff;
-    border-bottom: 1px solid #e8e8e8;
 }
 
+.fxg-tr-bottom-row > .fxg-tr-media {
+    flex: 1 1 50%;
+    min-width: 280px;
+    border-bottom: none;
+    padding: 20px 32px;
+    box-sizing: border-box;
+}
+
+.fxg-tr-bottom-row > .fxg-tr-facts {
+    flex: 1 1 50%;
+    min-width: 280px;
+    border-top: none;
+    padding: 20px 32px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-left: 1px solid #e8e8e8;
+}
+
+/* ====== Package Media ====== */
 .fxg-tr-media__inner {
     display: flex;
     gap: 16px;
@@ -632,15 +654,6 @@
 }
 
 /* ====== Shipment Facts ====== */
-.fxg-tr-facts {
-    padding: 20px 32px 28px;
-    background: #fff;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border-top: 1px solid #e8e8e8;
-}
-
 .fxg-tr-facts__item {
     display: flex;
     flex-direction: column;
@@ -765,7 +778,17 @@
     .fxg-tr-scans__item--active .fxg-tr-scans__dot { width: 40px; height: 40px; margin-left: -4px; }
     .fxg-tr-scans__item--active .fxg-tr-scans__dot svg { padding: 3px; }
 
-    .fxg-tr-facts { padding: 16px 20px 20px; grid-template-columns: 1fr; }
+    .fxg-tr-bottom-row {
+        flex-direction: column;
+    }
+    .fxg-tr-bottom-row > .fxg-tr-facts {
+        border-left: none;
+        padding: 16px 20px 20px;
+        grid-template-columns: 1fr;
+    }
+    .fxg-tr-bottom-row > .fxg-tr-media {
+        padding: 20px;
+    }
     .fxg-tr-facts__item { padding: 10px 0 10px 0; }
     .fxg-tr-facts__label { font-size: 10px; }
     .fxg-tr-facts__value { font-size: 13px; }
@@ -780,5 +803,4 @@
     .fxg-tracking-overlay .fxg-tr-alert { padding: 14px 20px; }
     .fxg-tracking-overlay .fxg-tr-stepper-wrap { padding: 20px 20px 16px; }
     .fxg-tracking-overlay .fxg-tr-scans { padding: 0 20px 16px; }
-    .fxg-tracking-overlay .fxg-tr-facts { padding: 16px 20px 20px; }
 }
