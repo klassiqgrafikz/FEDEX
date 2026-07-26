@@ -337,14 +337,13 @@
             return;
         }
 
-        var html = '<div class="fxg-tr-facts">';
+        var html = '';
         facts.forEach(function (f) {
             html += '<div class="fxg-tr-facts__item">';
             html += '<span class="fxg-tr-facts__label">' + escape(f.label) + '</span>';
             html += '<span class="fxg-tr-facts__value">' + escape(f.value) + '</span>';
             html += '</div>';
         });
-        html += '</div>';
         container.innerHTML = html;
     }
 
