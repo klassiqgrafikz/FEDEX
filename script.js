@@ -1034,15 +1034,6 @@
         return svg;
     }
 
-    function badgeSvg() {
-        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('viewBox', '0 0 24 24');
-        svg.setAttribute('width', '14');
-        svg.setAttribute('height', '14');
-        svg.innerHTML = '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>';
-        return svg;
-    }
-
     function alertSvg() {
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
@@ -1072,7 +1063,6 @@
 
     function renderStatusSummary(el, shipment) {
         var statusTextEl = el.querySelector('#trStatusText');
-        var badgeEl = el.querySelector('#trStatusBadge');
         var dateEl = el.querySelector('#trDeliveryDate');
         var iconBox = el.querySelector('#trStatusIcon');
 
@@ -1083,35 +1073,6 @@
 
         var st = shipment.currentStatus || 'Pending';
         if (statusTextEl) statusTextEl.textContent = st;
-
-        if (badgeEl) {
-            var badgeClass = 'fxg-tr-summary__badge--ontime';
-            var badgeLabel = 'ON TIME';
-            var badgeIcon = badgeSvg();
-            var s = st.toLowerCase();
-
-            if (s === 'delivered') {
-                badgeClass = 'fxg-tr-summary__badge--delivered';
-                badgeLabel = 'DELIVERED';
-            } else if (s === 'out for delivery') {
-                badgeClass = 'fxg-tr-summary__badge--outfordelivery';
-                badgeLabel = 'OUT FOR DELIVERY';
-            } else if (s === 'in transit' || s === 'departed warehouse' || s === 'customs' || s === 'arrived destination') {
-                badgeClass = 'fxg-tr-summary__badge--intransit';
-                badgeLabel = 'IN TRANSIT';
-            } else if (s === 'pending') {
-                badgeClass = 'fxg-tr-summary__badge--pending';
-                badgeLabel = 'PENDING';
-            } else if (s === 'exception') {
-                badgeClass = 'fxg-tr-summary__badge--exception';
-                badgeLabel = 'EXCEPTION';
-            }
-
-            badgeEl.className = 'fxg-tr-summary__badge ' + badgeClass;
-            badgeEl.innerHTML = '';
-            badgeEl.appendChild(badgeIcon);
-            badgeEl.appendChild(document.createTextNode(' ' + badgeLabel));
-        }
 
         var isDel = st === 'Delivered';
         if (dateEl) {
@@ -1400,7 +1361,6 @@
         '<div class="fxg-tr-summary__main">',
         '<div class="fxg-tr-summary__status-row">',
         '<span class="fxg-tr-summary__status-text" id="trStatusText"></span>',
-        '<span class="fxg-tr-summary__badge" id="trStatusBadge"></span>',
         '</div>',
         '<p class="fxg-tr-summary__date" id="trDeliveryDate"></p>',
         '</div>',
