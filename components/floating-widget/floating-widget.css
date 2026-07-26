@@ -72,7 +72,7 @@
 .fxg-floating-card__tracking {
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: 10px;
     flex-shrink: 0;
     padding: 6px 6px 6px 12px;
 }
@@ -83,10 +83,9 @@
     gap: 10px;
     background: #fff;
     border: 2px solid #d0d0d0;
-    border-radius: 8px 0 0 8px;
+    border-radius: 8px;
     padding: 0 14px;
     transition: border-color 0.2s;
-    border-right: none;
 }
 .fxg-floating-search:focus-within {
     border-color: var(--fedex-purple);
@@ -120,7 +119,7 @@
     background: #e65100;
     color: #fff;
     border: none;
-    border-radius: 0 8px 8px 0;
+    border-radius: 8px;
     padding: 14px 34px;
     font-size: 15px;
     font-weight: 700;
@@ -132,6 +131,20 @@
 }
 .fxg-floating-track-btn:hover {
     background: #d44a00;
+}
+
+/* Desktop: merged search + button with straight edges */
+@media (min-width: 769px) {
+    .fxg-floating-card__tracking {
+        gap: 0;
+    }
+    .fxg-floating-search {
+        border-radius: 8px 0 0 8px;
+        border-right: none;
+    }
+    .fxg-floating-track-btn {
+        border-radius: 0 8px 8px 0;
+    }
 }
 
 @media (max-width: 992px) {
