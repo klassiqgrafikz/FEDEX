@@ -485,10 +485,10 @@
             var ext = file.name.split('.').pop() || (mediaType === 'image' ? 'png' : 'mp4');
             var filepath = id + '/' + mediaType + '.' + ext;
             return uploadToStorage(file, 'shipment-media', filepath).then(function(publicUrl) {
-                return window.FDX.admin.saveShipmentMedia(id, mediaType, publicUrl);
+                return saveShipmentMedia(id, mediaType, publicUrl).then(function() { return publicUrl; });
             }).catch(function() {
                 if (fallbackBase64) {
-                    return window.FDX.admin.saveShipmentMedia(id, mediaType, fallbackBase64);
+                    return saveShipmentMedia(id, mediaType, fallbackBase64).then(function() { return fallbackBase64; });
                 }
             });
         }
@@ -567,11 +567,15 @@
                     if (alertEl) alertEl.style.display = 'none';
                 }, 5000);
 
-                var mediaPromises = [];
-                if (imageFile && imageFile.size > 0) mediaPromises.push(uploadMedia(imageFile, id, 'image', imgBase64));
-                if (videoFile && videoFile.size > 0) mediaPromises.push(uploadMedia(videoFile, id, 'video', vidBase64));
-                if (mediaPromises.length > 0) {
-                    Promise.all(mediaPromises).catch(function(err) {
+                var mediaTasks = [];
+                if (imageFile && imageFile.size > 0) mediaTasks.push({ type: 'image', promise: uploadMedia(imageFile, id, 'image', imgBase64) });
+                if (videoFile && videoFile.size > 0) mediaTasks.push({ type: 'video', promise: uploadMedia(videoFile, id, 'video', vidBase64) });
+                if (mediaTasks.length > 0) {
+                    Promise.all(mediaTasks.map(function(t) { return t.promise; })).then(function(results) {
+                        _cache.shipments[id].media = results.filter(Boolean).map(function(dataUrl, idx) {
+                            return { media_type: mediaTasks[idx].type, data: dataUrl };
+                        });
+                    }).catch(function(err) {
                         console.error('[Create] Media upload failed:', err);
                     });
                 }
@@ -913,6 +917,17 @@
         };
 
         renderAll();
+
+        if (!shipment.media || shipment.media.length === 0) {
+            F.fetchShipment(id).then(function(fresh) {
+                if (fresh && fresh.media && fresh.media.length > 0) {
+                    Object.assign(shipment, fresh);
+                    se = shipment.sender || {};
+                    re = shipment.recipient || {};
+                    renderAll();
+                }
+            });
+        }
 
         el.addEventListener('click', function(e) {
             var toggleBtn = e.target.closest('[data-toggle-edit]');
