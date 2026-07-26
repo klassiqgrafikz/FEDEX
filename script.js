@@ -260,8 +260,16 @@
             method: method,
             headers: headers,
             body: options && options.body ? JSON.stringify(options.body) : null
+        }).then(function(res) {
+            if (!res.ok) {
+                return res.text().then(function(text) {
+                    throw new Error('Supabase ' + method + ' ' + path + ' returned ' + res.status + ': ' + text.slice(0, 200));
+                });
+            }
+            return res;
         }).catch(function(err) {
-            console.error('[Supabase] Request failed:', method, path, err);
+            console.error('[Supabase] Request failed:', method, path, err.message || err);
+            throw err;
         });
     }
 
@@ -679,6 +687,7 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            try {
             var id = window.FDX.admin.generateTrackingId();
 
             var imgData = previewEl ? (previewEl.dataset.image || '') : '';
@@ -762,6 +771,14 @@
                     alertEl.style.display = 'block';
                 }
             });
+            } catch (err) {
+                console.error('[Create] Error:', err);
+                if (alertEl) {
+                    alertEl.className = 'fxg-admin-alert fxg-admin-alert--error';
+                    alertEl.textContent = 'Error: ' + (err.message || err);
+                    alertEl.style.display = 'block';
+                }
+            }
         });
     }
 
