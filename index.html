@@ -198,60 +198,6 @@
         </div>
     </div>
 
-    <!-- Chat bubble (fixed bottom-right) -->
-    <button class="fxg-chat-bubble" id="chatBubble" aria-label="Chat with FedEx">
-        <span class="fxg-chat-bubble__tooltip" id="chatTooltip">ASK ME</span>
-        <svg class="fxg-chat-bubble__icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-            <path d="M0 0h24v24H0z" fill="none"/>
-        </svg>
-        <svg class="fxg-chat-bubble__close" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-        <span class="fxg-chat-bubble__ring"></span>
-    </button>
-
-    <!-- Chat panel -->
-    <div class="fxg-chat-panel" id="chatPanel">
-        <div class="fxg-chat-panel__header">
-            <div class="fxg-chat-panel__header-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-                </svg>
-                <span>FedEx Chat</span>
-            </div>
-            <span class="fxg-chat-panel__status">Online</span>
-            <button class="fxg-chat-panel__close" id="chatClose" aria-label="Close chat">&#x2715;</button>
-        </div>
-        <div class="fxg-chat-panel__messages" id="chatMessages">
-            <div class="fxg-chat-msg fxg-chat-msg--bot">
-                <div class="fxg-chat-msg__avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-                <div class="fxg-chat-msg__content">
-                    <p>Hello! Welcome to FedEx. How can I help you today?</p>
-                </div>
-            </div>
-            <div class="fxg-chat-msg fxg-chat-msg--bot">
-                <div class="fxg-chat-msg__avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-                <div class="fxg-chat-msg__content">
-                    <p>Choose an option below:</p>
-                    <div class="fxg-chat-options">
-                        <button class="fxg-chat-options__btn" data-action="track">Track a package</button>
-                        <button class="fxg-chat-options__btn" data-action="schedule">Schedule a pickup</button>
-                        <button class="fxg-chat-options__btn" data-action="rates">Get shipping rates</button>
-                        <button class="fxg-chat-options__btn" data-action="locations">Find a location</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="fxg-chat-panel__input">
-            <input type="text" placeholder="Type your message..." disabled>
-            <button disabled>Send</button>
-        </div>
-    </div>
 </section>
 
         <section class="fxg-quicklinks">

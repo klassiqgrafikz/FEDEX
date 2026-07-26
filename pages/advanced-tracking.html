@@ -178,60 +178,6 @@
         </div>
     </div>
 
-    <!-- Chat bubble (fixed bottom-right) -->
-    <button class="fxg-chat-bubble" id="chatBubble" aria-label="Chat with FedEx">
-        <span class="fxg-chat-bubble__tooltip" id="chatTooltip">ASK ME</span>
-        <svg class="fxg-chat-bubble__icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-            <path d="M0 0h24v24H0z" fill="none"/>
-        </svg>
-        <svg class="fxg-chat-bubble__close" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-        <span class="fxg-chat-bubble__ring"></span>
-    </button>
-
-    <!-- Chat panel -->
-    <div class="fxg-chat-panel" id="chatPanel">
-        <div class="fxg-chat-panel__header">
-            <div class="fxg-chat-panel__header-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-                </svg>
-                <span>FedEx Chat</span>
-            </div>
-            <span class="fxg-chat-panel__status">Online</span>
-            <button class="fxg-chat-panel__close" id="chatClose" aria-label="Close chat">&#x2715;</button>
-        </div>
-        <div class="fxg-chat-panel__messages" id="chatMessages">
-            <div class="fxg-chat-msg fxg-chat-msg--bot">
-                <div class="fxg-chat-msg__avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-                <div class="fxg-chat-msg__content">
-                    <p>Hello! Welcome to FedEx. How can I help you today?</p>
-                </div>
-            </div>
-            <div class="fxg-chat-msg fxg-chat-msg--bot">
-                <div class="fxg-chat-msg__avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-                <div class="fxg-chat-msg__content">
-                    <p>Choose an option below:</p>
-                    <div class="fxg-chat-options">
-                        <button class="fxg-chat-options__btn" data-action="track">Track a package</button>
-                        <button class="fxg-chat-options__btn" data-action="schedule">Schedule a pickup</button>
-                        <button class="fxg-chat-options__btn" data-action="rates">Get shipping rates</button>
-                        <button class="fxg-chat-options__btn" data-action="locations">Find a location</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="fxg-chat-panel__input">
-            <input type="text" placeholder="Type your message..." disabled>
-            <button disabled>Send</button>
-        </div>
-    </div>
 </section>
         <main class="fxg-page-content">
             <div class="fxg-page-inner"><div class="fxg-subpage-hero"><div class="fxg-subpage-hero__bg"></div><div class="fxg-subpage-hero__content"><h1>Advanced Shipment Tracking</h1><p>Comprehensive tracking tools for all your FedEx shipments.</p></div></div><div class="fxg-subpage-section"><h2>Overview</h2><p>FedEx Advanced Shipment Tracking provides detailed visibility into your packages from pickup to delivery. Get real-time updates, proof of delivery, and proactive notifications.</p></div><div class="fxg-subpage-features"><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M31.7 30.3l-5.1-5.1C27.5 24 28 22.6 28 21c0-3.9-3.1-7-7-7s-7 3.1-7 7 3.1 7 7 7c1.6 0 3-.5 4.2-1.4l5.1 5.1c.2.2.5.3.7.3s.5-.1.7-.3c.4-.4.4-1 0-1.4zM21 26c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z"/></svg></div><h3>Real-Time Tracking</h3><p>Monitor your shipments with up-to-the-minute status updates and detailed scan history.</p></div><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M14.9 22.6h2v2h-2z"/><path d="M14.9 17l.8 4.9h.5l.7-4.9v-3.4h-2z"/><path d="M31.8 27.4L17.6 3c-.3-.6-.9-1-1.6-1h-.3c-.6.1-1.1.5-1.4 1.1L.2 27.4c-.2.3-.3.6-.3.9 0 .9.7 1.7 1.6 1.7h28.8c.5 0 1-.3 1.5-.8.3-.5.3-1.2 0-1.8z"/></svg></div><h3>Delivery Alerts</h3><p>Receive email or text notifications for key events including departure, arrival, and delivery.</p></div><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M27 0H11c-.3 0-.5.1-.7.3l-6 6c-.2.2-.3.4-.3.7v24c0 .6.4 1 1 1h22c.6 0 1-.4 1-1V1c0-.6-.4-1-1-1zM11 2.4V7H6.4L11 2.4zM26 30H6V9h6c.6 0 1-.4 1-1V2h13v28z"/><path d="M9 12h14v2H9zM9 17h14v2H9zM9 22h10v2H9z"/></svg></div><h3>Proof of Delivery</h3><p>Access delivery signatures, photos, and timestamp records for complete shipment verification.</p></div></div></div>

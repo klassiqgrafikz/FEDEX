@@ -178,60 +178,6 @@
         </div>
     </div>
 
-    <!-- Chat bubble (fixed bottom-right) -->
-    <button class="fxg-chat-bubble" id="chatBubble" aria-label="Chat with FedEx">
-        <span class="fxg-chat-bubble__tooltip" id="chatTooltip">ASK ME</span>
-        <svg class="fxg-chat-bubble__icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-            <path d="M0 0h24v24H0z" fill="none"/>
-        </svg>
-        <svg class="fxg-chat-bubble__close" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-        <span class="fxg-chat-bubble__ring"></span>
-    </button>
-
-    <!-- Chat panel -->
-    <div class="fxg-chat-panel" id="chatPanel">
-        <div class="fxg-chat-panel__header">
-            <div class="fxg-chat-panel__header-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-                </svg>
-                <span>FedEx Chat</span>
-            </div>
-            <span class="fxg-chat-panel__status">Online</span>
-            <button class="fxg-chat-panel__close" id="chatClose" aria-label="Close chat">&#x2715;</button>
-        </div>
-        <div class="fxg-chat-panel__messages" id="chatMessages">
-            <div class="fxg-chat-msg fxg-chat-msg--bot">
-                <div class="fxg-chat-msg__avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-                <div class="fxg-chat-msg__content">
-                    <p>Hello! Welcome to FedEx. How can I help you today?</p>
-                </div>
-            </div>
-            <div class="fxg-chat-msg fxg-chat-msg--bot">
-                <div class="fxg-chat-msg__avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-                <div class="fxg-chat-msg__content">
-                    <p>Choose an option below:</p>
-                    <div class="fxg-chat-options">
-                        <button class="fxg-chat-options__btn" data-action="track">Track a package</button>
-                        <button class="fxg-chat-options__btn" data-action="schedule">Schedule a pickup</button>
-                        <button class="fxg-chat-options__btn" data-action="rates">Get shipping rates</button>
-                        <button class="fxg-chat-options__btn" data-action="locations">Find a location</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="fxg-chat-panel__input">
-            <input type="text" placeholder="Type your message..." disabled>
-            <button disabled>Send</button>
-        </div>
-    </div>
 </section>
         <main class="fxg-page-content">
             <div class="fxg-page-inner"><div class="fxg-subpage-hero"><div class="fxg-subpage-hero__bg"></div><div class="fxg-subpage-hero__content"><h1>FedEx Mobile App</h1><p>Download the FedEx Mobile app for tracking and shipping on the go.</p></div></div><div class="fxg-subpage-section"><h2>Overview</h2><p>The FedEx Mobile app puts shipping and tracking capabilities right in your pocket. Manage shipments, find locations, and stay informed wherever you are.</p></div><div class="fxg-subpage-features"><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M22 0H10C8.3 0 7 1.3 7 3v26c0 1.7 1.3 3 3 3h12c1.7 0 3-1.3 3-3V3c0-1.7-1.3-3-3-3zm1 28H9V4h14v24z"/><circle cx="16" cy="26" r="1.5"/></svg></div><h3>Mobile Tracking</h3><p>Track packages in real time with push notifications for status changes and delivery updates.</p></div><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M16 0C9.4 0 4 5.4 4 12c0 8 12 20 12 20s12-12 12-20C28 5.4 22.6 0 16 0zm0 18c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"/></svg></div><h3>Find Locations</h3><p>Locate nearby FedEx drop boxes and staffed locations with directions and hours.</p></div><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M32 9.5c0-.1 0-.2-.1-.4V9c0-.1-.1-.2-.2-.2l-.1-.1c-.1-.1-.2-.1-.3-.2L16.3 2c-.3-.1-.5-.1-.8 0L.5 8.5c-.1 0-.2.1-.3.2 0 0 0 .1-.1.1.1.1 0 .2 0 .3v.1c-.1.1-.1.2-.1.3v14c0 .4.2.8.6.9l15 6c.1 0 .2.1.4.1.1 0 .3 0 .4-.1l15-6.1c.4-.2.6-.5.6-.9V9.5z"/></svg></div><h3>Mobile Shipping</h3><p>Create labels, schedule pickups, and manage shipments directly from your mobile device.</p></div></div></div>

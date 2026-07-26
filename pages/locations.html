@@ -178,60 +178,6 @@
         </div>
     </div>
 
-    <!-- Chat bubble (fixed bottom-right) -->
-    <button class="fxg-chat-bubble" id="chatBubble" aria-label="Chat with FedEx">
-        <span class="fxg-chat-bubble__tooltip" id="chatTooltip">ASK ME</span>
-        <svg class="fxg-chat-bubble__icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-            <path d="M0 0h24v24H0z" fill="none"/>
-        </svg>
-        <svg class="fxg-chat-bubble__close" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-        <span class="fxg-chat-bubble__ring"></span>
-    </button>
-
-    <!-- Chat panel -->
-    <div class="fxg-chat-panel" id="chatPanel">
-        <div class="fxg-chat-panel__header">
-            <div class="fxg-chat-panel__header-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-                </svg>
-                <span>FedEx Chat</span>
-            </div>
-            <span class="fxg-chat-panel__status">Online</span>
-            <button class="fxg-chat-panel__close" id="chatClose" aria-label="Close chat">&#x2715;</button>
-        </div>
-        <div class="fxg-chat-panel__messages" id="chatMessages">
-            <div class="fxg-chat-msg fxg-chat-msg--bot">
-                <div class="fxg-chat-msg__avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-                <div class="fxg-chat-msg__content">
-                    <p>Hello! Welcome to FedEx. How can I help you today?</p>
-                </div>
-            </div>
-            <div class="fxg-chat-msg fxg-chat-msg--bot">
-                <div class="fxg-chat-msg__avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-                <div class="fxg-chat-msg__content">
-                    <p>Choose an option below:</p>
-                    <div class="fxg-chat-options">
-                        <button class="fxg-chat-options__btn" data-action="track">Track a package</button>
-                        <button class="fxg-chat-options__btn" data-action="schedule">Schedule a pickup</button>
-                        <button class="fxg-chat-options__btn" data-action="rates">Get shipping rates</button>
-                        <button class="fxg-chat-options__btn" data-action="locations">Find a location</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="fxg-chat-panel__input">
-            <input type="text" placeholder="Type your message..." disabled>
-            <button disabled>Send</button>
-        </div>
-    </div>
 </section>
         <main class="fxg-page-content">
             <div class="fxg-page-inner"><div class="fxg-subpage-hero"><div class="fxg-subpage-hero__bg"></div><div class="fxg-subpage-hero__content"><h1>Find a Location</h1><p>Find FedEx locations near you including drop boxes and staffed centers.</p></div></div><div class="fxg-subpage-section"><h2>Overview</h2><p>With thousands of locations nationwide, FedEx makes it easy to find a convenient drop-off, pickup, or shipping center near you. Search by city, state, or ZIP code.</p></div><div class="fxg-subpage-features"><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M16 0C9.4 0 4 5.4 4 12c0 8 12 20 12 20s12-12 12-20C28 5.4 22.6 0 16 0zm0 18c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"/></svg></div><h3>Nearby Search</h3><p>Find FedEx locations closest to your current location with hours, services, and directions.</p></div><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M16 0C7.2 0 0 7.2 0 16s7.2 16 16 16 16-7.2 16-16S24.8 0 16 0zm0 30C8.3 30 2 23.7 2 16S8.3 2 16 2s14 6.3 14 14-6.3 14-14 14z"/><path d="M21 15h-4V8c0-.6-.4-1-1-1s-1 .4-1 1v8c0 .6.4 1 1 1h5c.6 0 1-.4 1-1s-.4-1-1-1z"/></svg></div><h3>Hours & Services</h3><p>View operating hours and available services for each location, including printing and packing.</p></div><div class="fxg-subpage-feature"><div class="fxg-subpage-feature__icon"><svg viewBox="0 0 32 32" width="32" height="32" fill="#660099"><path d="M32 9.5c0-.1 0-.2-.1-.4V9c0-.1-.1-.2-.2-.2l-.1-.1c-.1-.1-.2-.1-.3-.2L16.3 2c-.3-.1-.5-.1-.8 0L.5 8.5c-.1 0-.2.1-.3.2 0 0 0 .1-.1.1.1.1 0 .2 0 .3v.1c-.1.1-.1.2-.1.3v14c0 .4.2.8.6.9l15 6c.1 0 .2.1.4.1.1 0 .3 0 .4-.1l15-6.1c.4-.2.6-.5.6-.9V9.5z"/></svg></div><h3>Full Service Centers</h3><p>Staffed locations offer packing, printing, and expert shipping advice in addition to drop-off services.</p></div></div></div>
