@@ -1011,33 +1011,7 @@
             el.querySelector('#shipmentPackageName').textContent = shipment.packageName || '(no name)';
             el.querySelector('#shipmentCreatedDate').textContent = F.formatDate(shipment.createdAt);
 
-            var imgWrap = el.querySelector('#shipmentImage');
-            var videoWrap = el.querySelector('#shipmentVideo');
-            var mediaList = shipment.media || [];
-            var imgItem = null;
-            var vidItem = null;
-            for (var mi = 0; mi < mediaList.length; mi++) {
-                if (mediaList[mi].media_type === 'image') imgItem = mediaList[mi];
-                else if (mediaList[mi].media_type === 'video') vidItem = mediaList[mi];
-            }
-
-            if (imgItem && imgItem.data) {
-                imgWrap.innerHTML = '<img src="' + imgItem.data + '" alt="Package">';
-                imgWrap.className = 'fxg-admin-detail-header__image';
-            } else {
-                imgWrap.innerHTML = 'No image';
-                imgWrap.className = 'fxg-admin-detail-header__image--empty';
-            }
-
-            if (videoWrap) {
-                if (vidItem && vidItem.data) {
-                    videoWrap.innerHTML = '<video src="' + vidItem.data + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>';
-                    videoWrap.className = 'fxg-admin-detail-header__image';
-                } else {
-                    videoWrap.innerHTML = 'No video';
-                    videoWrap.className = 'fxg-admin-detail-header__image--empty';
-                }
-            }
+            renderDetailMedia();
 
             el.querySelector('#shipmentStatus').innerHTML = F.badgeHtml(shipment.currentStatus);
 
@@ -1179,6 +1153,113 @@
             });
         }
 
+        function getStoragePathFromUrl(url) {
+            if (!url || url.indexOf('/storage/v1/object/public/shipment-media/') === -1) return null;
+            var prefix = SUPABASE_URL + '/storage/v1/object/public/shipment-media/';
+            return url.indexOf(prefix) === 0 ? url.slice(prefix.length) : null;
+        }
+
+        function renderDetailMedia() {
+            var imgWrap = el.querySelector('#shipmentImage');
+            var videoWrap = el.querySelector('#shipmentVideo');
+            var mediaList = shipment.media || [];
+            var imgItem = null, vidItem = null;
+            for (var mi = 0; mi < mediaList.length; mi++) {
+                if (mediaList[mi].media_type === 'image') imgItem = mediaList[mi];
+                else if (mediaList[mi].media_type === 'video') vidItem = mediaList[mi];
+            }
+            renderMediaItem(imgWrap, imgItem, 'image');
+            renderMediaItem(videoWrap, vidItem, 'video');
+        }
+
+        function renderMediaItem(wrap, item, type) {
+            if (!wrap) return;
+            var pencilSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
+            var trashSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
+
+            if (item && item.data) {
+                var isVideo = type === 'video';
+                var tag = isVideo
+                    ? '<video src="' + item.data + '" muted controls style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>'
+                    : '<img src="' + item.data + '" alt="Package" style="width:100%;height:100%;object-fit:cover;">';
+                wrap.innerHTML = tag +
+                    '<div class="fxg-admin-media-overlay">' +
+                        '<button class="fxg-admin-btn-icon" data-media-edit="' + type + '" title="Edit ' + type + '">' + pencilSvg + '</button>' +
+                        '<button class="fxg-admin-btn-icon fxg-admin-btn-icon--danger" data-media-delete="' + type + '" title="Remove ' + type + '">' + trashSvg + '</button>' +
+                    '</div>';
+                wrap.className = 'fxg-admin-detail-header__image';
+            } else {
+                wrap.innerHTML = '<div class="fxg-admin-detail-header__image-upload" data-media-upload="' + type + '">Click to upload<br>' + type + '</div>';
+                wrap.className = 'fxg-admin-detail-header__image--empty';
+            }
+        }
+
+        function handleMediaUpload(type) {
+            var input = el.querySelector(type === 'image' ? '#detailImageInput' : '#detailVideoInput');
+            if (!input) return;
+            input.value = '';
+            input.click();
+        }
+
+        function onMediaFileSelected(type) {
+            var input = el.querySelector(type === 'image' ? '#detailImageInput' : '#detailVideoInput');
+            var file = input && input.files[0];
+            if (!file) return;
+            var ext = file.name.split('.').pop() || (type === 'image' ? 'png' : 'mp4');
+            var ts = Date.now();
+            var rand = Math.random().toString(36).slice(2, 6);
+            var path = ts + '_' + rand + '.' + ext;
+
+            uploadToStorage(file, 'shipment-media', path).then(function(publicUrl) {
+                var oldMedia = shipment.media || [];
+                var oldPath = null;
+                for (var i = 0; i < oldMedia.length; i++) {
+                    if (oldMedia[i].media_type === type) {
+                        oldPath = getStoragePathFromUrl(oldMedia[i].data);
+                        oldMedia.splice(i, 1);
+                        break;
+                    }
+                }
+                if (oldPath) deleteFromStorage('shipment-media', oldPath);
+
+                return saveShipmentMedia(id, type, publicUrl).then(function() {
+                    shipment.media = shipment.media || [];
+                    shipment.media.push({ media_type: type, data: publicUrl });
+                    shipment.updatedAt = new Date().toISOString();
+                    return F.saveShipment(shipment);
+                });
+            }).then(function() {
+                renderDetailMedia();
+                showToast((type === 'image' ? 'Image' : 'Video') + ' updated', 'success');
+            }).catch(function() {
+                showToast('Failed to upload ' + type, 'error');
+            });
+        }
+
+        function handleMediaDelete(type) {
+            if (!confirm('Remove this ' + type + '?')) return;
+            var oldMedia = shipment.media || [];
+            var oldPath = null;
+            for (var i = 0; i < oldMedia.length; i++) {
+                if (oldMedia[i].media_type === type) {
+                    oldPath = getStoragePathFromUrl(oldMedia[i].data);
+                    oldMedia.splice(i, 1);
+                    break;
+                }
+            }
+            if (oldPath) deleteFromStorage('shipment-media', oldPath);
+
+            supabaseFetch('shipment_media?shipment_id=eq.' + encodeURIComponent(id) + '&media_type=eq.' + type, {
+                method: 'DELETE'
+            }).then(function() {
+                shipment.updatedAt = new Date().toISOString();
+                return F.saveShipment(shipment);
+            }).then(function() {
+                renderDetailMedia();
+                showToast((type === 'image' ? 'Image' : 'Video') + ' removed', 'success');
+            });
+        }
+
         var editSections = {
             sender: {
                 fields: [
@@ -1269,7 +1350,34 @@
                 else renderPackageDisplay();
                 return;
             }
+
+            var mediaEditBtn = e.target.closest('[data-media-edit]');
+            if (mediaEditBtn) {
+                handleMediaUpload(mediaEditBtn.getAttribute('data-media-edit'));
+                return;
+            }
+
+            var mediaDeleteBtn = e.target.closest('[data-media-delete]');
+            if (mediaDeleteBtn) {
+                handleMediaDelete(mediaDeleteBtn.getAttribute('data-media-delete'));
+                return;
+            }
+
+            var mediaUploadBtn = e.target.closest('[data-media-upload]');
+            if (mediaUploadBtn) {
+                handleMediaUpload(mediaUploadBtn.getAttribute('data-media-upload'));
+                return;
+            }
         });
+
+        var imgInput = el.querySelector('#detailImageInput');
+        if (imgInput) {
+            imgInput.addEventListener('change', function() { onMediaFileSelected('image'); });
+        }
+        var vidInput = el.querySelector('#detailVideoInput');
+        if (vidInput) {
+            vidInput.addEventListener('change', function() { onMediaFileSelected('video'); });
+        }
 
         var updateForm = el.querySelector('#updateStatusForm');
         var statusSelect = el.querySelector('#updateStatus');

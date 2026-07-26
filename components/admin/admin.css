@@ -1103,3 +1103,43 @@
 .fxg-admin-table td.fxg-admin-actions .fxg-admin-btn:first-child {
     margin-left: 0;
 }
+
+.fxg-admin-detail-header__image {
+    position: relative;
+}
+
+.fxg-admin-media-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+}
+
+.fxg-admin-detail-header__image:hover .fxg-admin-media-overlay {
+    opacity: 1;
+}
+
+.fxg-admin-detail-header__image--empty {
+    cursor: pointer;
+}
+
+.fxg-admin-detail-header__image-upload {
+    text-align: center;
+    color: #bbb;
+    font-size: 12px;
+    padding: 8px;
+    line-height: 1.4;
+}
+
+.fxg-admin-detail-header__image-upload:hover {
+    color: var(--fx-purple-light);
+}
