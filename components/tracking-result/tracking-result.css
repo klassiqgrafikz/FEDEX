@@ -483,6 +483,10 @@
     z-index: 0;
 }
 
+.fxg-tr-scans--delivered::before {
+    background: #2e7d32;
+}
+
 .fxg-tr-scans--empty {
     display: none;
 }

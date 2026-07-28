@@ -306,6 +306,10 @@
         if (curDate !== null) html += '</div>';
 
         container.innerHTML = html;
+
+        var lastEntry = sorted.length ? sorted[sorted.length - 1] : null;
+        var isDelivered = lastEntry && (lastEntry.status || '').toLowerCase() === 'delivered';
+        container.classList.toggle('fxg-tr-scans--delivered', isDelivered);
     }
 
     function renderFacts(el, shipment) {
