@@ -59,7 +59,7 @@
     }
     .fxg-whyship__image {
         flex: none;
-        max-width: 300px;
+        width: 100%;
     }
 }
 
