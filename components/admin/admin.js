@@ -369,11 +369,13 @@
                             '</table>' +
                         '</div>' +
                     '</div>' +
-                    '<div style="text-align:center;padding-top:20px;border-top:2px solid #4D148C">' +
-                        '<div id="fxg-invoice-qr" style="display:inline-block;padding:8px;border:1px solid #e0e0e0;border-radius:4px"></div>' +
-                        '<div style="font-size:9px;color:#888;margin-top:10px;letter-spacing:0.4px">Scan to track your shipment</div>' +
-                        '<div style="font-size:8px;color:#aaa;margin-top:3px;letter-spacing:0.5px">Thank you for using FedEx</div>' +
-                        '<div style="margin-top:14px;font-size:8px;color:#999;line-height:1.5">FedEx Corporation &bull; 942 S Shady Grove Road, Memphis, TN 38120</div>' +
+                    '<div style="display:flex;align-items:center;justify-content:center;gap:20px;padding-top:20px;border-top:2px solid #4D148C">' +
+                        '<div id="fxg-invoice-qr" style="flex-shrink:0;padding:8px;border:1px solid #e0e0e0;border-radius:4px"></div>' +
+                        '<div style="text-align:left">' +
+                            '<div style="font-size:9px;color:#888;letter-spacing:0.4px">Scan to track your shipment</div>' +
+                            '<div style="font-size:8px;color:#aaa;margin-top:4px;letter-spacing:0.5px">Thank you for using FedEx</div>' +
+                            '<div style="margin-top:10px;font-size:8px;color:#999">FedEx Corporation &bull; 942 S Shady Grove Road, Memphis, TN 38120</div>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
             '</div>';
