@@ -300,12 +300,6 @@
         var dueDate = new Date(today);
         dueDate.setDate(dueDate.getDate() + 30);
         var dueStr = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        var weightNum = parseFloat(shipment.weight) || 1;
-        var ratePerLb = shipment.serviceType && shipment.serviceType.toLowerCase().indexOf('express') !== -1 ? 3.85 : 1.95;
-        var baseCharge = (weightNum * ratePerLb).toFixed(2);
-        var fuelSurcharge = (weightNum * ratePerLb * 0.0875).toFixed(2);
-        var total = (parseFloat(baseCharge) + parseFloat(fuelSurcharge)).toFixed(2);
-
         var div = document.createElement('div');
         div.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:999999';
         div.innerHTML =
@@ -358,51 +352,16 @@
                             '</table>' +
                         '</div>' +
                     '</div>' +
-                    '<div style="border:1px solid #ddd;border-radius:4px;overflow:hidden;margin-bottom:24px">' +
-                        '<div style="background:#f0ecf4;padding:8px 14px;font-size:10px;font-weight:700;color:#4D148C;letter-spacing:1px">SERVICE CHARGES</div>' +
-                        '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
-                            '<thead>' +
-                                '<tr style="background:#fafafa;border-bottom:1px solid #eee">' +
-                                    '<th style="padding:7px 14px;text-align:left;font-size:9px;color:#888;font-weight:600;letter-spacing:0.8px">DESCRIPTION</th>' +
-                                    '<th style="padding:7px 14px;text-align:right;font-size:9px;color:#888;font-weight:600;letter-spacing:0.8px">WEIGHT</th>' +
-                                    '<th style="padding:7px 14px;text-align:right;font-size:9px;color:#888;font-weight:600;letter-spacing:0.8px">RATE</th>' +
-                                    '<th style="padding:7px 14px;text-align:right;font-size:9px;color:#888;font-weight:600;letter-spacing:0.8px">AMOUNT</th>' +
-                                '</tr>' +
-                            '</thead>' +
-                            '<tbody>' +
-                                '<tr style="border-bottom:1px solid #f0f0f0">' +
-                                    '<td style="padding:8px 14px;color:#333;font-size:12px">' + escapeHtml(shipment.serviceType || 'Shipping Service') + '</td>' +
-                                    '<td style="padding:8px 14px;text-align:right;color:#333">' + escapeHtml(shipment.weight || '-') + '</td>' +
-                                    '<td style="padding:8px 14px;text-align:right;color:#333">$' + ratePerLb.toFixed(2) + '</td>' +
-                                    '<td style="padding:8px 14px;text-align:right;color:#333;font-weight:600">$' + baseCharge + '</td>' +
-                                '</tr>' +
-                                '<tr style="border-bottom:1px solid #f0f0f0">' +
-                                    '<td style="padding:8px 14px;color:#888;font-size:11px">Fuel Surcharge (8.75%)</td>' +
-                                    '<td style="padding:8px 14px;text-align:right;color:#888">-</td>' +
-                                    '<td style="padding:8px 14px;text-align:right;color:#888">-</td>' +
-                                    '<td style="padding:8px 14px;text-align:right;color:#888;font-size:11px">$' + fuelSurcharge + '</td>' +
-                                '</tr>' +
-                            '</tbody>' +
-                            '<tfoot>' +
-                                '<tr>' +
-                                    '<td colspan="3" style="padding:10px 14px;text-align:right;font-size:10px;color:#888;font-weight:600;letter-spacing:0.5px">TOTAL DUE (USD)</td>' +
-                                    '<td style="padding:10px 14px;text-align:right;font-size:16px;font-weight:700;color:#4D148C">$' + total + '</td>' +
-                                '</tr>' +
-                            '</tfoot>' +
-                        '</table>' +
-                    '</div>' +
-                    '<div style="background:#fff8e6;border:1px solid #f0e0b0;border-radius:4px;padding:10px 14px;margin-bottom:24px">' +
-                        '<div style="font-size:9px;font-weight:700;color:#996600;letter-spacing:0.8px;margin-bottom:3px">PAYMENT TERMS</div>' +
-                        '<div style="font-size:11px;color:#665500">Payment due within 30 days. Make checks payable to FedEx Corporation. Reference invoice number on all payments.</div>' +
-                    '</div>' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:2px solid #4D148C">' +
-                        '<div>' +
-                            '<div id="fxg-invoice-qr" style="display:inline-block;padding:8px;border:1px solid #e0e0e0;border-radius:4px"></div>' +
-                            '<div style="font-size:8px;color:#999;margin-top:4px;letter-spacing:0.3px">Scan to track your shipment</div>' +
+                    '<div style="display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:2px solid #4D148C">' +
+                        '<div style="display:flex;align-items:center;gap:16px">' +
+                            '<div id="fxg-invoice-qr" style="flex-shrink:0;padding:6px;border:1px solid #e0e0e0;border-radius:4px"></div>' +
+                            '<div>' +
+                                '<div style="font-size:8px;color:#999;letter-spacing:0.3px;margin-bottom:2px">Scan to track your shipment</div>' +
+                                '<div style="font-size:7px;color:#bbb;letter-spacing:0.5px">Thank you for using FedEx</div>' +
+                            '</div>' +
                         '</div>' +
                         '<div style="text-align:right;font-size:8px;color:#aaa;line-height:1.6">' +
-                            'FedEx Corporation<br>942 S Shady Grove Road, Memphis, TN 38120<br>' +
-                            'Thank you for your business' +
+                            'FedEx Corporation<br>942 S Shady Grove Road, Memphis, TN 38120' +
                         '</div>' +
                     '</div>' +
                 '</div>' +
