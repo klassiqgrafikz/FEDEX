@@ -274,19 +274,7 @@
 }
 
 .fxg-tr-summary__icon {
-    flex-shrink: 0;
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f6fb;
-}
-
-.fxg-tr-summary__icon svg {
-    width: 40px;
-    height: 40px;
+    display: none;
 }
 
 /* ====== Alert Banner ====== */
@@ -436,6 +424,10 @@
     text-align: center;
     line-height: 1.2;
     display: none;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .fxg-tr-stepper__step--completed .fxg-tr-stepper__date,
@@ -559,12 +551,6 @@
     background: #d32f2f;
     border-color: #d32f2f;
     box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.2);
-}
-
-.fxg-tr-scans__item--active.fxg-tr-scans__item--pending .fxg-tr-scans__dot {
-    background: #f9a825;
-    border-color: #f9a825;
-    box-shadow: 0 0 0 4px rgba(249, 168, 37, 0.2);
 }
 
 @keyframes fgxTrScanPulse {
@@ -758,9 +744,6 @@
     .fxg-tr-summary__status-text { font-size: 22px; }
     .fxg-tr-summary__badge { padding: 5px 12px; font-size: 11px; }
     .fxg-tr-summary__date { font-size: 14px; }
-    .fxg-tr-summary__icon { width: 56px; height: 56px; }
-    .fxg-tr-summary__icon svg { width: 34px; height: 34px; }
-
     .fxg-tr-alert { padding: 14px 20px; font-size: 13px; }
     .fxg-tr-alert svg { width: 18px; height: 18px; }
 

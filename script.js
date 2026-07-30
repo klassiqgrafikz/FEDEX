@@ -1739,11 +1739,6 @@
         var dateEl = el.querySelector('#trDeliveryDate');
         var iconBox = el.querySelector('#trStatusIcon');
 
-        if (iconBox) {
-            iconBox.innerHTML = '';
-            iconBox.appendChild(statusIcon(shipment));
-        }
-
         var st = shipment.currentStatus || 'Pending';
         if (statusTextEl) statusTextEl.textContent = st;
 
