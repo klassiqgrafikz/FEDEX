@@ -487,16 +487,6 @@
     margin-bottom: 4px;
 }
 
-.fxg-tr-scans__date-header {
-    font-size: 12px;
-    font-weight: 700;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    padding: 14px 0 8px 45px;
-    margin-bottom: 4px;
-}
-
 .fxg-tr-scans__item {
     display: flex;
     gap: 20px;
@@ -756,7 +746,6 @@
     .fxg-tr-stepper__date { font-size: 9px; }
     .fxg-tr-scans { padding: 0 20px 16px; }
     .fxg-tr-scans::before { left: 28px; top: 0; width: 16px; border-radius: 8px 8px 0 0; }
-    .fxg-tr-scans__date-header { padding: 14px 0 8px 34px; }
     .fxg-tr-scans__item { gap: 14px; padding: 10px 0; }
     .fxg-tr-scans__time { font-size: 11px; }
     .fxg-tr-scans__status { font-size: 13px; }

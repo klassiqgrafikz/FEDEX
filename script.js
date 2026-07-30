@@ -1868,18 +1868,13 @@
         var sorted = tl.slice().sort(function (a, b) { return new Date(a.timestamp) - new Date(b.timestamp); });
         var html = '';
         var curDate = null;
-        var dateGroups = 0;
 
         sorted.forEach(function (entry, idx) {
             var d = entry.timestamp ? fmtShort(entry.timestamp) : '';
             if (d && d !== curDate) {
                 if (curDate !== null) html += '</div>';
                 curDate = d;
-                dateGroups++;
                 html += '<div class="fxg-tr-scans__date-group">';
-                if (dateGroups > 1) {
-                    html += '<div class="fxg-tr-scans__date-header">' + escape(d) + '</div>';
-                }
             } else if (!d && curDate === null) {
                 html += '<div class="fxg-tr-scans__date-group">';
                 curDate = '';
