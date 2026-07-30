@@ -332,11 +332,13 @@
                             '<div style="background:#f8f6fa;border:1px solid #e8e0f0;border-radius:4px;padding:12px 14px">' +
                                 '<div style="font-size:13px;font-weight:700;color:#222">' + escapeHtml(re.name || '') + '</div>' +
                                 (re.company ? '<div style="font-size:12px;color:#555;margin-top:2px">' + escapeHtml(re.company) + '</div>' : '') +
-                                '<div style="font-size:12px;color:#555;margin-top:2px">' + escapeHtml([re.city, re.state].filter(Boolean).join(', ') || '') + '</div>' +
+                                (re.address ? '<div style="font-size:12px;color:#555;margin-top:2px">' + escapeHtml(re.address) + '</div>' : '') +
+                                '<div style="font-size:12px;color:#555;margin-top:2px">' + escapeHtml([re.city, re.state, re.zip].filter(Boolean).join(' ') || '') + '</div>' +
+                                (re.country && re.country !== 'US' ? '<div style="font-size:12px;color:#555;margin-top:2px">' + escapeHtml(re.country) + '</div>' : '') +
                             '</div>' +
                         '</div>' +
                     '</div>' +
-                    '<div style="display:flex;gap:20px;margin-bottom:28px">' +
+                    '<div style="display:flex;gap:20px;margin-bottom:24px">' +
                         '<div style="flex:1">' +
                             '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
                                 '<tr><td style="padding:3px 6px 3px 0;color:#888;width:100px">Invoice Date</td><td style="padding:3px 0;color:#333">' + escapeHtml(invDate) + '</td></tr>' +
@@ -352,17 +354,26 @@
                             '</table>' +
                         '</div>' +
                     '</div>' +
-                    '<div style="display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:2px solid #4D148C">' +
-                        '<div style="display:flex;align-items:center;gap:16px">' +
-                            '<div id="fxg-invoice-qr" style="flex-shrink:0;padding:6px;border:1px solid #e0e0e0;border-radius:4px"></div>' +
-                            '<div>' +
-                                '<div style="font-size:8px;color:#999;letter-spacing:0.3px;margin-bottom:2px">Scan to track your shipment</div>' +
-                                '<div style="font-size:7px;color:#bbb;letter-spacing:0.5px">Thank you for using FedEx</div>' +
-                            '</div>' +
+                    '<div style="border:1px solid #ddd;border-radius:4px;overflow:hidden;margin-bottom:24px">' +
+                        '<div style="background:#f0ecf4;padding:8px 14px;font-size:10px;font-weight:700;color:#4D148C;letter-spacing:1px">SHIPMENT DETAILS</div>' +
+                        '<div style="padding:10px 14px">' +
+                            '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
+                                '<tr><td style="padding:4px 8px 4px 0;color:#888;width:130px">Package</td><td style="padding:4px 0;color:#333;font-weight:500">' + escapeHtml(shipment.packageName || '-') + '</td></tr>' +
+                                '<tr><td style="padding:4px 8px 4px 0;color:#888;border-top:1px solid #f0f0f0">Service</td><td style="padding:4px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + escapeHtml(shipment.serviceType || '-') + '</td></tr>' +
+                                '<tr><td style="padding:4px 8px 4px 0;color:#888;border-top:1px solid #f0f0f0">Weight</td><td style="padding:4px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + escapeHtml(shipment.weight || '-') + '</td></tr>' +
+                                '<tr><td style="padding:4px 8px 4px 0;color:#888;border-top:1px solid #f0f0f0">Packaging</td><td style="padding:4px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + escapeHtml(shipment.packaging || '-') + '</td></tr>' +
+                                '<tr><td style="padding:4px 8px 4px 0;color:#888;border-top:1px solid #f0f0f0">Ship Date</td><td style="padding:4px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + formatDateShort(shipment.createdAt) + '</td></tr>' +
+                                '<tr><td style="padding:4px 8px 4px 0;color:#888;border-top:1px solid #f0f0f0">Est. Delivery</td><td style="padding:4px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + formatDateShort(shipment.estDeliveryDate) + '</td></tr>' +
+                                (shipment.dimensions ? '<tr><td style="padding:4px 8px 4px 0;color:#888;border-top:1px solid #f0f0f0">Dimensions</td><td style="padding:4px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + escapeHtml(shipment.dimensions) + '</td></tr>' : '') +
+                                (shipment.totalPieces ? '<tr><td style="padding:4px 8px 4px 0;color:#888;border-top:1px solid #f0f0f0">Total Pieces</td><td style="padding:4px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + escapeHtml(shipment.totalPieces) + '</td></tr>' : '') +
+                            '</table>' +
                         '</div>' +
-                        '<div style="text-align:right;font-size:8px;color:#aaa;line-height:1.6">' +
-                            'FedEx Corporation<br>942 S Shady Grove Road, Memphis, TN 38120' +
-                        '</div>' +
+                    '</div>' +
+                    '<div style="text-align:center;padding-top:20px;border-top:2px solid #4D148C">' +
+                        '<div id="fxg-invoice-qr" style="display:inline-block;padding:8px;border:1px solid #e0e0e0;border-radius:4px"></div>' +
+                        '<div style="font-size:9px;color:#888;margin-top:10px;letter-spacing:0.4px">Scan to track your shipment</div>' +
+                        '<div style="font-size:8px;color:#aaa;margin-top:3px;letter-spacing:0.5px">Thank you for using FedEx</div>' +
+                        '<div style="margin-top:14px;font-size:8px;color:#999;line-height:1.5">FedEx Corporation &bull; 942 S Shady Grove Road, Memphis, TN 38120</div>' +
                     '</div>' +
                 '</div>' +
             '</div>';
@@ -370,8 +381,8 @@
         if (typeof QRCode !== 'undefined') {
             new QRCode(document.getElementById('fxg-invoice-qr'), {
                 text: shipment.id,
-                width: 90,
-                height: 90,
+                width: 130,
+                height: 130,
                 colorDark: '#4D148C',
                 colorLight: '#ffffff',
                 correctLevel: QRCode.CorrectLevel.H
