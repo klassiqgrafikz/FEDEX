@@ -1679,14 +1679,7 @@
                 '<path d="M32 28v14" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"/>' +
                 '<path d="M32 38l8 4" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>';
         } else {
-            svg.innerHTML =
-                '<circle cx="32" cy="32" r="30" fill="#660099"/>' +
-                '<circle cx="32" cy="32" r="26" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>' +
-                '<rect x="20" y="25" width="10" height="10" rx="2" fill="#fff" opacity="0.9"/>' +
-                '<rect x="30" y="27" width="14" height="8" rx="1.5" fill="#fff" opacity="0.9"/>' +
-                '<circle cx="24" cy="41" r="4" fill="#fff" opacity="0.8"/>' +
-                '<circle cx="40" cy="41" r="4" fill="#fff" opacity="0.8"/>' +
-                '<path d="M20 35l-4-6h6l4 6z" fill="#fff" opacity="0.65"/>';
+            svg.innerHTML = '<circle cx="32" cy="32" r="14" fill="#e0dce6"/>';
         }
         return svg;
     }
