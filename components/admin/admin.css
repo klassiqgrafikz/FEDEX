@@ -1194,6 +1194,15 @@
     background: var(--fx-purple-bg);
     border-color: var(--fx-border);
 }
+.fxg-admin-btn--invoice {
+    color: #2e7d32;
+    vertical-align: middle;
+}
+.fxg-admin-btn--invoice:hover {
+    color: #1b5e20;
+    background: #e8f5e9;
+    border-color: #c8e6c9;
+}
 .fxg-admin-edit-actions {
     display: flex;
     gap: 8px;

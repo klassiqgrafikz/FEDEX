@@ -291,6 +291,97 @@
         });
     }
 
+    function generateInvoice(shipment) {
+        var div = document.createElement('div');
+        div.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:999999';
+        div.innerHTML =
+            '<div id="fxg-invoice" style="width:520px;background:#fff;padding:40px;font-family:Arial,sans-serif;margin:0 auto">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #660099;padding-bottom:20px;margin-bottom:24px">' +
+                    '<div>' +
+                        '<svg viewBox="0 0 451.694 220.997" style="width:140px;height:auto">' +
+                            '<defs><style>.fxg-iv-ex{fill:#FF6600;}.fxg-iv-fed{fill:#660099;}</style></defs>' +
+                            '<polygon class="fxg-iv-ex" points="360.671 159 346.805 143.415 333.547 159.009 306.001 159.012 332.991 127.8 306.001 97.012 335.001 97.012 348.006 111.984 361.001 97.012 388.001 97.012 361.62 127.6 389.705 159 360.671 159"/>' +
+                            '<polygon class="fxg-iv-ex" points="252.001 159.012 252.001 62.012 306.001 62.012 306.001 84.012 275.001 84.012 275.001 97.012 306.001 97.012 306.001 118.012 275.001 118.012 275.001 137.012 306.001 137.012 306.001 159.012 252.001 159.012"/>' +
+                            '<path class="fxg-iv-fed" d="M230,62.012v40l-.814-.639c-5.005-5.7-11.879-7.361-19.186-7.361-14.915,0-25.458,9.664-29.362,23.077C176.134,102.374,164.118,94.012,147,94.012c-13.914,0-25.294,5.789-31,16v-13H88v-13h31v-22H62v97H88v-41l25.571-.222a36.939,36.939,0,0,0-1.2,9.509c0,20.12,15.316,34.535,34.935,34.535,16.517,0,26.89-7.708,32.7-21.822H158c-3,4.2-4.69,5.205-10.6,5.205-6.907,0-13.113-6.206-13.113-13.413h45.045c1.9,16.016,14.41,30.208,31.528,30.208A24.082,24.082,0,0,0,230,151.755v7.257h22v-97ZM135.293,118.09c1.4-6.106,6.206-10.11,12.112-10.11,6.507,0,11.011,3.9,12.213,10.11Zm80.381,25.626c-8.309,0-13.514-7.808-13.514-15.916,0-8.709,4.5-17.017,13.514-17.017,9.309,0,13.113,8.308,13.113,17.017C228.787,136.108,224.783,143.716,215.674,143.716Z"/>' +
+                        '</svg>' +
+                    '</div>' +
+                    '<div style="text-align:right">' +
+                        '<div style="font-size:11px;color:#666;font-weight:700;letter-spacing:1px;margin-bottom:4px">TRACKING NUMBER</div>' +
+                        '<div style="font-size:18px;font-weight:700;color:#660099">' + escapeHtml(shipment.id) + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="display:flex;gap:40px;margin-bottom:24px">' +
+                    '<div style="flex:1">' +
+                        '<div style="font-size:11px;color:#666;font-weight:700;letter-spacing:1px;margin-bottom:6px">FROM</div>' +
+                        '<div style="font-size:14px;font-weight:600;color:#333">' + escapeHtml(shipment.sender.name || '') + '</div>' +
+                    '</div>' +
+                    '<div style="flex:1">' +
+                        '<div style="font-size:11px;color:#666;font-weight:700;letter-spacing:1px;margin-bottom:6px">TO</div>' +
+                        '<div style="font-size:14px;font-weight:600;color:#333">' + escapeHtml((shipment.recipient || {}).name || '') + '</div>' +
+                        '<div style="font-size:13px;color:#555">' + escapeHtml([(shipment.recipient || {}).city, (shipment.recipient || {}).state].filter(Boolean).join(', ') || '') + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;margin-bottom:24px">' +
+                    '<div style="background:#f5f0f8;padding:10px 16px;font-size:12px;font-weight:700;color:#660099;letter-spacing:1px">PACKAGE DETAILS</div>' +
+                    '<div style="padding:12px 16px">' +
+                        '<table style="width:100%;border-collapse:collapse;font-size:13px">' +
+                            '<tr><td style="padding:6px 8px 6px 0;color:#888;width:140px">Service</td><td style="padding:6px 0;color:#333;font-weight:500">' + escapeHtml(shipment.serviceType || '-') + '</td></tr>' +
+                            '<tr><td style="padding:6px 8px 6px 0;color:#888;border-top:1px solid #f0f0f0">Weight</td><td style="padding:6px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + escapeHtml(shipment.weight || '-') + '</td></tr>' +
+                            '<tr><td style="padding:6px 8px 6px 0;color:#888;border-top:1px solid #f0f0f0">Ship Date</td><td style="padding:6px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + formatDateShort(shipment.createdAt) + '</td></tr>' +
+                            '<tr><td style="padding:6px 8px 6px 0;color:#888;border-top:1px solid #f0f0f0">Est. Delivery</td><td style="padding:6px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + formatDateShort(shipment.estDeliveryDate) + '</td></tr>' +
+                            '<tr><td style="padding:6px 8px 6px 0;color:#888;border-top:1px solid #f0f0f0">Reference</td><td style="padding:6px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + escapeHtml(shipment.referenceNumber || '-') + '</td></tr>' +
+                            '<tr><td style="padding:6px 8px 6px 0;color:#888;border-top:1px solid #f0f0f0">Packaging</td><td style="padding:6px 0;color:#333;font-weight:500;border-top:1px solid #f0f0f0">' + escapeHtml(shipment.packaging || 'Package') + '</td></tr>' +
+                        '</table>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="background:#f9f9f9;border-radius:6px;padding:12px 16px;margin-bottom:24px;border-left:4px solid ' + (shipment.currentStatus === 'Delivered' ? '#2e7d32' : '#660099') + '">' +
+                    '<div style="font-size:11px;color:#666;font-weight:700;letter-spacing:1px;margin-bottom:2px">CURRENT STATUS</div>' +
+                    '<div style="font-size:16px;font-weight:700;color:#333">' + escapeHtml(shipment.currentStatus || 'Pending') + '</div>' +
+                '</div>' +
+                '<div style="text-align:center">' +
+                    '<div id="fxg-invoice-qr" style="display:inline-block;padding:12px;border:1px solid #e0e0e0;border-radius:6px"></div>' +
+                    '<div style="font-size:11px;color:#888;margin-top:6px">Scan to track your package</div>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(div);
+        if (typeof QRCode !== 'undefined') {
+            new QRCode(document.getElementById('fxg-invoice-qr'), {
+                text: shipment.id,
+                width: 120,
+                height: 120,
+                colorDark: '#660099',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+        setTimeout(function () {
+            if (typeof html2canvas !== 'undefined' && typeof jspdf !== 'undefined') {
+                html2canvas(document.getElementById('fxg-invoice'), {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: 520
+                }).then(function (canvas) {
+                    var imgData = canvas.toDataURL('image/png');
+                    var pdf = new jspdf.jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+                    var pdfW = pdf.internal.pageSize.getWidth();
+                    var pdfH = (canvas.height * pdfW) / canvas.width;
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
+                    pdf.save('invoice_' + shipment.id + '.pdf');
+                    document.body.removeChild(div);
+                }).catch(function () {
+                    document.body.removeChild(div);
+                });
+            } else {
+                document.body.removeChild(div);
+            }
+        }, 500);
+    }
+
     window.FDX.admin = {
         SUPABASE_URL: SUPABASE_URL,
         SUPABASE_ANON_KEY: SUPABASE_ANON_KEY,
@@ -308,7 +399,8 @@
         formatDate: formatDate,
         formatDateShort: formatDateShort,
         escapeHtml: escapeHtml,
-        badgeHtml: badgeHtml
+        badgeHtml: badgeHtml,
+        generateInvoice: generateInvoice
     };
 
     window.FDX.components.push(function() {
@@ -736,6 +828,9 @@
                     '<td>' + window.FDX.admin.formatDateShort(s.departureDate) + '</td>' +
                     '<td>' + window.FDX.admin.formatDateShort(s.estDeliveryDate) + '</td>' +
                     '<td class="fxg-admin-actions">' +
+                        '<button class="fxg-admin-btn-icon fxg-admin-btn--invoice" data-invoice="' + escapeHtml(s.id) + '" title="Download Invoice">' +
+                            '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>' +
+                        '</button>' +
                         '<button class="fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--outline" data-edit="' + escapeHtml(s.id) + '">Edit</button>' +
                         '<button class="fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--danger" data-delete="' + escapeHtml(s.id) + '">Delete</button>' +
                     '</td>';
@@ -757,10 +852,13 @@
                 }
                 return;
             }
-            var id = btn.getAttribute('data-edit') || btn.getAttribute('data-delete');
+            var id = btn.getAttribute('data-edit') || btn.getAttribute('data-delete') || btn.getAttribute('data-invoice');
             if (!id) return;
 
-            if (btn.hasAttribute('data-edit')) {
+            if (btn.hasAttribute('data-invoice')) {
+                var shipment = window.FDX.admin.getShipment(id);
+                if (shipment) window.FDX.admin.generateInvoice(shipment);
+            } else if (btn.hasAttribute('data-edit')) {
                 window.location.href = 'shipment.html?id=' + encodeURIComponent(id);
             } else if (btn.hasAttribute('data-delete')) {
                 if (confirm('Delete shipment ' + id + '? This cannot be undone.')) {
