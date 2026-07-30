@@ -47,5 +47,6 @@
 
 @media (max-width: 480px) {
     .fxg-quicklinks__grid { grid-template-columns: repeat(3, 1fr); gap: 2px; }
-    .fxg-quicklink { padding: 12px 10px; gap: 8px; }
+    .fxg-quicklink { padding: 10px 8px; gap: 6px; }
+    .fxg-quicklink__label { font-size: 11px; }
 }
