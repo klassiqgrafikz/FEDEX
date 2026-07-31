@@ -1203,6 +1203,112 @@
     background: #e8f5e9;
     border-color: #c8e6c9;
 }
+.fxg-admin-btn--email {
+    color: #1565c0;
+    vertical-align: middle;
+}
+.fxg-admin-btn--email:hover {
+    color: #0d47a1;
+    background: #e3f2fd;
+    border-color: #bbdefb;
+}
+.fxg-admin-btn--email-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #1565c0;
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.fxg-admin-btn--email-label:hover {
+    background: #bbdefb;
+    border-color: #90caf9;
+    color: #0d47a1;
+}
+.fxg-admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fgxAdminFadeIn 0.2s ease;
+}
+@keyframes fgxAdminFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.fxg-admin-modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.fxg-admin-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--fx-purple);
+    flex-shrink: 0;
+}
+.fxg-admin-modal__header h3 {
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+}
+.fxg-admin-modal__close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.15s;
+}
+.fxg-admin-modal__close:hover {
+    color: #fff;
+}
+.fxg-admin-modal__body {
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.fxg-admin-modal__hint {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+}
+.fxg-admin-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--fx-border-light);
+    flex-shrink: 0;
+    background: #fafafa;
+}
 .fxg-admin-edit-actions {
     display: flex;
     gap: 8px;

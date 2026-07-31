@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Track Your Shipment | FedEx</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="shortcut icon" type="image/x-icon" href="https://www.fedex.com/etc.clientlibs/designs/fedex-common/images/resources/fx-favicon.ico">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <input type="hidden" id="supportedLocales" value="en,es">
+    <div class="fxg-main-content">
+        <div style="min-height:60vh;display:flex;align-items:center;justify-content:center;padding:48px 24px">
+            <div style="text-align:center;max-width:420px">
+                <svg viewBox="0 0 451.694 220.997" style="width:120px;height:auto;margin:0 auto 24px;display:block">
+                    <defs><style>.fxg-tt-ex{fill:#FF6600;}.fxg-tt-fed{fill:#660099;}</style></defs>
+                    <polygon class="fxg-tt-ex" points="360.671 159 346.805 143.415 333.547 159.009 306.001 159.012 332.991 127.8 306.001 97.012 335.001 97.012 348.006 111.984 361.001 97.012 388.001 97.012 361.62 127.6 389.705 159 360.671 159"/>
+                    <polygon class="fxg-tt-ex" points="252.001 159.012 252.001 62.012 306.001 62.012 306.001 84.012 275.001 84.012 275.001 97.012 306.001 97.012 306.001 118.012 275.001 118.012 275.001 137.012 306.001 137.012 306.001 159.012 252.001 159.012"/>
+                    <path class="fxg-tt-fed" d="M230,62.012v40l-.814-.639c-5.005-5.7-11.879-7.361-19.186-7.361-14.915,0-25.458,9.664-29.362,23.077C176.134,102.374,164.118,94.012,147,94.012c-13.914,0-25.294,5.789-31,16v-13H88v-13h31v-22H62v97H88v-41l25.571-.222a36.939,36.939,0,0,0-1.2,9.509c0,20.12,15.316,34.535,34.935,34.535,16.517,0,26.89-7.708,32.7-21.822H158c-3,4.2-4.69,5.205-10.6,5.205-6.907,0-13.113-6.206-13.113-13.413h45.045c1.9,16.016,14.41,30.208,31.528,30.208A24.082,24.082,0,0,0,230,151.755v7.257h22v-97ZM135.293,118.09c1.4-6.106,6.206-10.11,12.112-10.11,6.507,0,11.011,3.9,12.213,10.11Zm80.381,25.626c-8.309,0-13.514-7.808-13.514-15.916,0-8.709,4.5-17.017,13.514-17.017,9.309,0,13.113,8.308,13.113,17.017C228.787,136.108,224.783,143.716,215.674,143.716Z"/>
+                </svg>
+                <h1 style="font-size:24px;color:#2d2d2d;margin-bottom:12px">Tracking your shipment</h1>
+                <p style="font-size:15px;color:#666;margin-bottom:24px" id="trackFallbackMsg">Please wait while we load the tracking details for your package.</p>
+                <div style="display:flex;justify-content:center;gap:8px" id="trackLoader">
+                    <span style="width:10px;height:10px;border-radius:50%;background:#660099;animation:ttBounce 1s infinite"></span>
+                    <span style="width:10px;height:10px;border-radius:50%;background:#660099;animation:ttBounce 1s infinite 0.15s"></span>
+                    <span style="width:10px;height:10px;border-radius:50%;background:#660099;animation:ttBounce 1s infinite 0.3s"></span>
+                </div>
+                <style>@keyframes ttBounce{0%,100%{transform:translateY(0);opacity:0.4}50%{transform:translateY(-6px);opacity:1}}</style>
+                <div style="display:none;margin-top:16px" id="trackFallbackForm">
+                    <a href="advanced-tracking.html" style="display:inline-block;background:#FF6600;color:#fff;text-decoration:none;padding:12px 28px;border-radius:4px;font-size:14px;font-weight:600">GO TO ADVANCED TRACKING</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../script.js?v=__SCRIPT_VERSION__"></script>
+    <script>
+    (function() {
+        var params = new URLSearchParams(window.location.search);
+        var trackingId = params.get('tracking');
+        var loader = document.getElementById('trackLoader');
+        var fallbackForm = document.getElementById('trackFallbackForm');
+        var fallbackMsg = document.getElementById('trackFallbackMsg');
+
+        function openTrack() {
+            if (window.FDX && typeof window.FDX.track === 'function') {
+                window.FDX.track(trackingId);
+                return;
+            }
+            retry();
+        }
+
+        function retry() {
+            if (window.FDX && typeof window.FDX.track === 'function') {
+                window.FDX.track(trackingId);
+            } else {
+                setTimeout(retry, 200);
+            }
+        }
+
+        if (!trackingId) {
+            if (loader) loader.style.display = 'none';
+            if (fallbackMsg) fallbackMsg.textContent = 'No tracking number was provided in the link.';
+            if (fallbackForm) fallbackForm.style.display = 'block';
+            return;
+        }
+
+        openTrack();
+    })();
+    </script>
+</body>
+</html>

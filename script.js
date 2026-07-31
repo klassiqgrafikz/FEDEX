@@ -623,6 +623,185 @@
         }, 500);
     }
 
+    var SEND_EMAIL_FN_URL = SUPABASE_URL + '/functions/v1/send-email';
+
+    function sendEmail(payload) {
+        return fetch(SEND_EMAIL_FN_URL, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        }).then(function(res) {
+            return res.json().catch(function() { return { ok: false, error: 'Invalid response from email service' }; });
+        });
+    }
+
+    function siteBaseUrl() {
+        var p = window.location.pathname;
+        var idx = p.indexOf('/pages/');
+        return window.location.origin + (idx >= 0 ? p.slice(0, idx + 1) : p.replace(/[^/]*$/, ''));
+    }
+
+    function emailTrackUrl(shipment) {
+        return siteBaseUrl() + 'pages/track.html?tracking=' + encodeURIComponent(shipment.id);
+    }
+
+    function emailSubjectFor(shipment) {
+        var st = shipment.currentStatus || '';
+        if (st === 'Delivered') return 'Your FedEx package ' + shipment.id + ' has been delivered';
+        if (st === 'Out for Delivery') return 'Your FedEx package ' + shipment.id + ' is out for delivery';
+        if (st === 'Shipment Created') return 'Your FedEx shipment ' + shipment.id + ' is on its way';
+        return 'Your FedEx shipment ' + shipment.id + ' — ' + st;
+    }
+
+    function emailMessageFor(shipment) {
+        var re = shipment.recipient || {};
+        var name = re.name ? re.name.split(' ')[0] : 'there';
+        var eta = shipment.estDeliveryDate ? formatDateShort(shipment.estDeliveryDate) : 'to be confirmed';
+        var st = shipment.currentStatus || 'Pending';
+
+        if (st === 'Delivered') {
+            return 'Hello ' + name + ',\n\nGreat news! Your FedEx package ' + shipment.id + ' has been delivered.\n\nThank you for choosing FedEx.';
+        }
+        if (st === 'Out for Delivery') {
+            return 'Hello ' + name + ',\n\nYour FedEx package ' + shipment.id + ' is out for delivery today and should arrive by the end of the day.\n\nPlease make sure someone is available to receive it. Thank you for choosing FedEx.';
+        }
+        return 'Hello ' + name + ',\n\nYour FedEx package ' + shipment.id + ' is currently ' + st.toLowerCase() + ' and is scheduled for delivery by ' + eta + '.\n\nYou can track your package anytime using the button below. Thank you for choosing FedEx.';
+    }
+
+    function buildEmailHtml(shipment, message) {
+        var re = shipment.recipient || {};
+        var se = shipment.sender || {};
+        var trackUrl = emailTrackUrl(shipment);
+        var text = (message || '').split('\n').map(function(line) {
+            return '<p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#333">' +
+                (line ? escapeHtml(line) : '&nbsp;') + '</p>';
+        }).join('');
+        var eta = shipment.estDeliveryDate ? formatDateShort(shipment.estDeliveryDate) : '-';
+        var status = shipment.currentStatus || 'Pending';
+
+        return '' +
+            '<div style="background:#fff;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif">' +
+                '<div style="background:#4D148C;padding:24px 32px;display:flex;justify-content:space-between;align-items:center">' +
+                    '<svg viewBox="0 0 451.694 220.997" style="width:110px;height:auto;display:block">' +
+                        '<defs><style>.fxg-em-ex{fill:#FF6600;}.fxg-em-fed{fill:#fff;}</style></defs>' +
+                        '<polygon class="fxg-em-ex" points="360.671 159 346.805 143.415 333.547 159.009 306.001 159.012 332.991 127.8 306.001 97.012 335.001 97.012 348.006 111.984 361.001 97.012 388.001 97.012 361.62 127.6 389.705 159 360.671 159"/>' +
+                        '<polygon class="fxg-em-ex" points="252.001 159.012 252.001 62.012 306.001 62.012 306.001 84.012 275.001 84.012 275.001 97.012 306.001 97.012 306.001 118.012 275.001 118.012 275.001 137.012 306.001 137.012 306.001 159.012 252.001 159.012"/>' +
+                        '<path class="fxg-em-fed" d="M230,62.012v40l-.814-.639c-5.005-5.7-11.879-7.361-19.186-7.361-14.915,0-25.458,9.664-29.362,23.077C176.134,102.374,164.118,94.012,147,94.012c-13.914,0-25.294,5.789-31,16v-13H88v-13h31v-22H62v97H88v-41l25.571-.222a36.939,36.939,0,0,0-1.2,9.509c0,20.12,15.316,34.535,34.935,34.535,16.517,0,26.89-7.708,32.7-21.822H158c-3,4.2-4.69,5.205-10.6,5.205-6.907,0-13.113-6.206-13.113-13.413h45.045c1.9,16.016,14.41,30.208,31.528,30.208A24.082,24.082,0,0,0,230,151.755v7.257h22v-97ZM135.293,118.09c1.4-6.106,6.206-10.11,12.112-10.11,6.507,0,11.011,3.9,12.213,10.11Zm80.381,25.626c-8.309,0-13.514-7.808-13.514-15.916,0-8.709,4.5-17.017,13.514-17.017,9.309,0,13.113,8.308,13.113,17.017C228.787,136.108,224.783,143.716,215.674,143.716Z"/>' +
+                    '</svg>' +
+                    '<div style="text-align:right">' +
+                        '<div style="font-size:18px;font-weight:700;color:#fff;letter-spacing:1.5px;margin-bottom:2px">SHIPPING NOTIFICATION</div>' +
+                        '<div style="font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:0.5px">TRACKING ID: ' + escapeHtml(shipment.id) + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="padding:28px 32px">' +
+                    text +
+                    '<div style="margin:20px 0;border:1px solid #e8e8e8;border-radius:8px;overflow:hidden">' +
+                        '<div style="background:#f8f6fb;padding:10px 16px;font-size:11px;font-weight:700;color:#4D148C;letter-spacing:0.8px;text-transform:uppercase;border-bottom:1px solid #e8e8e8">Shipment Details</div>' +
+                        '<table style="width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#333">' +
+                            '<tr><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;color:#888;width:45%">Tracking ID</td><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;font-weight:700;color:#4D148C">' + escapeHtml(shipment.id) + '</td></tr>' +
+                            '<tr><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;color:#888">Package</td><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0">' + escapeHtml(shipment.packageName || '-') + '</td></tr>' +
+                            '<tr><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;color:#888">Service</td><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0">' + escapeHtml(shipment.serviceType || '-') + '</td></tr>' +
+                            '<tr><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;color:#888">Status</td><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0">' + escapeHtml(status) + '</td></tr>' +
+                            '<tr><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;color:#888">Estimated Delivery</td><td style="padding:10px 16px;border-bottom:1px solid #f0f0f0">' + escapeHtml(eta) + '</td></tr>' +
+                            '<tr><td style="padding:10px 16px;color:#888">Sender</td><td style="padding:10px 16px">' + escapeHtml(se.name || '-') + '</td></tr>' +
+                        '</table>' +
+                    '</div>' +
+                    '<div style="text-align:center;margin:24px 0">' +
+                        '<a href="' + escapeHtml(trackUrl) + '" style="display:inline-block;background:#4D148C;color:#fff;text-decoration:none;padding:13px 32px;border-radius:6px;font-size:14px;font-weight:700;letter-spacing:0.5px">TRACK YOUR PACKAGE</a>' +
+                    '</div>' +
+                    '<p style="font-size:11px;color:#999;text-align:center;margin:0">Thank you for using FedEx</p>' +
+                '</div>' +
+                '<div style="background:#f5f5f5;padding:16px 32px;text-align:center;font-size:11px;color:#999;border-top:3px solid #FF6600">' +
+                    '&copy; FedEx 1995-2026 &nbsp;|&nbsp; ' + escapeHtml((re.name || '')) + (re.address ? ' &nbsp;|&nbsp; ' + escapeHtml(re.address) : '') +
+                '</div>' +
+            '</div>';
+    }
+
+    function openEmailModal(shipment) {
+        var re = shipment.recipient || {};
+
+        var overlay = document.createElement('div');
+        overlay.className = 'fxg-admin-modal-overlay';
+        overlay.innerHTML =
+            '<div class="fxg-admin-modal">' +
+                '<div class="fxg-admin-modal__header">' +
+                    '<h3>Email Recipient</h3>' +
+                    '<button type="button" class="fxg-admin-modal__close" data-email-close aria-label="Close">&#10005;</button>' +
+                '</div>' +
+                '<div class="fxg-admin-modal__body">' +
+                    '<div class="fxg-admin-form__group">' +
+                        '<label class="fxg-admin-form__label">To</label>' +
+                        '<input type="email" class="fxg-admin-form__input" id="emailTo" value="' + escapeHtml(re.email || '') + '" placeholder="recipient@example.com">' +
+                    '</div>' +
+                    '<div class="fxg-admin-form__group">' +
+                        '<label class="fxg-admin-form__label">Subject</label>' +
+                        '<input type="text" class="fxg-admin-form__input" id="emailSubject" value="' + escapeHtml(emailSubjectFor(shipment)) + '">' +
+                    '</div>' +
+                    '<div class="fxg-admin-form__group">' +
+                        '<label class="fxg-admin-form__label">Message</label>' +
+                        '<textarea class="fxg-admin-form__textarea" id="emailMessage" rows="7">' + escapeHtml(emailMessageFor(shipment)) + '</textarea>' +
+                    '</div>' +
+                    '<p class="fxg-admin-modal__hint">A branded FedEx email will be sent with the shipment details and a tracking link.</p>' +
+                '</div>' +
+                '<div class="fxg-admin-modal__footer">' +
+                    '<button type="button" class="fxg-admin-btn fxg-admin-btn--outline" data-email-cancel>Cancel</button>' +
+                    '<button type="button" class="fxg-admin-btn fxg-admin-btn--primary" id="emailSendBtn">Send Email</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(overlay);
+
+        function close() {
+            document.body.removeChild(overlay);
+        }
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) close();
+        });
+        var closeBtn = overlay.querySelector('[data-email-close]');
+        if (closeBtn) closeBtn.addEventListener('click', close);
+        var cancelBtn = overlay.querySelector('[data-email-cancel]');
+        if (cancelBtn) cancelBtn.addEventListener('click', close);
+
+        var sendBtn = overlay.querySelector('#emailSendBtn');
+        sendBtn.addEventListener('click', function() {
+            var to = overlay.querySelector('#emailTo').value.trim();
+            var subject = overlay.querySelector('#emailSubject').value.trim();
+            var message = overlay.querySelector('#emailMessage').value.trim();
+            var err = overlay.querySelector('.fxg-admin-modal__hint');
+
+            if (!to) {
+                err.style.color = '#d32f2f';
+                err.textContent = 'Please enter the recipient email address.';
+                return;
+            }
+            if (!subject || !message) {
+                err.style.color = '#d32f2f';
+                err.textContent = 'Subject and message are required.';
+                return;
+            }
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+            err.style.color = '';
+            err.textContent = '';
+
+            sendEmail({ to: to, subject: subject, html: buildEmailHtml(shipment, message) }).then(function(res) {
+                if (res && res.ok) {
+                    close();
+                    showToast('Email sent to ' + to, 'success');
+                } else {
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send Email';
+                    err.style.color = '#d32f2f';
+                    err.textContent = 'Failed to send: ' + ((res && res.error) || 'Unknown error');
+                }
+            });
+        });
+    }
+
     window.FDX.admin = {
         SUPABASE_URL: SUPABASE_URL,
         SUPABASE_ANON_KEY: SUPABASE_ANON_KEY,
@@ -641,7 +820,9 @@
         formatDateShort: formatDateShort,
         escapeHtml: escapeHtml,
         badgeHtml: badgeHtml,
-        generateInvoice: generateInvoice
+        generateInvoice: generateInvoice,
+        sendEmail: sendEmail,
+        openEmailModal: openEmailModal
     };
 
     window.FDX.components.push(function() {
@@ -1072,6 +1253,9 @@
                         '<button class="fxg-admin-btn-icon fxg-admin-btn--invoice" data-invoice="' + escapeHtml(s.id) + '" title="Download Invoice">' +
                             '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>' +
                         '</button>' +
+                        '<button class="fxg-admin-btn-icon fxg-admin-btn--email" data-email="' + escapeHtml(s.id) + '" title="Email Recipient">' +
+                            '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>' +
+                        '</button>' +
                         '<button class="fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--outline" data-edit="' + escapeHtml(s.id) + '">Edit</button>' +
                         '<button class="fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--danger" data-delete="' + escapeHtml(s.id) + '">Delete</button>' +
                     '</td>';
@@ -1093,12 +1277,15 @@
                 }
                 return;
             }
-            var id = btn.getAttribute('data-edit') || btn.getAttribute('data-delete') || btn.getAttribute('data-invoice');
+            var id = btn.getAttribute('data-edit') || btn.getAttribute('data-delete') || btn.getAttribute('data-invoice') || btn.getAttribute('data-email');
             if (!id) return;
 
             if (btn.hasAttribute('data-invoice')) {
                 var shipment = window.FDX.admin.getShipment(id);
                 if (shipment) window.FDX.admin.generateInvoice(shipment);
+            } else if (btn.hasAttribute('data-email')) {
+                var shipment = window.FDX.admin.getShipment(id);
+                if (shipment) window.FDX.admin.openEmailModal(shipment);
             } else if (btn.hasAttribute('data-edit')) {
                 window.location.href = 'shipment.html?id=' + encodeURIComponent(id);
             } else if (btn.hasAttribute('data-delete')) {
@@ -1146,6 +1333,17 @@
 
         var se = shipment.sender || {};
         var re = shipment.recipient || {};
+
+        var emailBtn = document.createElement('button');
+        emailBtn.type = 'button';
+        emailBtn.className = 'fxg-admin-btn fxg-admin-btn--small fxg-admin-btn--email-label';
+        emailBtn.title = 'Send an email to the recipient';
+        emailBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Email Recipient';
+        emailBtn.addEventListener('click', function() {
+            F.openEmailModal(shipment);
+        });
+        var trackingIdWrap = el.querySelector('#trackingIdWrap');
+        if (trackingIdWrap) trackingIdWrap.appendChild(emailBtn);
 
         function renderAll() {
             el.querySelector('#shipmentTrackingId').textContent = shipment.id;
