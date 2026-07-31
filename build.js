@@ -142,7 +142,8 @@ function buildAdminPages() {
         { id: 'dashboard', title: 'Dashboard', page: 'dashboard' },
         { id: 'create', title: 'Create Shipment', page: 'create' },
         { id: 'shipments', title: 'All Shipments', page: 'shipments' },
-        { id: 'shipment', title: 'Shipment Detail', page: 'shipment' }
+        { id: 'shipment', title: 'Shipment Detail', page: 'shipment' },
+        { id: 'inbox', title: 'Inbox', page: 'inbox' }
     ];
 
     if (!fs.existsSync(ADMIN_TEMPLATE)) { console.log('  [ADMIN] No admin template found, skipping'); return; }

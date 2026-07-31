@@ -1370,3 +1370,107 @@
 .fxg-admin-detail-header__image-upload:hover {
     color: var(--fx-purple-light);
 }
+.fxg-inbox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fxg-inbox-item {
+    background: var(--fx-white);
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fxg-inbox-item:hover {
+    border-color: var(--fx-purple-light);
+    box-shadow: 0 2px 8px rgba(77, 20, 140, 0.08);
+}
+
+.fxg-inbox-item--unread {
+    border-left: 3px solid var(--fx-orange);
+}
+
+.fxg-inbox-item--unread .fxg-inbox-item__subject {
+    font-weight: 700;
+}
+
+.fxg-inbox-item__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.fxg-inbox-item__from {
+    font-weight: 600;
+    color: var(--fx-purple-dark);
+    font-size: 14px;
+}
+
+.fxg-inbox-item__email {
+    font-weight: 400;
+    color: #999;
+    font-size: 12px;
+}
+
+.fxg-inbox-item__time {
+    color: #999;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.fxg-inbox-item__subject {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #333;
+}
+
+.fxg-inbox-item__att {
+    margin-left: 8px;
+    font-size: 11px;
+    color: var(--fx-purple);
+    background: rgba(77, 20, 140, 0.08);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.fxg-inbox-item__preview {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fxg-inbox-item__body {
+    margin-top: 10px;
+    padding: 12px;
+    background: #f8f6fb;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #444;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.fxg-inbox-item__actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    cursor: default;
+}
+
+.fxg-inbox__error {
+    color: #d32f2f;
+    font-size: 13px;
+    text-align: center;
+    padding: 24px;
+}

@@ -528,8 +528,12 @@
             '</div>';
     }
 
-    function openEmailModal(shipment) {
+    function openEmailModal(shipment, prefill) {
         var re = shipment.recipient || {};
+        prefill = prefill || {};
+        var prefillTo = (prefill.to !== undefined) ? prefill.to : (re.email || '');
+        var prefillSubject = (prefill.subject !== undefined) ? prefill.subject : emailSubjectFor(shipment);
+        var prefillMessage = (prefill.message !== undefined) ? prefill.message : emailMessageFor(shipment);
 
         var overlay = document.createElement('div');
         overlay.className = 'fxg-admin-modal-overlay';
@@ -550,15 +554,15 @@
                     '</div>' +
                     '<div class="fxg-admin-form__group">' +
                         '<label class="fxg-admin-form__label">To</label>' +
-                        '<input type="email" class="fxg-admin-form__input" id="emailTo" value="' + escapeHtml(re.email || '') + '" placeholder="recipient@example.com">' +
+                        '<input type="email" class="fxg-admin-form__input" id="emailTo" value="' + escapeHtml(prefillTo) + '" placeholder="recipient@example.com">' +
                     '</div>' +
                     '<div class="fxg-admin-form__group">' +
                         '<label class="fxg-admin-form__label">Subject</label>' +
-                        '<input type="text" class="fxg-admin-form__input" id="emailSubject" value="' + escapeHtml(emailSubjectFor(shipment)) + '">' +
+                        '<input type="text" class="fxg-admin-form__input" id="emailSubject" value="' + escapeHtml(prefillSubject) + '">' +
                     '</div>' +
                     '<div class="fxg-admin-form__group">' +
                         '<label class="fxg-admin-form__label">Message</label>' +
-                        '<textarea class="fxg-admin-form__textarea" id="emailMessage" rows="7">' + escapeHtml(emailMessageFor(shipment)) + '</textarea>' +
+                        '<textarea class="fxg-admin-form__textarea" id="emailMessage" rows="7">' + escapeHtml(prefillMessage) + '</textarea>' +
                     '</div>' +
                     '<p class="fxg-admin-modal__hint">A branded FedEx email will be sent with the shipment details and a tracking link.</p>' +
                 '</div>' +
@@ -680,7 +684,7 @@
             });
             var titleEl = document.getElementById('adminHeaderTitle');
             if (titleEl) {
-                var titles = { dashboard: 'Dashboard', create: 'Create Shipment', shipments: 'All Shipments', shipment: 'Shipment Detail' };
+                var titles = { dashboard: 'Dashboard', create: 'Create Shipment', shipments: 'All Shipments', shipment: 'Shipment Detail', inbox: 'Inbox' };
                 titleEl.textContent = titles[page] || page;
             }
         }
@@ -689,6 +693,7 @@
         if (pageType === 'dashboard') initDashboard(contentEl);
         else if (pageType === 'create') initCreate(contentEl);
         else if (pageType === 'shipments') initShipments(contentEl);
+        else if (pageType === 'inbox') initInbox(contentEl);
 
         if (pageType !== 'create') {
             setTimeout(function() {
@@ -696,10 +701,165 @@
                     if (pageType === 'dashboard') initDashboard(contentEl);
                     else if (pageType === 'shipments') initShipments(contentEl);
                     else if (pageType === 'shipment') initShipmentDetail(contentEl);
+                    else if (pageType === 'inbox') initInbox(contentEl);
                 });
             }, 50);
         }
     });
+
+    function initInbox(el) {
+        var listEl = el.querySelector('#inboxList');
+        var emptyEl = el.querySelector('#noInbox');
+        var searchEl = el.querySelector('#inboxSearch');
+        var refreshBtn = el.querySelector('#inboxRefresh');
+        var rows = [];
+        if (!listEl) return;
+
+        function load() {
+            fetch(SUPABASE_URL + '/rest/v1/email_inbox?select=*&order=created_at.desc&limit=100', {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                }
+            }).then(function(res) {
+                return res.json();
+            }).then(function(data) {
+                rows = Array.isArray(data) ? data : [];
+                render();
+            }).catch(function() {
+                listEl.innerHTML = '<p class="fxg-inbox__error">Failed to load inbox. Check your connection.</p>';
+            });
+        }
+
+        function markRead(row) {
+            if (row.read) return;
+            fetch(SUPABASE_URL + '/rest/v1/email_inbox?id=eq.' + row.id, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({ read: true })
+            }).then(function() {
+                row.read = true;
+                var itemEl = listEl.querySelector('[data-row-id="' + row.id + '"]');
+                if (itemEl) itemEl.classList.remove('fxg-inbox-item--unread');
+            });
+        }
+
+        function deleteRow(row) {
+            if (!window.confirm('Delete this reply from ' + (row.from_name || row.from_email) + '?')) return;
+            fetch(SUPABASE_URL + '/rest/v1/email_inbox?id=eq.' + row.id, {
+                method: 'DELETE',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                }
+            }).then(function(res) {
+                if (res.ok) {
+                    rows = rows.filter(function(r) { return r.id !== row.id; });
+                    render();
+                    showToast('Reply deleted', 'success');
+                }
+            });
+        }
+
+        function replyTo(row) {
+            var m = String(row.subject || '').match(/\b\d{8,16}\b/);
+            var fake = {
+                id: m ? m[1] : 'reply',
+                recipient: { email: row.from_email, name: row.from_name },
+                currentStatus: ''
+            };
+            var firstName = (row.from_name || 'there').split(' ')[0];
+            openEmailModal(fake, {
+                subject: 'Re: ' + row.subject,
+                message: 'Hello ' + firstName + ','
+            });
+        }
+
+        function preview(row) {
+            return String(row.body_text || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+        }
+
+        function formatTime(ts) {
+            if (!ts) return '';
+            var d = new Date(ts);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var pad = function(n) { return (n < 10 ? '0' : '') + n; };
+            return months[d.getMonth()] + ' ' + d.getDate() + ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        }
+
+        function render() {
+            var query = (searchEl.value || '').trim().toLowerCase();
+            var filtered = rows.filter(function(r) {
+                if (!query) return true;
+                return (r.from_name + ' ' + r.from_email + ' ' + r.subject).toLowerCase().indexOf(query) !== -1;
+            });
+
+            if (rows.length === 0) {
+                listEl.innerHTML = '';
+                emptyEl.style.display = '';
+                return;
+            }
+            emptyEl.style.display = 'none';
+
+            listEl.innerHTML = filtered.map(function(row) {
+                var att = (row.attachments && row.attachments.length)
+                    ? '<span class="fxg-inbox-item__att">' + row.attachments.length + ' attachment' + (row.attachments.length > 1 ? 's' : '') + '</span>'
+                    : '';
+                return '' +
+                    '<div class="fxg-inbox-item' + (row.read ? '' : ' fxg-inbox-item--unread') + '" data-row-id="' + row.id + '">' +
+                        '<div class="fxg-inbox-item__head">' +
+                            '<div class="fxg-inbox-item__from">' + escapeHtml(row.from_name || row.from_email || 'Unknown sender') +
+                                (row.from_email ? ' <span class="fxg-inbox-item__email">&lt;' + escapeHtml(row.from_email) + '&gt;</span>' : '') +
+                            '</div>' +
+                            '<div class="fxg-inbox-item__time">' + formatTime(row.created_at) + '</div>' +
+                        '</div>' +
+                        '<div class="fxg-inbox-item__subject">' + (row.subject ? escapeHtml(row.subject) : '(no subject)') + att + '</div>' +
+                        '<div class="fxg-inbox-item__preview">' + escapeHtml(preview(row)) + '</div>' +
+                        '<div class="fxg-inbox-item__body" hidden>' + escapeHtml(row.body_text || row.body_html || '') + '</div>' +
+                        '<div class="fxg-inbox-item__actions">' +
+                            '<button type="button" class="fxg-admin-btn fxg-admin-btn--primary fxg-admin-btn--small" data-inbox-reply>Reply</button>' +
+                            '<button type="button" class="fxg-admin-btn fxg-admin-btn--outline fxg-admin-btn--small" data-inbox-delete>Delete</button>' +
+                        '</div>' +
+                    '</div>';
+            }).join('');
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = '<p class="fxg-inbox__error">No matches for "' + escapeHtml(query) + '".</p>';
+            }
+        }
+
+        listEl.addEventListener('click', function(e) {
+            var itemEl = e.target.closest('.fxg-inbox-item');
+            if (!itemEl) return;
+            var row = rows.find(function(r) { return r.id === itemEl.getAttribute('data-row-id'); });
+            if (!row) return;
+
+            var replyBtn = e.target.closest('[data-inbox-reply]');
+            var deleteBtn = e.target.closest('[data-inbox-delete]');
+            if (replyBtn) { replyTo(row); return; }
+            if (deleteBtn) { deleteRow(row); return; }
+
+            var bodyEl = itemEl.querySelector('.fxg-inbox-item__body');
+            var previewEl = itemEl.querySelector('.fxg-inbox-item__preview');
+            var hidden = bodyEl.hasAttribute('hidden');
+            bodyEl.hidden = !hidden;
+            previewEl.hidden = hidden;
+            if (hidden) markRead(row);
+        });
+
+        if (searchEl) {
+            searchEl.addEventListener('input', render);
+        }
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', load);
+        }
+        load();
+    }
 
     function initDashboard(el) {
         var stats = window.FDX.admin.getStats();

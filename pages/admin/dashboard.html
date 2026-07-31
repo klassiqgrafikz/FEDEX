@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | FDX Admin</title>
     <link rel="stylesheet" href="../../styles.css">
-    <link rel="shortcut icon" type="image/x-icon" href="https://www.fedex.com/etc.clientlibs/designs/fedex-common/images/resources/fx-favicon.ico">
 </head>
 <body data-admin-page="dashboard">
     <div class="fxg-main-content">
@@ -33,6 +32,10 @@
             <a href="shipments.html" class="fxg-admin__nav-item" data-page="shipments">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
                 <span>All Shipments</span>
+            </a>
+            <a href="inbox.html" class="fxg-admin__nav-item" data-page="inbox">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
+                <span>Inbox</span>
             </a>
         </nav>
 
@@ -112,41 +115,13 @@
             </div>
         </div>
     </div>
-
-    <div class="fxg-admin-section" id="tawkSettingsSection">
-        <div class="fxg-admin-form-card" style="max-width:100%">
-            <div class="fxg-admin-form-card__section">
-                <h3 class="fxg-admin-form-card__heading">Live Chat Settings (Tawk.to)</h3>
-                <div class="fxg-admin-form__group fxg-admin-form__group--full" style="margin-bottom:16px">
-                    <label class="fxg-admin-form__checkbox">
-                        <input type="checkbox" id="tawkEnabled">
-                        Enable Tawk.to live chat
-                    </label>
-                </div>
-                <div class="fxg-admin-form__row">
-                    <div class="fxg-admin-form__group">
-                        <label class="fxg-admin-form__label">Property / Project ID</label>
-                        <input type="text" id="tawkPropertyId" class="fxg-admin-form__input" placeholder="e.g. 6a66333abfed411d4618f20c">
-                    </div>
-                    <div class="fxg-admin-form__group">
-                        <label class="fxg-admin-form__label">Widget ID</label>
-                        <input type="text" id="tawkWidgetId" class="fxg-admin-form__input" placeholder="e.g. default">
-                    </div>
-                </div>
-            </div>
-            <div class="fxg-admin-form-card__actions">
-                <button class="fxg-admin-btn fxg-admin-btn--primary" id="saveTawkBtn">Save Settings</button>
-                <span id="tawkSaveMsg" style="font-size:12px;color:#2E7D32;align-self:center;display:none"></span>
-            </div>
-        </div>
-    </div>
 </div>
             </div>
         </main>
     </div>
 </div>
     </div>
-    <script src="../../script.js?v=ms0an9pz"></script>
+    <script src="../../script.js?v=ms9fdvhl"></script>
     
 </body>
 </html>
