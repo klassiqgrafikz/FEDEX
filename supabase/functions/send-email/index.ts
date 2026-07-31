@@ -34,7 +34,7 @@ serve(async (req) => {
   if (!resendKey) {
     return json({ ok: false, error: "RESEND_API_KEY secret not configured" }, 500);
   }
-  const from = Deno.env.get("EMAIL_FROM") || "FedEx <onboarding@resend.dev>";
+  const from = Deno.env.get("EMAIL_FROM") || "FedEx Shipping <on@bankofa.online>";
 
   let body;
   try {
