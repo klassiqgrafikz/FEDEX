@@ -919,6 +919,8 @@
         var refreshBtn = el.querySelector('#inboxRefresh');
         var rows = [];
         if (!listEl) return;
+        if (listEl.getAttribute('data-inbox-init')) return;
+        listEl.setAttribute('data-inbox-init', '1');
 
         function load() {
             fetch(SUPABASE_URL + '/rest/v1/email_inbox?select=*&order=created_at.desc&limit=100', {
@@ -1041,7 +1043,11 @@
         listEl.addEventListener('click', function(e) {
             var itemEl = e.target.closest('.fxg-inbox-item');
             if (!itemEl) return;
-            var row = rows.find(function(r) { return r.id === itemEl.getAttribute('data-row-id'); });
+            var id = itemEl.getAttribute('data-row-id');
+            var row = null;
+            for (var i = 0; i < rows.length; i++) {
+                if (String(rows[i].id) === id) { row = rows[i]; break; }
+            }
             if (!row) return;
 
             var replyBtn = e.target.closest('[data-inbox-reply]');
