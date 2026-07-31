@@ -16,6 +16,18 @@ function json(body, status = 200) {
   });
 }
 
+function parseSenders(raw) {
+  const senders = {};
+  if (!raw) return senders;
+  for (const part of raw.split(";")) {
+    const seg = part.split("|");
+    if (seg.length >= 3) {
+      senders[seg[0].trim()] = seg[1].trim() + " <" + seg[2].trim() + ">";
+    }
+  }
+  return senders;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -34,7 +46,8 @@ serve(async (req) => {
   if (!resendKey) {
     return json({ ok: false, error: "RESEND_API_KEY secret not configured" }, 500);
   }
-  const from = Deno.env.get("EMAIL_FROM") || "FedEx Shipping <on@bankofa.online>";
+  const senders = parseSenders(Deno.env.get("EMAIL_SENDERS"));
+  const defaultFrom = Deno.env.get("EMAIL_FROM") || "FedEx Shipping <on@bankofa.online>";
 
   let body;
   try {
@@ -52,6 +65,15 @@ serve(async (req) => {
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
     return json({ ok: false, error: "Invalid recipient email" }, 400);
+  }
+
+  let from = defaultFrom;
+  if (body.sender) {
+    const key = String(body.sender).trim();
+    if (!senders[key]) {
+      return json({ ok: false, error: "Unknown sender identity: " + key }, 400);
+    }
+    from = senders[key];
   }
 
   const res = await fetch(RESEND_API_URL, {

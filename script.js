@@ -625,6 +625,18 @@
 
     var SEND_EMAIL_FN_URL = SUPABASE_URL + '/functions/v1/send-email';
 
+    var EMAIL_SENDERS = [
+        { key: 'shipping', label: 'FedEx Shipping' },
+        { key: 'tracking', label: 'FedEx Tracking' },
+        { key: 'delivery', label: 'FedEx Delivery' }
+    ];
+
+    function senderDefaultFor(shipment) {
+        var st = shipment.currentStatus || '';
+        if (st === 'Out for Delivery' || st === 'Delivered') return 'delivery';
+        return 'shipping';
+    }
+
     function sendEmail(payload) {
         return fetch(SEND_EMAIL_FN_URL, {
             method: 'POST',
@@ -734,6 +746,14 @@
                 '</div>' +
                 '<div class="fxg-admin-modal__body">' +
                     '<div class="fxg-admin-form__group">' +
+                        '<label class="fxg-admin-form__label">Sender</label>' +
+                        '<select class="fxg-admin-form__select" id="emailSender">' +
+                            EMAIL_SENDERS.map(function(snd) {
+                                return '<option value="' + snd.key + '"' + (snd.key === senderDefaultFor(shipment) ? ' selected' : '') + '>' + snd.label + '</option>';
+                            }).join('') +
+                        '</select>' +
+                    '</div>' +
+                    '<div class="fxg-admin-form__group">' +
                         '<label class="fxg-admin-form__label">To</label>' +
                         '<input type="email" class="fxg-admin-form__input" id="emailTo" value="' + escapeHtml(re.email || '') + '" placeholder="recipient@example.com">' +
                     '</div>' +
@@ -767,6 +787,7 @@
 
         var sendBtn = overlay.querySelector('#emailSendBtn');
         sendBtn.addEventListener('click', function() {
+            var sender = overlay.querySelector('#emailSender').value;
             var to = overlay.querySelector('#emailTo').value.trim();
             var subject = overlay.querySelector('#emailSubject').value.trim();
             var message = overlay.querySelector('#emailMessage').value.trim();
@@ -788,7 +809,7 @@
             err.style.color = '';
             err.textContent = '';
 
-            sendEmail({ to: to, subject: subject, html: buildEmailHtml(shipment, message) }).then(function(res) {
+            sendEmail({ sender: sender, to: to, subject: subject, html: buildEmailHtml(shipment, message) }).then(function(res) {
                 if (res && res.ok) {
                     close();
                     showToast('Email sent to ' + to, 'success');
