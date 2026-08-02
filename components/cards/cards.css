@@ -1,8 +1,16 @@
 .fxg-cards { padding: 48px 0; }
 
+.fxg-cards__title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fedex-dark);
+    margin-bottom: 32px;
+}
+
 .fxg-cards__grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
 }
 
