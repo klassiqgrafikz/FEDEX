@@ -15,7 +15,8 @@ const SCRIPT_VERSION = Date.now().toString(36);
 const componentOrder = [
     'header', 'hero', 'floating-widget', 'quicklinks',
     'cta', 'whyship', 'cards', 'featured', 'legal', 'footer', 'admin',
-    'tracking-result'
+    'tracking-result',
+    'alert-banner'
 ];
 
 function readComponent(name) {

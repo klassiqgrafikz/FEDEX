@@ -1,0 +1,42 @@
+.fxg-alert-banner {
+    background: #fff;
+    padding: 18px 0;
+}
+
+.fxg-alert-banner__inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-left: 4px solid #0066CC;
+    padding: 4px 0 4px 16px;
+}
+
+.fxg-alert-banner__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.fxg-alert-banner__text {
+    font-size: 15px;
+    color: var(--fedex-dark);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.fxg-alert-banner__link {
+    color: #0066CC;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.fxg-alert-banner__link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .fxg-alert-banner { padding: 14px 0; }
+    .fxg-alert-banner__text { font-size: 13px; }
+    .fxg-alert-banner__inner { gap: 10px; padding-left: 12px; }
+}

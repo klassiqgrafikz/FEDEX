@@ -11,7 +11,7 @@
     background: #f7f7f7;
     border-radius: 16px;
     box-shadow: 0 10px 44px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.08);
-    padding: 10px 12px 10px 8px;
+    padding: 14px 16px 14px 10px;
     gap: 0;
     border: 1px solid #eaeaea;
 }
@@ -83,7 +83,7 @@
     gap: 10px;
     background: #fff;
     border: 2px solid #d0d0d0;
-    border-radius: 8px;
+    border-radius: 0;
     padding: 0 14px;
     transition: border-color 0.2s;
 }
@@ -110,16 +110,17 @@
 }
 .fxg-floating-search__input::placeholder {
     color: #aaa;
+    font-style: italic;
 }
 
 .fxg-floating-track-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #e65100;
+    background: #FF6600;
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 0;
     padding: 14px 34px;
     font-size: 15px;
     font-weight: 700;
@@ -130,20 +131,16 @@
     white-space: nowrap;
 }
 .fxg-floating-track-btn:hover {
-    background: #d44a00;
+    background: #e05500;
 }
 
-/* Desktop: merged search + button with straight edges */
+/* Desktop: merged search + button with square edges */
 @media (min-width: 769px) {
     .fxg-floating-card__tracking {
         gap: 0;
     }
     .fxg-floating-search {
-        border-radius: 8px 0 0 8px;
         border-right: none;
-    }
-    .fxg-floating-track-btn {
-        border-radius: 0 8px 8px 0;
     }
 }
 
@@ -175,9 +172,9 @@
     .fxg-floating-icon svg { width: 26px; height: 26px; }
     .fxg-floating-icon__label { font-size: 11px; }
     .fxg-floating-card__tracking { gap: 0; }
-    .fxg-floating-search { flex: 1; min-width: 0; border-radius: 8px 0 0 8px; border-right: none; }
+    .fxg-floating-search { flex: 1; min-width: 0; border-right: none; }
     .fxg-floating-search__input { min-width: 0; width: 100%; padding: 12px 0; font-size: 14px; }
-    .fxg-floating-track-btn { padding: 12px 26px; font-size: 14px; border-radius: 0 8px 8px 0; }
+    .fxg-floating-track-btn { padding: 12px 26px; font-size: 14px; }
 }
 
 @media (max-width: 480px) {
@@ -188,6 +185,5 @@
     }
     .fxg-floating-icon { padding: 12px 6px; min-height: 56px; }
     .fxg-floating-icon__label { white-space: normal; font-size: 11px; }
-    .fxg-floating-search { flex: 1; min-width: 0; border-radius: 8px 0 0 8px; border-right: none; }
-    .fxg-floating-track-btn { border-radius: 0 8px 8px 0; }
+    .fxg-floating-search { flex: 1; min-width: 0; border-right: none; }
 }
