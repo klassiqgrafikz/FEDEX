@@ -6,12 +6,12 @@
 .fxg-alert-banner__inner {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     border: 1px solid #eaeaea;
     border-left: 4px solid #0066CC;
-    border-radius: 16px;
+    border-radius: 0;
     background: #f7f7f7;
-    padding: 14px 20px;
+    padding: 16px 24px;
 }
 
 .fxg-alert-banner__icon {
@@ -22,7 +22,7 @@
 }
 
 .fxg-alert-banner__text {
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--fedex-dark);
     line-height: 1.5;
@@ -41,6 +41,6 @@
 
 @media (max-width: 480px) {
     .fxg-alert-banner { padding: 14px 0; }
-    .fxg-alert-banner__text { font-size: 13px; }
-    .fxg-alert-banner__inner { gap: 10px; padding: 12px 14px; border-radius: 12px; }
+    .fxg-alert-banner__text { font-size: 16px; }
+    .fxg-alert-banner__inner { gap: 10px; padding: 12px 14px; border-radius: 0; }
 }
