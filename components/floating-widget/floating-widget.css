@@ -182,11 +182,7 @@
 }
 
 @media (max-width: 480px) {
-    .fxg-floating-card__icons {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 4px;
-    }
+    .fxg-floating-card__icons { gap: 0; }
     .fxg-floating-icon { padding: 12px 6px; min-height: 56px; }
     .fxg-floating-icon__label { white-space: normal; font-size: 11px; }
     .fxg-floating-search { flex: 1; min-width: 0; border-right: none; }
