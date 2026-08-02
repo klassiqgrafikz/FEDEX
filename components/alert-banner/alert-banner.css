@@ -7,8 +7,11 @@
     display: flex;
     align-items: center;
     gap: 14px;
+    border: 1px solid #eaeaea;
     border-left: 4px solid #0066CC;
-    padding: 4px 0 4px 16px;
+    border-radius: 16px;
+    background: #f7f7f7;
+    padding: 14px 20px;
 }
 
 .fxg-alert-banner__icon {
@@ -20,6 +23,7 @@
 
 .fxg-alert-banner__text {
     font-size: 15px;
+    font-weight: 700;
     color: var(--fedex-dark);
     line-height: 1.5;
     margin: 0;
@@ -27,7 +31,7 @@
 
 .fxg-alert-banner__link {
     color: #0066CC;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: underline;
 }
 
@@ -38,5 +42,5 @@
 @media (max-width: 480px) {
     .fxg-alert-banner { padding: 14px 0; }
     .fxg-alert-banner__text { font-size: 13px; }
-    .fxg-alert-banner__inner { gap: 10px; padding-left: 12px; }
+    .fxg-alert-banner__inner { gap: 10px; padding: 12px 14px; border-radius: 12px; }
 }
