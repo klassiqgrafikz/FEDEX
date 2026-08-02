@@ -7,7 +7,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    border: 1px solid #eaeaea;
+    border: 1px solid #0066CC;
     border-left: 4px solid #0066CC;
     border-radius: 0;
     background: #f7f7f7;
@@ -22,8 +22,8 @@
 }
 
 .fxg-alert-banner__text {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 400;
     color: var(--fedex-dark);
     line-height: 1.5;
     margin: 0;
@@ -31,7 +31,7 @@
 
 .fxg-alert-banner__link {
     color: #0066CC;
-    font-weight: 700;
+    font-weight: 400;
     text-decoration: underline;
 }
 
@@ -41,6 +41,6 @@
 
 @media (max-width: 480px) {
     .fxg-alert-banner { padding: 14px 0; }
-    .fxg-alert-banner__text { font-size: 16px; }
+    .fxg-alert-banner__text { font-size: 13px; }
     .fxg-alert-banner__inner { gap: 10px; padding: 12px 14px; border-radius: 0; }
 }
