@@ -59,6 +59,8 @@
     white-space: normal;
 }
 
+.fxg-floating-icon__label-short { display: none; }
+
 /* ---- Divider ---- */
 .fxg-floating-card__divider {
     width: 1px;
@@ -171,6 +173,8 @@
     .fxg-floating-icon { padding: 12px 6px; }
     .fxg-floating-icon svg { width: 26px; height: 26px; }
     .fxg-floating-icon__label { font-size: 11px; }
+    .fxg-floating-icon__label-long { display: none; }
+    .fxg-floating-icon__label-short { display: inline; }
     .fxg-floating-card__tracking { gap: 0; }
     .fxg-floating-search { flex: 1; min-width: 0; border-right: none; }
     .fxg-floating-search__input { min-width: 0; width: 100%; padding: 12px 0; font-size: 14px; }
