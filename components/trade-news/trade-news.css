@@ -4,6 +4,7 @@
 
 .fxg-trade-news__row {
     display: flex;
+    flex-direction: row-reverse;
     align-items: center;
     gap: 40px;
 }
