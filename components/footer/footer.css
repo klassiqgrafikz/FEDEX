@@ -8,9 +8,11 @@
 .fxg-footer__row {
     display: flex;
     gap: 40px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid #444;
+    padding: 28px 24px;
     margin-bottom: 24px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 8px;
 }
 
 .fxg-footer__col--4 { flex: 4; }
@@ -95,6 +97,9 @@
     gap: 16px;
     font-size: 13px;
     color: #777;
+    border: 1px solid var(--fedex-purple);
+    border-radius: 8px;
+    padding: 14px 18px;
 }
 
 .fxg-footer__legal {
