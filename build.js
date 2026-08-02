@@ -14,7 +14,7 @@ const SCRIPT_VERSION = Date.now().toString(36);
 
 const componentOrder = [
     'header', 'hero', 'floating-widget',
-    'cta', 'whyship', 'cards', 'trade-news', 'legal', 'footer', 'admin',
+    'cta', 'whyship', 'cards', 'trade-news', 'business', 'legal', 'footer', 'admin',
     'tracking-result',
     'alert-banner'
 ];
