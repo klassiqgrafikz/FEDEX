@@ -70,5 +70,6 @@
 
 @media (max-width: 768px) {
     .fxg-cards__grid { grid-template-columns: 1fr; gap: 16px; }
+    .fxg-card { margin: 0 -16px; border-radius: 0; border-left: none; border-right: none; }
     .fxg-card__body { padding: 16px; }
 }
