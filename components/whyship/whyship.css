@@ -66,10 +66,11 @@
         height: auto;
         object-fit: initial;
     }
+    .fxg-whyship__content { width: 100%; }
+    .fxg-whyship__columns { grid-template-columns: 1fr; gap: 16px; }
 }
 
 @media (max-width: 768px) {
-    .fxg-whyship__columns { grid-template-columns: 1fr; gap: 16px; }
     .fxg-whyship__content h3 { font-size: 22px; }
 }
 
