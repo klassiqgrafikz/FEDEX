@@ -128,9 +128,6 @@
 .fxg-footer__social-toggle svg {
     transition: transform 0.35s ease;
 }
-.fxg-footer__social[data-step] .fxg-footer__social-toggle svg {
-    transform: rotate(180deg);
-}
 
 @media (min-width: 769px) {
     .fxg-footer__social-hidden { max-width: none; }
@@ -186,5 +183,9 @@
     .fxg-footer__copyright {
         flex-direction: column;
         text-align: center;
+    }
+    .fxg-footer__social-hidden .fxg-social-link {
+        background: #fff;
+        border: 1px solid #000;
     }
 }
