@@ -71,11 +71,6 @@
 @media (max-width: 768px) {
     .fxg-whyship__columns { grid-template-columns: 1fr; gap: 16px; }
     .fxg-whyship__content h3 { font-size: 22px; }
-    .fxg-whyship__image {
-        margin: 0 -16px;
-        width: calc(100% + 32px);
-        border-radius: 0;
-    }
 }
 
 @media (max-width: 480px) {

@@ -50,10 +50,8 @@
 
 @media (max-width: 768px) {
     .fxg-trade-news__image {
-        margin: 0 -16px;
-        width: calc(100% + 32px);
+        width: 100%;
         max-width: none;
-        border-radius: 0;
     }
     .fxg-trade-news__content { width: 100%; }
 }
